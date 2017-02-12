@@ -1,35 +1,53 @@
 import ase.io, os.path
 from utilities import relax_config, run_root
+from ase.neighborlist import NeighborList
+import numpy as np
 
-def do_one_vacancy(relaxed_bulk, vac_i, tol=1.0e-3):
+def do_one_vacancy(relaxed_bulk, vac_i, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-3):
     vac = relaxed_bulk.copy()
+
+    if relax_radial > 0:
+        nl = NeighborList([nn_cutoff/2.0]*len(relaxed_bulk), self_interaction=False, bothways=True)
+        nl.update(relaxed_bulk)
+        indices, offsets = nl.get_neighbors(vac_i)
+        offset_factor = relax_radial
+        for i, offset in zip(indices, offsets):
+           ri = vac.positions[vac_i] - (vac.positions[i] + np.dot(offset, vac.get_cell()))
+           vac.positions[i] += offset_factor*ri
+           offset_factor += relax_symm_break
+
     del vac[vac_i]
     label = "ind_%d_Z_%d" % (vac_i, relaxed_bulk.get_atomic_numbers()[vac_i])
     vac = relax_config(vac, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
-        label=label, from_base_model=True, save_config=True)
+        config_label=label, from_base_model=True, save_config=True)
 
     ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  vac, format='extxyz')
 
     vac_pe = vac.get_potential_energy()
     if len(set(vac.get_atomic_numbers())) == 1:
+        print "raw energies ", vac_pe, relaxed_bulk.get_potential_energy()
         return [label, vac_pe - float(len(vac))/float(len(relaxed_bulk)) * relaxed_bulk.get_potential_energy() ]
     else:
         return [label, vac_pe - relaxed_bulk.get_potential_energy(), "+mu_%d" % relaxed_bulk.get_atomic_numbers()[vac_i] ]
 
-def do_all_vacancies(test_dir, tol=1.0e-3):
+def do_all_vacancies(test_dir, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-3):
+    print "doing do_all_vacancies"
     bulk = ase.io.read(os.path.join(test_dir,"bulk_supercell.xyz"), format="extxyz")
+    print "got bulk ", len(bulk)
 
     tol = 1.0e-3
-    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, 
-        traj_file=None, label='bulk_supercell', from_base_model=True, save_config=True)
+    relaxed_bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, 
+        traj_file=None, config_label='bulk_supercell', from_base_model=True, save_config=True)
+
+    print "got relaxed_bulk ", relaxed_bulk.get_cell()
 
     properties={}
     try:
-        vacancy_list = [ int(i) for i in bulk.info['vacancies'].split(',') ]
+        vacancy_list = [ int(i) for i in relaxed_bulk.info['vacancies'].split(',') ]
     except:
-        vacancy_list = [ bulk.info['vacancies'] ]
+        vacancy_list = [ relaxed_bulk.info['vacancies'] ]
     for vac_i in vacancy_list:
-        vac_E = do_one_vacancy(bulk, vac_i, tol)
+        vac_E = do_one_vacancy(relaxed_bulk, vac_i, relax_radial, relax_symm_break, nn_cutoff, tol)
         if len(vac_E) == 2:
             properties[vac_E[0]] = vac_E[1]
         elif len(vac_E) == 3:

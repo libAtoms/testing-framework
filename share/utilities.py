@@ -21,8 +21,18 @@ def name_of_file(file):
         name = file
     return name
 
-def model_test_root(model_file, test_file):
-    return 'model-{0}-test-{1}'.format(name_of_file(model_file), name_of_file(test_file))
+def model_test_root(u_model_name=None, u_test_name=None, base_model=False):
+    if u_model_name is None:
+        if base_model:
+            u_model_name = base_model_name
+        else:
+            u_model_name = model_name
+    if u_test_name is None:
+        u_test_name = test_name
+    if system_label != '':
+        return '{0}-model-{1}-test-{2}'.format(system_label, u_model_name, u_test_name)
+    else:
+        return 'model-{0}-test-{1}'.format(model_name, test_name)
 
 class SymmetrizedCalculator(Calculator):
    implemented_properties = ['energy','forces','stress']
@@ -47,16 +57,15 @@ class SymmetrizedCalculator(Calculator):
             self.results['stress'] = full_3x3_to_voigt_6_stress(symmetrized_stress)
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=1000, traj_file=None, constant_volume=False,
-    keep_symmetry=False, strain_mask = None, label=None, from_base_model=False, save_config=False, **kwargs):
+    keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, **kwargs):
 
     # get from base model if requested
     import model
     if from_base_model:
-        if label is None:
-            raise ValueError('from_base_model is set but no label provided')
+        if config_label is None:
+            raise ValueError('from_base_model is set but no config_label provided')
         try:
-            base_run_root = model_test_root(base_model_name, test_name)
-            base_run_file = os.path.join('..',base_run_root,base_run_root+'-'+label+'-relaxed.xyz')
+            base_run_file = os.path.join('..',base_run_root,base_run_root+'-'+config_label+'-relaxed.xyz')
             atoms_in = read(base_run_file, format='extxyz')
             # set positions from atoms_in rescaling to match current cell
             saved_cell = atoms.get_cell().copy()
@@ -66,7 +75,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
             print "relax_config read config from ",base_run_file
         except:
             try:
-                print "relax_config failed to read config from ",base_run_root+'-'+label+'-relaxed.xyz'
+                print "relax_config failed to read base run config from ",base_run_root+'-'+config_label+'-relaxed.xyz'
             except:
                 print "relax_config failed to determined base_run_root"
 
@@ -108,9 +117,9 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         pass
 
     if save_config:
-        if label is None:
-            raise ValueError('save_config is set but no label provided')
-        write(run_root+'-'+label+'-relaxed.xyz', atoms, format='extxyz')
+        if config_label is None:
+            raise ValueError('save_config is set but no config_label provided')
+        write(run_root+'-'+config_label+'-relaxed.xyz', atoms, format='extxyz')
 
     if keep_symmetry:
         atoms.set_calculator(model.calculator)

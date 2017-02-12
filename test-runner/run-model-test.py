@@ -40,20 +40,36 @@ parser.add_argument('--base_model','-B', type=str, action='store', help='optiona
 args = parser.parse_args()
 
 if args.label is not None:
-    label=args.label
+    system_label=args.label
 else:
-    label=''
+    system_label=''
 
 model_name = args.model
 test_name = args.test
 force = args.force
 
-run_root = 'model-{0}-test-{1}'.format(model_name, test_name)
-dir_name = run_root
+# read utilities from current relative path
+share_dir = os.path.join('..', 'share')
+sys.path.insert(0, share_dir)
+import utilities
+# remove this path, since later relative path will be different
+sys.path.remove(share_dir)
+
+# set quantities to be available to utilities routines
+utilities.model_name = model_name
+utilities.base_model_name = args.base_model
+utilities.test_name = test_name
+utilities.system_label = system_label
+
+run_root = utilities.model_test_root()
+dir_name = run_root # maybe a different name?
 if not os.path.exists(dir_name) and __builtin__.do_io:
     os.mkdir(dir_name)
 time.sleep(1)
 os.chdir(dir_name)
+
+utilities.run_root = run_root
+utilities.base_run_root = utilities.model_test_root(base_model=True)
 
 json_file_name = os.path.join('..', run_root+'-properties.json')
 if not force and os.path.isfile(json_file_name) and os.path.getsize(json_file_name) > 0:
@@ -61,18 +77,12 @@ if not force and os.path.isfile(json_file_name) and os.path.getsize(json_file_na
     sys.exit(0)
 
 share_dir = os.path.join('..', '..', 'share')
-model_dir = os.path.join('..', '..', 'models', label, model_name)
-test_dir = os.path.join('..', '..', 'tests', label, test_name)
+model_dir = os.path.join('..', '..', 'models', system_label, model_name)
+test_dir = os.path.join('..', '..', 'tests', system_label, test_name)
 
 sys.path.insert(0, share_dir)
 sys.path.insert(0, model_dir)
 sys.path.insert(0, test_dir)
-
-import utilities
-utilities.model_name = model_name
-utilities.test_name = test_name
-utilities.run_root = run_root
-utilities.base_model_name = args.base_model
 
 _stdout, _stderr = sys.stdout, sys.stderr
 if __builtin__.do_io:

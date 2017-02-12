@@ -51,7 +51,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.0e-3, method='fire'):
       V_cur = scaled_bulk.get_volume()
       scaled_bulk.set_cell(scaled_bulk.get_cell()*((V0+i*dV)/V_cur)**(1.0/3.0), scale_atoms=True)
       scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
-          keep_symmetry=True, label="E_vs_V_%d" % i, from_base_model=True, save_config=True)
+          keep_symmetry=True, config_label="E_vs_V_%d" % i, from_base_model=True, save_config=True)
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       E_vs_V.append( (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
 
@@ -66,7 +66,7 @@ def do_lattice(test_dir, lattice_type):
 
    # relax the initial unit cell and atomic positions
    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, method='cg_n', 
-     keep_symmetry=True, label="bulk", from_base_model=True, save_config=True)
+     keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
 
    print "relaxed bulk"
    ase.io.write(sys.stdout, bulk, format='extxyz')
