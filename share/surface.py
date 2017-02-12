@@ -5,7 +5,7 @@ import numpy as np
 # the current 
 import model 
 
-def do_surface(test_dir):
+def do_symmetric_surface(test_dir):
     surf = ase.io.read(test_dir+"/surface.xyz", format="extxyz")
 
     # read bulk
@@ -26,6 +26,9 @@ def do_surface(test_dir):
         raise ValueError('anisotropic rescaling of surface cell not implemented')
 
     surf.set_cell(surf.get_cell()*cell_ratio, scale_atoms=True)
+
+    print "got relaxed bulk cell ", bulk.get_cell()
+    print "got rescaled surf cell ", surf.get_cell()
 
     # relax surface system
     tol = 1.0e-3
