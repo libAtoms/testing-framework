@@ -64,17 +64,23 @@ except:
 
 for model in models:
 
+    model_name = os.path.split(model)[-1]
+
+    print "Using model defaults ", model_run_defaults[model_name]
     try:
-        use_mpi = 'use_mpi' in model_run_defaults[model]
+        use_bugs = 'use_bugs' in model_run_defaults[model_name]
+    except:
+        use_bugs = args.bugs
+    try:
+        use_mpi = 'use_mpi' in model_run_defaults[model_name]
     except:
         use_mpi = args.MPI
     try:
-        use_openmp = 'use_openmp' in model_run_defaults[model]
+        use_openmp = 'use_openmp' in model_run_defaults[model_name]
     except:
         use_openmp = args.OpenMP
 
     for test in tests:
-        model_name = os.path.split(model)[-1]
         test_name = os.path.split(test)[-1]
         try:
             fp = open(model+"/COMPUTATIONAL_COST")
@@ -98,7 +104,7 @@ for model in models:
         if args.base_model is not None:
             cmd_args += ' --base_model '+args.base_model
 
-        if bugs:
+        if use_bugs:
             ident_string= '{0}_{1}'.format(model_name, test_name)
             if use_mpi:
                 bugs_script='test.bugs_script_mpi'
