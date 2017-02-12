@@ -105,7 +105,10 @@ for model in models:
             cmd_args += ' --base_model '+args.base_model
 
         if use_bugs:
-            ident_string= '{0}_{1}'.format(model_name, test_name)
+            if args.label is not None:
+                ident_string= '{0}_{1}_{2}'.format(args.label, model_name, test_name)
+            else:
+                ident_string= '{0}_{1}'.format(model_name, test_name)
             if use_mpi:
                 bugs_script='test.bugs_script_mpi'
                 mpi_cmd=''
