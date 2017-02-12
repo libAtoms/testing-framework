@@ -3,7 +3,7 @@ from ase.calculators.calculator import Calculator
 from ase.calculators.singlepoint import SinglePointCalculator
 from ase.optimize import FIRE
 from ase.optimize.precon import Exp, PreconLBFGS
-from ase.constraints import UnitCellFilter, FixAtoms
+from ase.constraints import UnitCellFilter, FixAtoms, voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
 from quippy.potential import Minim
 import numpy as np
 import os.path
@@ -42,13 +42,9 @@ class SymmetrizedCalculator(Calculator):
             self.results['forces'] = symmetrize.forces(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_forces, 
                 self.rotations, self.translations, self.symm_map)
         if 'stress' in properties and 'stress' not in self.results:
-            raw_stress_6 = self.calc.get_stress(atoms)
-            raw_stress = np.array( [[raw_stress_6[0], raw_stress_6[5], raw_stress_6[4]],
-                                    [raw_stress_6[5], raw_stress_6[1], raw_stress_6[3]],
-                                    [raw_stress_6[4], raw_stress_6[3], raw_stress_6[2]]] )
+            raw_stress = voigt_6_to_full_3x3_stress(self.calc.get_stress(atoms))
             symmetrized_stress = symmetrize.stress(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_stress, self.rotations)
-            self.results['stress'] = np.array([symmetrized_stress[0,0], symmetrized_stress[1,1], symmetrized_stress[2,2],
-                symmetrized_stress[1,2], symmetrized_stress[2,0], symmetrized_stress[0,1]])
+            self.results['stress'] = full_3x3_to_voigt_6_stress(symmetrized_stress)
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=1000, traj_file=None, constant_volume=False,
     keep_symmetry=False, strain_mask = None, label=None, from_base_model=False, save_config=False, **kwargs):
