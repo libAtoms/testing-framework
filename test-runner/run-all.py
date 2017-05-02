@@ -19,29 +19,45 @@ parser.add_argument('--label', '-l', action='store', help='optional label for mo
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
 args = parser.parse_args()
 
-if args.label is not None:
-    label_str = args.label
-else:
-    label_str=''
+try:
+    with open("default_run_opts.json") as defaults_file:
+        defaults_vals = json.load(defaults_file)
+        if 'models' in defaults_vals and args.models is None:
+            args.models = defaults_vals['models']
+        if 'tests' in defaults_vals and args.tests is None:
+            args.tests = defaults_vals['tests']
+        if 'omit-tests' in defaults_vals and args.omit_tests is None:
+            args.omit_tests = defaults_vals['omit_tests']
+        if 'label' in defaults_vals and args.label is None:
+            args.label = defaults_vals['label']
+        if 'base_model' in defaults_vals and args.base_model is None:
+            args.base_model = defaults_vals['base_model']
+        if 'bugs' in defaults_vals:
+            args.bugs = defaults_vals['bugs']
+except:
+    sys.stderr.write("No parsable default_run_opts.json file\n")
+
+if args.label is None:
+    args.label = ''
 
 models = None
 tests = None
 omittests = None
 if args.models is not None:
-    models = [ os.path.join("../models/"+label_str, d) for d in args.models ]
+    models = [ os.path.join("../models/"+args.label, d) for d in args.models ]
 if args.tests is not None:
-    tests = [ os.path.join("../tests/"+label_str, d) for d in args.tests ]
+    tests = [ os.path.join("../tests/"+args.label, d) for d in args.tests ]
 if args.omit_tests is not None:
-    omittests = [ os.path.join("../tests/"+label_str, d) for d in args.omit_tests ]
+    omittests = [ os.path.join("../tests/"+args.label, d) for d in args.omit_tests ]
 force = args.force
 bugs = args.bugs
 
 run_model_test = 'run-model-test.py'
 
 if models is None:
-    models = glob.glob(os.path.join('..', 'models/%s/*' % label_str))
+    models = glob.glob(os.path.join('..', 'models/%s/*' % args.label))
 if tests is None:
-    tests = glob.glob(os.path.join('..', 'tests/%s/*' % label_str))
+    tests = glob.glob(os.path.join('..', 'tests/%s/*' % args.label))
 
 if omittests is not None:
     for d in omittests:
@@ -56,29 +72,26 @@ print 'Tests:', tests
 try:
     print "trying to read default_model_run_opts.json"
     with open("default_model_run_opts.json","r") as model_run_defaults_file:
-        print "trying to parse json default_model_run_opts.json"
         model_run_defaults = json.load(model_run_defaults_file)
-        print "got json ",model_run_defaults
 except:
     model_run_defaults= {}
+print "got model_run_defaults", model_run_defaults
 
 for model in models:
 
     model_name = os.path.split(model)[-1]
 
-    print "Using model defaults ", model_run_defaults[model_name]
-    try:
-        use_bugs = 'use_bugs' in model_run_defaults[model_name]
-    except:
-        use_bugs = args.bugs
-    try:
-        use_mpi = 'use_mpi' in model_run_defaults[model_name]
-    except:
-        use_mpi = args.MPI
-    try:
-        use_openmp = 'use_openmp' in model_run_defaults[model_name]
-    except:
-        use_openmp = args.OpenMP
+    if not args.MPI:
+        try:
+            args.MPI = 'MPI' in model_run_defaults[model_name]
+        except:
+            pass
+
+    if not args.OpenMP:
+        try:
+            args.OpenMP = 'OpenMP' in model_run_defaults[model_name]
+        except:
+            pass
 
     for test in tests:
         test_name = os.path.split(test)[-1]
@@ -104,18 +117,18 @@ for model in models:
         if args.base_model is not None:
             cmd_args += ' --base_model '+args.base_model
 
-        if use_bugs:
+        if args.bugs:
             if args.label is not None:
                 ident_string= '{0}_{1}_{2}'.format(args.label, model_name, test_name)
             else:
                 ident_string= '{0}_{1}'.format(model_name, test_name)
-            if use_mpi:
+            if args.MPI:
                 bugs_script='test.bugs_script_mpi'
                 mpi_cmd=''
             else:
                 mpi_cmd='-no_mpirun'
                 bugs_script='test.bugs_script'
-            if use_openmp:
+            if args.OpenMP:
                 bugs_script+='_openmp'
             bugs_script += '.'+os.environ['HOSTNAME']
             cmd=('env REDIRECT_IO="'+cmd_args+'" bugs -exec=python '+mpi_cmd+' -time=96h -np='+('%d' % np)+' -script='+bugs_script+
