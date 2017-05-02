@@ -21,7 +21,7 @@ def do_one_vacancy(relaxed_bulk, vac_i, relax_radial=0.0, relax_symm_break=0.0, 
     vac = relax_config(vac, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
         config_label=label, from_base_model=True, save_config=True)
 
-    ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  vac, format='extxyz')
+    ase.io.write(os.path.join("..",run_root+"-%s-relaxed.xyz" % label),  vac, format='extxyz')
 
     vac_pe = vac.get_potential_energy()
     if len(set(vac.get_atomic_numbers())) == 1:
