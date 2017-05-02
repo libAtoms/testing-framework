@@ -23,13 +23,12 @@ with open("default_run_opts.json") as default_run_file:
     if 'label' in default_run_opts and not args.label:
         args.label = default_run_opts['label']
 
-models = glob.glob(os.path.join('..', 'models',args.label,args.models_re))
-bulk_tests = glob.glob(os.path.join('..', 'tests',args.label,'bulk_'+args.tests_re))
+models = [os.path.basename(f) for f in glob.glob(os.path.join('..', 'models',args.label,args.models_re))]
+bulk_tests = [os.path.basename(f).replace("bulk_","") for f in glob.glob(os.path.join('..', 'tests',args.label,'bulk_'+args.tests_re))]
 
-ref_color = "black"
 ref_symbol="-"
-other_colors = [ "red", "blue", "cyan", "orange", "magenta" ] 
 other_symbol="--"
+struct_colors = [ "red", "blue", "cyan", "orange", "magenta" ] 
 
 if args.label is None:
     args.label = ""
@@ -39,14 +38,13 @@ else:
 # read and parse all data
 element_min_Es = {}
 data = {}
-for model in models:
-    print "reading data for model ",model
-    model_name = os.path.basename(model)
+for model_name in models:
+    print "reading data for model ",model_name
+    element_min_Es[model_name] = {}
     data[model_name] = {}
     cur_model_data = {}
-    for bulk_test in bulk_tests:
-        print "   reading data for test ", bulk_test
-        bulk_test_name = os.path.basename(bulk_test).replace("bulk_","")
+    for bulk_test_name in bulk_tests:
+        print "   reading data for test ", bulk_test_name
 
         # read bulk test structure
         struct_filename = "{}model-{}-test-{}-relaxed.xyz".format(args.label, model_name, "bulk_"+bulk_test_name)
@@ -78,12 +76,12 @@ for model in models:
             symb = chemical_symbols[Z]
             element_bulk_struct = default_analysis_settings["{}_ref_struct".format(symb)]
             try:
-                E = element_min_Es[element_bulk_struct]
+                E = element_min_Es[model_name][Z]
             except:
                 with open("{}model-{}-test-bulk_{}_{}-properties.json".format(args.label, model_name, symb, element_bulk_struct), "r") as f:
                     d = json.load(f)
                 E = min(d["E_vs_V"], key = lambda x : x[1])[1]
-                element_min_Es[element_bulk_struct] = E
+                element_min_Es[model_name][Z] = E
             E0 += sum(struct.get_atomic_numbers() == Z)*E
         E0 /= len(struct)
 
@@ -91,28 +89,33 @@ for model in models:
         E_vs_V_orig = cur_model_data[bulk_test_name]["E_vs_V"]
         cur_model_data[bulk_test_name]["E_vs_V"] = [ [ EV[0], EV[1]-E0] for EV in E_vs_V_orig ]
 
-    print "got data for ",model_name, cur_model_data
+    # print "got data for ",model_name, cur_model_data.keys()
     data[model_name] = cur_model_data.copy()
 
 ref_model_name = default_analysis_settings["ref_model"]
 n_fig = 1
-for model in models:
-    model_name = os.path.basename(model)
+for model_name in models:
+    for bulk_test_name in bulk_tests:
+        min_EV  = min(data[model_name][bulk_test_name]["E_vs_V"], key = lambda x : x[1])
+        print "BULK_E_V",model_name,bulk_test_name, min_EV[0], min_EV[1]
     if model_name == ref_model_name:
         continue
 
     bulk_ind = -1
     figure(n_fig)
-    for bulk_test in bulk_tests:
+    for bulk_test_name in bulk_tests:
         bulk_ind += 1
-        if bulk_test not in data[model_name]:
+        if bulk_test_name not in data[model_name]:
+            sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
             continue
 
-        line, = plot( [x[0] for x in data[model_name]["E_vs_V"]],  [x[1] - E0 for x in data[model_name]["E_vs_V"]], other_symbol)
-        line.set_color(other_colors[bulk_ind])
-        line, = plot( [x[0] for x in data[ref_model_name]["E_vs_V"]],  [x[1] - E0 for x in data[ref_model_name]["E_vs_V"]], ref_symbol)
-        line.set_color(ref_color)
+        line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_symbol)
+        line.set_color(struct_colors[bulk_ind])
+        line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_symbol, label=bulk_test_name)
+        line.set_color(struct_colors[bulk_ind])
 
-
-    savefig("{}_bulk.pdf".format(model_name))
+    legend(loc="center left", bbox_to_anchor=[1, 0.5])
+    xlabel("V/atom (A^3)")
+    ylabel("E/atom (eV)")
+    savefig("{}_bulk.pdf".format(model_name), bbox_inches='tight')
     n_fig += 1
