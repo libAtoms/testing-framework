@@ -120,7 +120,7 @@ for model_name in models:
         line.set_color(struct_colors[bulk_ind])
 
     legend(loc="center left", bbox_to_anchor=[1, 0.5])
-    xlabel("V/atom (A^3)")
-    ylabel("E/atom (eV)")
+    xlabel("V ($A^3$/atom)")
+    ylabel("E (eV/atom)")
     savefig("{}_bulk.pdf".format(model_name), bbox_inches='tight')
     n_fig += 1
