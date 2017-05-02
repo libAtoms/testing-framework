@@ -20,7 +20,13 @@ parser.add_argument('--base_model', '-B', action='store', type=str, help='model 
 args = parser.parse_args()
 
 try:
-    with open("default_run_opts.json") as defaults_file:
+    defaults_label = os.environ["DEFAULTS_LABEL"]+"_"
+except:
+    defaults_label = ""
+
+try:
+    print "reading","{}default_run_opts.json".format(defaults_label)
+    with open("{}default_run_opts.json".format(defaults_label)) as defaults_file:
         defaults_vals = json.load(defaults_file)
         if 'models' in defaults_vals and args.models is None:
             args.models = defaults_vals['models']
@@ -35,7 +41,7 @@ try:
         if 'bugs' in defaults_vals:
             args.bugs = defaults_vals['bugs']
 except:
-    sys.stderr.write("No parsable default_run_opts.json file\n")
+    sys.stderr.write("No parsable {}default_run_opts.json file\n".format(defaults_label))
 
 if args.label is None:
     args.label = ''
@@ -70,8 +76,8 @@ print 'Models:', models
 print 'Tests:', tests
 
 try:
-    print "trying to read default_model_run_opts.json"
-    with open("default_model_run_opts.json","r") as model_run_defaults_file:
+    print "trying to read {}default_model_run_opts.json".format(defaults_label)
+    with open("{}default_model_run_opts.json".format(defaults_label),"r") as model_run_defaults_file:
         model_run_defaults = json.load(model_run_defaults_file)
 except:
     model_run_defaults= {}

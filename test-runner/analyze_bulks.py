@@ -15,10 +15,15 @@ parser.add_argument('--tests_re', '-t', action='store', type=str, help='tests to
 parser.add_argument('--label', '-l', action='store', help='optional label for models/tests directories', default='')
 args = parser.parse_args()
 
-with open("default_analysis_settings.json") as default_analysis_file:
+try:
+    defaults_label = os.environ["DEFAULTS_LABEL"]+"_"
+except:
+    defaults_label = ""
+
+with open("{}default_analysis_settings.json".format(defaults_label)) as default_analysis_file:
     default_analysis_settings = json.load(default_analysis_file)
 
-with open("default_run_opts.json") as default_run_file:
+with open("{}default_run_opts.json".format(defaults_label)) as default_run_file:
     default_run_opts = json.load(default_run_file)
     if 'label' in default_run_opts and not args.label:
         args.label = default_run_opts['label']
