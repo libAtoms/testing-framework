@@ -41,18 +41,18 @@ if args.label is None:
 else:
     args.label = args.label+"-"
 
-ref_struct_data = get_ref_structs(args.label, models, default_analysis_settings)
+element_ref_struct_data = get_element_ref_structs(args.label, models, default_analysis_settings["element_ref_struct"])
 
 # read and parse all data
 element_min_Es = {}
 data = {}
 for model_name in models:
-    print "reading data for model ",model_name
+    sys.stderr.write("reading data for model {}\n".format(model_name))
     element_min_Es[model_name] = {}
     data[model_name] = {}
     cur_model_data = {}
     for bulk_test_name in bulk_tests:
-        print "   reading data for test ", bulk_test_name
+        sys.stderr.write("   reading data for test {}\n".format(bulk_test_name))
 
         # read bulk test structure
         struct_filename = "{}model-{}-test-{}-relaxed.xyz".format(args.label, model_name, "bulk_"+bulk_test_name)
@@ -82,8 +82,7 @@ for model_name in models:
         E0 = 0.0
         for Z in elements_present:
             symb = chemical_symbols[Z]
-            element_bulk_struct = default_analysis_settings["{}_ref_struct".format(symb)]
-            E = ref_struct_data["min_Es"][model_name][element_bulk_struct]
+            E = element_ref_struct_data[symb]["min_Es"][model_name]
             E0 += sum(struct.get_atomic_numbers() == Z)*E
         E0 /= len(struct)
 
@@ -99,7 +98,7 @@ n_fig = 1
 for model_name in models:
     for bulk_test_name in bulk_tests:
         min_EV  = min(data[model_name][bulk_test_name]["E_vs_V"], key = lambda x : x[1])
-        print "BULK_E_V",model_name,bulk_test_name, min_EV[0], min_EV[1]
+        print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
     if model_name == ref_model_name:
         continue
 
