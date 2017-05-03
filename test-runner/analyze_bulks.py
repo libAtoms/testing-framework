@@ -8,6 +8,7 @@ import argparse
 import glob, os
 import ase.io
 from ase.data import chemical_symbols
+from analyze_utils import *
 
 parser = argparse.ArgumentParser(description='Analyze bulk lattices')
 parser.add_argument('--models_re', '-m', action='store', type=str, help='models to include', default='*')
@@ -40,6 +41,8 @@ if args.label is None:
 else:
     args.label = args.label+"-"
 
+ref_struct_data = get_ref_structs(args.label, models, default_analysis_settings)
+
 # read and parse all data
 element_min_Es = {}
 data = {}
@@ -59,11 +62,6 @@ for model_name in models:
             sys.stderr.write("No struct file '{}'\n".format(struct_filename))
             continue
 
-        # parse elements present
-        elements_present = {}
-        for Z in set(struct.get_atomic_numbers()):
-            elements_present[Z] = sum(struct.get_atomic_numbers() == Z)
-
         # read bulk test properties
         prop_filename ="{}model-{}-test-{}-properties.json".format(args.label, model_name, "bulk_"+bulk_test_name)
         try:
@@ -75,18 +73,17 @@ for model_name in models:
 
         cur_model_data[bulk_test_name] = json_data.copy()
 
+        # parse elements present
+        elements_present = {}
+        for Z in set(struct.get_atomic_numbers()):
+            elements_present[Z] = sum(struct.get_atomic_numbers() == Z)
+
         # shift energy by minimum energies of reference element structures
         E0 = 0.0
         for Z in elements_present:
             symb = chemical_symbols[Z]
             element_bulk_struct = default_analysis_settings["{}_ref_struct".format(symb)]
-            try:
-                E = element_min_Es[model_name][Z]
-            except:
-                with open("{}model-{}-test-bulk_{}_{}-properties.json".format(args.label, model_name, symb, element_bulk_struct), "r") as f:
-                    d = json.load(f)
-                E = min(d["E_vs_V"], key = lambda x : x[1])[1]
-                element_min_Es[model_name][Z] = E
+            E = ref_struct_data["min_Es"][model_name][element_bulk_struct]
             E0 += sum(struct.get_atomic_numbers() == Z)*E
         E0 /= len(struct)
 
