@@ -39,6 +39,8 @@ def do_all_vacancies(test_dir, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff
     relaxed_bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, 
         traj_file=None, config_label='bulk_supercell', from_base_model=True, save_config=True)
 
+    ase.io.write(os.path.join("..",run_root+"-relaxed-bulk.xyz"),  relaxed_bulk, format='extxyz')
+
     print "got relaxed_bulk ", relaxed_bulk.get_cell()
 
     properties={}
