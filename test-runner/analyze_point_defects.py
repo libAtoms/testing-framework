@@ -120,9 +120,9 @@ def mu_range(label, model_name, corresponding_bulk_test, multicomponent_constrai
                     mu_v_extrema[0][1] = x[1]
 
     elif len(cur_composition) == 3: # ternary
-        print "Can't handle mu range for",len(cur_composition),"-ary"
+        raise("Can't do mu_range for %d-ary".format(len(cur_composition)))
     else:
-        print "Can't handle mu range for",len(cur_composition),"-ary"
+        raise("Can't do mu_range for %d-ary".format(len(cur_composition)))
 
     if mu_v_extrema is None:
         mu_extrema = None

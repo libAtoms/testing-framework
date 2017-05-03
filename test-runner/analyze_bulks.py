@@ -34,7 +34,7 @@ bulk_tests = [os.path.basename(f).replace("bulk_","") for f in glob.glob(os.path
 
 ref_symbol="-"
 other_symbol="--"
-struct_colors = [ "red", "blue", "cyan", "orange", "magenta" ] 
+struct_colors = [ "black", "red", "blue", "cyan", "orange", "magenta", "green", "grey" ] 
 
 if args.label is None:
     args.label = ""
