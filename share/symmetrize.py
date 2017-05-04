@@ -9,16 +9,15 @@ def prep(at, symprec=1.0e-5):
     translations = dataset['translations'].copy()
     symm_map=[]
     pos = at.get_scaled_positions()
-    first_cell_pos = pos - np.round(pos)
+    first_cell_pos = pos
     for (r, t) in zip(rotations, translations):
         # print "op"
         this_op_map = [-1] * len(at)
         for i_at in range(len(at)):
             new_p = np.dot(r, first_cell_pos[i_at,:]) + t
-            first_cell_new_p = new_p - np.round(new_p)
-            # print "distances ",np.linalg.norm(first_cell_pos - first_cell_new_p, axis=1)
-            i_at_map = np.argmin(np.linalg.norm(first_cell_pos - first_cell_new_p, axis=1))
-            # print "indices ", i_at, i_at_map
+            dp = first_cell_pos - new_p
+            dp -= np.round(dp)
+            i_at_map = np.argmin(np.linalg.norm(dp,  axis=1))
             this_op_map[i_at] = i_at_map
         symm_map.append(this_op_map)
     return (rotations, translations, symm_map)

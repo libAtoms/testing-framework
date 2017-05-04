@@ -38,22 +38,23 @@ def do_all_vacancies(test_dir, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff
     tol = 1.0e-3
     relaxed_bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, 
         traj_file=None, config_label='bulk_supercell', from_base_model=True, save_config=True)
+    relaxed_bulk_pe = relaxed_bulk.get_potential_energy()
 
     ase.io.write(os.path.join("..",run_root+"-relaxed-bulk.xyz"),  relaxed_bulk, format='extxyz')
 
     print "got relaxed_bulk ", relaxed_bulk.get_cell()
 
-    properties={}
+    properties = { "bulk_E_per_atom" : relaxed_bulk_pe / len(relaxed_bulk) }
     try:
         vacancy_list = [ int(i) for i in relaxed_bulk.info['vacancies'].split(',') ]
     except:
         vacancy_list = [ relaxed_bulk.info['vacancies'] ]
     for vac_i in vacancy_list:
-        vac_E = do_one_vacancy(relaxed_bulk, vac_i, relax_radial, relax_symm_break, nn_cutoff, tol)
-        if len(vac_E) == 2:
-            properties[vac_E[0]] = vac_E[1]
-        elif len(vac_E) == 3:
-            properties[vac_E[0]] = [vac_E[1],vac_E[2]]
+        vac_data = do_one_vacancy(relaxed_bulk, vac_i, relax_radial, relax_symm_break, nn_cutoff, tol)
+        if len(vac_data) == 2:
+            properties[vac_data[0]] = vac_data[1]
+        elif len(vac_data) == 3:
+            properties[vac_data[0]] = [vac_data[1],vac_data[2]]
         else:
             raise ValueError('unknown number of things returned from do_vacancy')
 
