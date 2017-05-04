@@ -17,7 +17,8 @@ parser.add_argument('--label', '-l', action='store', help='optional label for mo
 args = parser.parse_args()
 
 try:
-    defaults_label = os.environ["DEFAULTS_LABEL"]+"_"
+    with open("DEFAULTS_LABEL","r") as f:
+        defaults_label = f.readline().strip()
 except:
     defaults_label = ""
 

@@ -39,10 +39,14 @@ parser.add_argument('--label','-l', type=str, action='store', help='optional lab
 parser.add_argument('--base_model','-B', type=str, action='store', help='optional base model to start from')
 args = parser.parse_args()
 
-if args.label is not None:
-    system_label=args.label
+if args.label is None:
+    try:
+        with open("DEFAULTS_LABEL","r") as f:
+            system_label = f.readline().strip()
+    except:
+        system_label = ""
 else:
-    system_label=''
+    system_label = args.label
 
 model_name = args.model
 test_name = args.test
