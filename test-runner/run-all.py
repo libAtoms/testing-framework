@@ -22,7 +22,7 @@ args = parser.parse_args()
 
 try:
     with open("DEFAULTS_LABEL","r") as f:
-        defaults_label = f.readline().strip()
+        defaults_label = f.readline().strip()+"_"
 except:
     defaults_label = ""
 
@@ -120,7 +120,7 @@ for model in models:
         cmd_args = '{0} {1} {2}'.format(run_model_test, model_name, test_name)
         if force:
             cmd_args += ' -force'
-        if args.label is not None:
+        if args.label is not None and len(args.label) > 0:
             cmd_args += ' --label '+args.label
         if args.base_model is not None:
             cmd_args += ' --base_model '+args.base_model

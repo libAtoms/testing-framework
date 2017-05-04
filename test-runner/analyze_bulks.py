@@ -18,7 +18,7 @@ args = parser.parse_args()
 
 try:
     with open("DEFAULTS_LABEL","r") as f:
-        defaults_label = f.readline().strip()
+        defaults_label = f.readline().strip()+"_"
 except:
     defaults_label = ""
 
