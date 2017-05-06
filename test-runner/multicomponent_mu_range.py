@@ -1,11 +1,48 @@
 import numpy as np
 from itertools import izip
 
-def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc_energies):
-    print "mu_range got compositions ", mcc_compositions
-    print "mu_range got energies ", mcc_energies
-    print "got ref_bulk_model ", cur_min_EV, cur_composition
+def intersect_half_plane(polygon, L, V):
+    # print "check intersection ", L, V
+    # print "polygon", polygon
+    last_in_point = None
+    first_in_point = None
+    # print "number of edges ", len(polygon)
+    new_polygon = []
+    for e in polygon:
+        # print "check edge ", e
+        in_0 = sum(L*e[0]) < V
+        in_1 = sum(L*e[1]) < V
+        # print "in status ", in_0, in_1
+        if in_0 and in_1:
+            new_polygon.append(e)
+        elif not in_0 and not in_1:
+            continue
+        else: # intersection
+            # L . (e0 + x (e1-e0)) = V
+            # L.e0 + x L.(e1-e0) = V
+            # x = (V-L.e0)/(L.(e1-e0))
+            x = (V - np.sum(L*e[0]) ) / np.sum(L*(e[1]-e[0]))
+            intersection_p = e[0] + x*(e[1]-e[0])
+            if in_0 and not in_1: # in to out
+                new_polygon.append( [ e[0], intersection_p ] )
+                last_in_point = intersection_p.copy()
+            else: # no in_0 and in_1, out to in
+                if last_in_point is None: # should only happen on first edge
+                    first_in_point = intersection_p.copy()
+                else:
+                    new_polygon.append( [ last_in_point, intersection_p ] )
+                new_polygon.append( [ intersection_p, e[1] ] )
+    if first_in_point is not None:
+        new_polygon.append( [ last_in_point, first_in_point ] )
+    # print "new_polygon ", new_polygon
+    return new_polygon
 
+def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc_energies):
+    # print "mu_range got compositions ", mcc_compositions
+    # print "mu_range got energies ", mcc_energies
+    # print "got ref_bulk_model ", cur_min_EV, cur_composition
+
+    n_types = len(cur_composition)
     Leq = []
     Veq = cur_min_EV * sum( [x[1] for x in cur_composition ] )
     print "equality constraint:",
@@ -18,7 +55,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         cur_elements.append(element[0])
         Leq.append(element[1])
         i_of_element[element[0]] = i
-    print " = mu_{} = {}".format(cur_bulk_struct, cur_min_EV*len(cur_composition))
+    print " = mu_{} = {}".format(cur_bulk_struct, Veq)
 
     ## print "constraint i_of_element, L, V ", i_of_element, Leq, "=", Veq
 
@@ -39,7 +76,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
             continue
 
         # determine inequality
-        Lne_cur = [0] * len(cur_composition)
+        Lne_cur = [0] * n_types
         # print "   ", struct, multicomponent_constraints_data[struct]["E_per_atom"][model_name], multicomponent_constraints_data[struct]["composition"]
         n_atoms = 0
         for (i, element) in enumerate(mcc_compositions[struct]):
@@ -56,7 +93,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         ## print "inequality i_of_element, L, V ", i_of_element, L, "<=", V
 
     mu_v_extrema = None
-    if len(cur_composition) == 2: # binary
+    if n_types == 2: # binary
         Leq_3 = np.array([Leq[0], Leq[1], 0.0])
         mu_v_extrema = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
         for (L, V) in izip(Lne, Vne):
@@ -75,15 +112,15 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
                     mu_v_extrema[0][0] = x[0]
                     mu_v_extrema[0][1] = x[1]
 
-    elif len(cur_composition) == 3: # ternary
-        print "****************************************************************************************************"
-        print "types ", i_of_element
-        print "equality constraint", Leq, Veq
-        # do monatomic limits first do define triangle
+    elif n_types == 3: # ternary
+        # print "****************************************************************************************************"
+        # print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
+        # do monatomic limits first
+        vertices = []
         for (L1, V1) in izip(Lne, Vne):
-            if sum(L1 != 0) == 1:
+            if sum(L1 != 0) == 1: # monatomic
                 i1 = np.where(L1 != 0)[0][0]
-                for (L2, V2) in izip(Lne, Vne):
+                for (L2, V2) in izip(Lne, Vne): # monatomic
                     i2 = np.where(L2 != 0)[0][0]
                     if sum(L2 != 0) == 1 and i1 < i2:
                         i3 = [0, 1, 2]
@@ -91,13 +128,24 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
                         i3.remove(i2)
                         i3 = i3[0]
                         mu_3 = (Veq - Leq[i1]*V1 - Leq[i2]*V2)/Leq[i3]
-                        print "do monatomic inequality pair ", L1, V1, i1, L2, V2, i2, i3
-                        print "got mus ", cur_elements[i1], V1, cur_elements[i2], V2, cur_elements[i3], mu_3, "sum",(Leq[i1]*V1+Leq[i2]*V2+Leq[i3]*mu_3)
-                print ""
-        print "****************************************************************************************************"
-        raise Exception("Can't really do mu_range for terunary")
-    elif len(cur_composition) > 1: # n >= 4
-        raise Exception("Can't do mu_range for %d-ary".format(len(cur_composition)))
+                        pt = [ 0 ] * 3
+                        pt[i1] = V1
+                        pt[i2] = V2
+                        pt[i3] = mu_3
+                        vertices.append(np.array(pt))
+        polygon = []
+        for i in range (3):
+            polygon.append([vertices[i], vertices[(i+1)%3]])
+        # print "initial polygon ", polygon
+        for (L, V) in izip(Lne, Vne):
+            if sum(L != 0) > 1:
+                polygon = intersect_half_plane (polygon, L, V)
+        # print "****************************************************************************************************"
+        mu_v_extrema = []
+        for e in polygon:
+            mu_v_extrema.append(e[0])
+    elif n_types > 1: # n >= 4
+        raise Exception("Can't do mu_range for %d-ary".format(n_types))
 
     if mu_v_extrema is None:
         mu_extrema = None

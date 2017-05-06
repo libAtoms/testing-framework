@@ -41,15 +41,16 @@ def get_element_ref_structs(label, models, element_ref_struct):
     return data
 
 def get_multicomponent_constraints(label, models, multicomponent_constraints):
-    data = {}
+    composition_data = {}
+    energy_data = {}
 
-    for struct_name in multicomponent_constraints:
+    for model_name in models:
         # print "get_multicomponent_constraints", struct_name
-        data[struct_name] = { "E_per_atom" : {} }
-        for model_name in models:
+        energy_data[model_name] = {}
+        for struct_name in multicomponent_constraints:
             (min_EV, composition) = read_ref_bulk_model_struct(label, model_name, struct_name)
-            data[struct_name]["E_per_atom"][model_name] = min_EV
-            if not "composition" in data[struct_name]: 
-                data[struct_name]["composition"] = composition
+            energy_data[model_name][struct_name] = min_EV
+            if not "struct_name" in composition_data: 
+                composition_data[struct_name] = composition
 
-    return data
+    return (composition_data, energy_data)

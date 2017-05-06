@@ -104,4 +104,5 @@ for model_name in models:
                     m = re.search('^\+mu_([0-9]*)$', mu_str)
                     mu_Z = int(m.group(1))
                     for mu_pt in mu_extrema:
-                        print model_name, test_name, ind, Z, "multicomponent mu", mu_pt[mu_Z],"E_f", Ef0 + mu_pt[mu_Z]
+                        print model_name, test_name, ind, Z, "(E_f0 =",Ef0,") + (mu_{} =".format(mu_Z), mu_pt[mu_Z],") = ",Ef0 + mu_pt[mu_Z], \
+                            "all_mus",[ (ZZ, mu_pt[ZZ]) for ZZ in sorted(mu_pt.keys()) ]
