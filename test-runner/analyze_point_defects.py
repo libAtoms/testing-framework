@@ -61,36 +61,23 @@ for model_name in models:
     for test_name in tests:
         print "   reading data for test {}".format(test_name)
 
-        # read bulk test structure
-        struct_filename_re = "{}model-{}-test-{}-ind_*_Z_*-relaxed.xyz".format(args.label, model_name, test_name)
-        for struct_filename in glob.glob(struct_filename_re):
-            try:
-                struct = ase.io.read(struct_filename, format="extxyz")
-            except:
-                print "No struct file '{}'".format(struct_filename)
-                continue
+        prop_filename ="{}model-{}-test-{}-properties.json".format(args.label, model_name, test_name)
+        try:
+            with open(prop_filename, "r") as model_data_file:
+                cur_model_data[test_name] = json.load(model_data_file)
+        except:
+            print "No properties file '{}'".format(prop_filename)
+            continue
 
-            # read bulk test properties
-            prop_filename ="{}model-{}-test-{}-properties.json".format(args.label, model_name, test_name)
-            try:
-                with open(prop_filename, "r") as model_data_file:
-                    json_data = json.load(model_data_file)
-            except:
-                print "No properties file '{}'".format(prop_filename)
-                continue
-
-            json_data["corresponding_bulk_struct"] = struct.info["corresponding_bulk_struct"]
-            cur_model_data[test_name] = json_data.copy()
-
-    data[model_name] = cur_model_data.copy()
+    data[model_name] = cur_model_data
 
 n_fig = 0
 for model_name in models:
     for test_name in tests:
         print "DO {} {}".format(model_name, test_name)
 
-        (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.label, model_name, data[model_name][test_name]["corresponding_bulk_struct"])
-        (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["corresponding_bulk_struct"], mcc_compositions, mcc_energies[model_name])
+        (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.label, model_name, data[model_name][test_name]["bulk_struct"])
+        (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["bulk_struct"], mcc_compositions, mcc_energies[model_name])
         # print model_name, test_name, "stable_mu_extrema", stable_mu_extrema
         # print "full_mu_range", full_mu_range
         if stable_mu_extrema is not None:
@@ -103,25 +90,23 @@ for model_name in models:
             else:
                 print "stable mu range: None"
 
-        for vac in data[model_name][test_name]:
-            m = re.search("^ind_([0-9]*)_Z_([0-9]*)$", vac)
-            if m is not None:
-                print ""
-                ind = m.group(1)
-                Z = m.group(2)
-                if isinstance(data[model_name][test_name][vac], float) :
-                    print "DEFECT", model_name, test_name, ind, Z, data[model_name][test_name][vac]
-                else:
+        for defect_label in data[model_name][test_name]["defects"]:
+            # print "defect label",defect_label
+            defect = data[model_name][test_name]["defects"][defect_label]
 
-                    Ef0 = data[model_name][test_name][vac][0]
-                    mu_str = data[model_name][test_name][vac][1]
-                    m = re.search('^\+mu_([0-9]*)$', mu_str)
-                    mu_Z = int(m.group(1))
-                    if len(stable_mu_extrema) == 0:
-                        print "DEFECT", model_name, test_name, ind, Z, "(E_f0 =", Ef0,") but no stable mu range exists"
-                    else:
-                        mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
-                        mu_max = max([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
-                        print "DEFECT", model_name, test_name, "atom",ind, "Z",Z, "Ef ",Ef0," + ( mu_{} = [".format(mu_Z),mu_min,"--",mu_max,"] ) = [",Ef0+mu_min,"--",Ef0+mu_max,"]"
+            ind = defect['atom_ind']
+            Z = defect['Z']
+            Ef = defect['Ef']
+            if 'dmu' in defect:
+                n_Z = defect['dmu'][0]
+                mu_Z = defect['dmu'][1]
+                if len(stable_mu_extrema) == 0:
+                    print "DEFECT", model_name, test_name, ind, Z, "(E_f0 =", Ef,") but no stable mu range exists"
+                else:
+                    mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
+                    mu_max = max([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
+                    print "DEFECT", model_name, test_name, "atom",ind, "Z",Z, "Ef ",Ef," + ( mu_{} = [".format(mu_Z),mu_min,"--",mu_max,"] ) = [",Ef+mu_min,"--",Ef+mu_max,"]"
+            else:
+                print "DEFECT", model_name, test_name, "atom",ind, "Z", Z, "Ef", Ef
 
         print ""
