@@ -5,8 +5,6 @@
 # from matplotlib.pyplot import *
 
 import json
-import argparse
-import glob, os
 import ase.io
 from ase.data import chemical_symbols
 from analyze_utils import *
@@ -15,36 +13,7 @@ import re
 from itertools import izip
 import numpy as np
 
-parser = argparse.ArgumentParser(description='Analyze bulk lattices')
-parser.add_argument('--models_re', '-m', action='store', type=str, help='models to include', default='*')
-parser.add_argument('--tests_re', '-t', action='store', type=str, help='tests to include', default='*vacancy*,*interstitial*')
-parser.add_argument('--label', '-l', action='store', help='optional label for models/tests directories', default='')
-args = parser.parse_args()
-
-try:
-    with open("DEFAULTS_LABEL","r") as f:
-        defaults_label = f.readline().strip()+"_"
-except:
-    defaults_label = ""
-
-with open("{}default_analysis_settings.json".format(defaults_label)) as default_analysis_file:
-    default_analysis_settings = json.load(default_analysis_file)
-
-with open("{}default_run_opts.json".format(defaults_label)) as default_run_file:
-    default_run_opts = json.load(default_run_file)
-    if 'label' in default_run_opts and not args.label:
-        args.label = default_run_opts['label']
-
-models = [os.path.basename(f) for f in glob.glob(os.path.join('..', 'models',args.label,args.models_re))]
-tests = []
-for tests_re in args.tests_re.split(','):
-    tests.extend( [os.path.basename(f) for f in glob.glob(os.path.join('..', 'tests',args.label,tests_re))] )
-
-if args.label is None:
-    args.label = ""
-else:
-    args.label = args.label+"-"
-
+(args, models, tests, default_analysis_settings) = analyze_start('*vacancy*,*interstitial*')
 
 (mcc_compositions, mcc_energies) = get_multicomponent_constraints(args.label, models, default_analysis_settings["multicomponent_constraints"])
 

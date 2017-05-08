@@ -37,16 +37,14 @@ def do_symmetric_surface(test_dir):
     ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  surf, format='extxyz')
 
     # check stoichiometry and number of bulk cell energies to subtract
-    n_bulk_cells_0 = None
     surf_Zs = surf.get_atomic_numbers()
     bulk_Zs = bulk.get_atomic_numbers()
-    for Z_i in set(bulk.get_atomic_numbers()):
-        n_bulk_cells = sum(surf_Zs == Z_i)/sum(bulk_Zs == Z_i)
-        if n_bulk_cells_0 is None:
-            n_bulk_cells_0 = n_bulk_cells
-        elif n_bulk_cells != n_bulk_cells_0:
-            raise ValueError('surface has different stoichiometry from bulk')
+    Z0 = bulk_Zs[0]
+    n_bulk_cells = float(sum(surf_Zs == Z0))/float(sum(bulk_Zs == Z0))
+    n_dmu = {}
+    for Z in set(bulk_Zs):
+        n_dmu[Z] = sum(surf_Zs == Z) - n_bulk_cells*sum(bulk_Zs == Z)
 
     # calculate surface energy
     area = np.linalg.norm(np.cross(surf.get_cell()[0,:],surf.get_cell()[1,:]))
-    return (bulk_model_test_root, (surf.get_potential_energy() - bulk.get_potential_energy()*n_bulk_cells)/(2.0*area) )
+    return { "bulk_struct" : bulk_test_name,  "Ef" : (surf.get_potential_energy() - bulk.get_potential_energy()*n_bulk_cells)/(2.0*area), "dmu" : n_dmu }

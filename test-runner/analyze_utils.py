@@ -3,6 +3,7 @@
 import json
 import ase.io
 import fractions
+import argparse, os, glob
 
 def gcd(l):
     divisor = l[0]
@@ -54,3 +55,35 @@ def get_multicomponent_constraints(label, models, multicomponent_constraints):
                 composition_data[struct_name] = composition
 
     return (composition_data, energy_data)
+
+def analyze_start(default_tests_re):
+    parser = argparse.ArgumentParser(description='Analyze bulk lattices')
+    parser.add_argument('--models_re', '-m', action='store', type=str, help='models to include', default='*')
+    parser.add_argument('--tests_re', '-t', action='store', type=str, help='tests to include', default=default_tests_re)
+    parser.add_argument('--label', '-l', action='store', help='optional label for models/tests directories', default='')
+    args = parser.parse_args()
+
+    try:
+        with open("DEFAULTS_LABEL","r") as f:
+            defaults_label = f.readline().strip()+"_"
+    except:
+        defaults_label = ""
+
+    with open("{}default_analysis_settings.json".format(defaults_label)) as default_analysis_file:
+        default_analysis_settings = json.load(default_analysis_file)
+
+    with open("{}default_run_opts.json".format(defaults_label)) as default_run_file:
+        default_run_opts = json.load(default_run_file)
+        if 'label' in default_run_opts and not args.label:
+            args.label = default_run_opts['label']
+
+    models = [os.path.basename(f) for f in glob.glob(os.path.join('..', 'models',args.label,args.models_re))]
+    tests = []
+    for tests_re in args.tests_re.split(','):
+        tests.extend( [os.path.basename(f) for f in glob.glob(os.path.join('..', 'tests',args.label,tests_re))] )
+
+    if args.label is None:
+        args.label = ""
+    else:
+        args.label = args.label+"-"
+    return (args, models, tests, default_analysis_settings)
