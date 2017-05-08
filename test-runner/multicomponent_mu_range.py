@@ -92,10 +92,11 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
     ## for (L, V) in izip(Lne, Vne):
         ## print "inequality i_of_element, L, V ", i_of_element, L, "<=", V
 
-    mu_v_extrema = None
+    full_mu_range = None
+    stable_mu_range = None
     if n_types == 2: # binary
         Leq_3 = np.array([Leq[0], Leq[1], 0.0])
-        mu_v_extrema = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
+        stable_mu_range = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
         for (L, V) in izip(Lne, Vne):
             A_lin_sys = np.array( [Leq, L] )
             b_lin_sys = np.array( [Veq, V] )
@@ -103,14 +104,15 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
             L_3 = np.array([L[0], L[1], 0.0])
             if np.cross(Leq_3, L_3)[2] < 0.0:
                 # new max on component 0
-                if x[0] < mu_v_extrema[1][0]:
-                    mu_v_extrema[1][0] = x[0]
-                    mu_v_extrema[1][1] = x[1]
+                if x[0] < stable_mu_range[1][0]:
+                    stable_mu_range[1][0] = x[0]
+                    stable_mu_range[1][1] = x[1]
             else:
                 # new min on component 0
-                if x[0] > mu_v_extrema[0][0]:
-                    mu_v_extrema[0][0] = x[0]
-                    mu_v_extrema[0][1] = x[1]
+                if x[0] > stable_mu_range[0][0]:
+                    stable_mu_range[0][0] = x[0]
+                    stable_mu_range[0][1] = x[1]
+        full_mu_range = stable_mu_range
 
     elif n_types == 3: # ternary
         # print "****************************************************************************************************"
@@ -136,25 +138,38 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         polygon = []
         for i in range (3):
             polygon.append([vertices[i], vertices[(i+1)%3]])
+        full_mu_range = []
+        for e in polygon:
+            full_mu_range.append(e[0])
         # print "initial polygon ", polygon
         for (L, V) in izip(Lne, Vne):
             if sum(L != 0) > 1:
                 polygon = intersect_half_plane (polygon, L, V)
         # print "****************************************************************************************************"
-        mu_v_extrema = []
+        stable_mu_range = []
         for e in polygon:
-            mu_v_extrema.append(e[0])
+            stable_mu_range.append(e[0])
     elif n_types > 1: # n >= 4
         raise Exception("Can't do mu_range for %d-ary".format(n_types))
 
-    if mu_v_extrema is None:
-        mu_extrema = None
+    if stable_mu_range is None:
+        stable_mu_range_Z = None
     else:
-        mu_extrema = []
-        for mu_pt in mu_v_extrema:
+        stable_mu_range_Z = []
+        for mu_pt in stable_mu_range:
             mu_pt_Z = {}
             for Z in i_of_element:
                 mu_pt_Z[Z] = mu_pt[i_of_element[Z]]
-            mu_extrema.append(mu_pt_Z)
+            stable_mu_range_Z.append(mu_pt_Z)
 
-    return (mu_extrema)
+    if full_mu_range is None:
+        full_mu_range_Z = None
+    else:
+        full_mu_range_Z = []
+        for mu_pt in full_mu_range:
+            mu_pt_Z = {}
+            for Z in i_of_element:
+                mu_pt_Z[Z] = mu_pt[i_of_element[Z]]
+            full_mu_range_Z.append(mu_pt_Z)
+
+    return (stable_mu_range_Z, full_mu_range_Z)
