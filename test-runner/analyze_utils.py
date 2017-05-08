@@ -87,3 +87,25 @@ def analyze_start(default_tests_re):
     else:
         args.label = args.label+"-"
     return (args, models, tests, default_analysis_settings)
+
+def read_properties(models, tests, label):
+    data = {}
+    for model_name in models:
+        print "reading data for model {}".format(model_name)
+        data[model_name] = {}
+        cur_model_data = {}
+        for test_name in tests:
+            print "   reading data for test {}".format(test_name)
+
+            prop_filename ="{}model-{}-test-{}-properties.json".format(label, model_name, test_name)
+            try:
+                with open(prop_filename, "r") as model_data_file:
+                    cur_model_data[test_name] = json.load(model_data_file)
+            except:
+                print "No properties file '{}'".format(prop_filename)
+                continue
+
+        data[model_name] = cur_model_data
+
+    return data
+

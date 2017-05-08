@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from analyze_utils import *
+import numpy as np
 
 (args, models, tests, default_analysis_settings) = analyze_start('*surface*')
 
@@ -32,30 +33,27 @@ for model_name in models:
             else:
                 print "stable mu range: None"
 
-        print "data", data[model_name][test_name]
+        # print "data", data[model_name][test_name]
         if data[model_name][test_name]["dmu"] is None: # single component
             print "SURFACE", model_name, test_name, data[model_name][test_name]["Ef"]
         else: # multicomponent
-#
-#        label = data[model_name][test_name][0]
-#
-#        for defect_label in data[model_name][test_name]["defects"]:
-#            # print "defect label",defect_label
-#            defect = data[model_name][test_name]["defects"][defect_label]
-#
-#            ind = defect['atom_ind']
-#            Z = defect['Z']
-#            Ef = defect['Ef']
-#            if 'dmu' in defect:
-#                n_Z = defect['dmu'][0]
-#                mu_Z = defect['dmu'][1]
-#                if len(stable_mu_extrema) == 0:
-#                    print "DEFECT", model_name, test_name, ind, Z, "(E_f0 =", Ef,") but no stable mu range exists"
-#                else:
-#                    mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
-#                    mu_max = max([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
-#                    print "DEFECT", model_name, test_name, "atom",ind, "Z",Z, "Ef ",Ef," + ( mu_{} = [".format(mu_Z),mu_min,"--",mu_max,"] ) = [",Ef+mu_min,"--",Ef+mu_max,"]"
-#            else:
-#                print "DEFECT", model_name, test_name, "atom",ind, "Z", Z, "Ef", Ef
-#
+            print "SURFACE", model_name, test_name, data[model_name][test_name]["Ef"],"+ ",
+            mu_contrib_min_total = 0.0
+            mu_contrib_max_total = 0.0
+            for mu_Z in data[model_name][test_name]["dmu"]:
+                n_dmu = data[model_name][test_name]["dmu"][mu_Z]
+                if n_dmu != 0:
+                    print "( {} * mu_{} =".format(n_dmu,mu_Z),
+                    mu_min = min([ mu_pt[int(mu_Z)] for mu_pt in stable_mu_extrema] )
+                    mu_max = max([ mu_pt[int(mu_Z)] for mu_pt in stable_mu_extrema] )
+                    mu_contrib_min = np.finfo(float).max
+                    mu_contrib_max = -np.finfo(float).max
+                    mu_contrib_min = min(mu_contrib_min, n_dmu*mu_min)
+                    mu_contrib_min = min(mu_contrib_min, n_dmu*mu_max)
+                    mu_contrib_max = max(mu_contrib_max, n_dmu*mu_min)
+                    mu_contrib_max = max(mu_contrib_max, n_dmu*mu_max)
+                    print "[",mu_contrib_min,"--",mu_contrib_max,"] )",
+                    mu_contrib_min_total += mu_contrib_min
+                    mu_contrib_max_total += mu_contrib_max
+            print " = [", data[model_name][test_name]["Ef"] + mu_contrib_min_total,"--",data[model_name][test_name]["Ef"] + mu_contrib_max_total,"]"
         print ""

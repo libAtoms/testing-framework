@@ -9,7 +9,7 @@ def do_symmetric_surface(test_dir):
     surf = ase.io.read(test_dir+"/surface.xyz", format="extxyz")
 
     # read bulk
-    bulk_test_name=surf.info['bulk_test_name']
+    bulk_test_name=surf.info['bulk_struct']
     bulk_model_test_root = model_test_root(u_test_name=bulk_test_name)
 
     bulk = ase.io.read('../%s-relaxed.xyz' % bulk_model_test_root, format='extxyz')
@@ -41,9 +41,12 @@ def do_symmetric_surface(test_dir):
     bulk_Zs = bulk.get_atomic_numbers()
     Z0 = bulk_Zs[0]
     n_bulk_cells = float(sum(surf_Zs == Z0))/float(sum(bulk_Zs == Z0))
-    n_dmu = {}
-    for Z in set(bulk_Zs):
-        n_dmu[Z] = sum(surf_Zs == Z) - n_bulk_cells*sum(bulk_Zs == Z)
+    if len(set(bulk_Zs)) == 1:
+        n_dmu = None
+    else:
+        n_dmu = {}
+        for Z in set(bulk_Zs):
+            n_dmu[Z] = n_bulk_cells*sum(bulk_Zs == Z) - sum(surf_Zs == Z)
 
     # calculate surface energy
     area = np.linalg.norm(np.cross(surf.get_cell()[0,:],surf.get_cell()[1,:]))

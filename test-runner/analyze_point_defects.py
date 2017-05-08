@@ -4,7 +4,6 @@
 # matplotlib.use('PDF')
 # from matplotlib.pyplot import *
 
-import json
 from analyze_utils import *
 
 (args, models, tests, default_analysis_settings) = analyze_start('*vacancy*,*interstitial*')
@@ -16,23 +15,7 @@ from analyze_utils import *
 from multicomponent_mu_range import mu_range
 
 # read and parse all data
-data = {}
-for model_name in models:
-    print "reading data for model {}".format(model_name)
-    data[model_name] = {}
-    cur_model_data = {}
-    for test_name in tests:
-        print "   reading data for test {}".format(test_name)
-
-        prop_filename ="{}model-{}-test-{}-properties.json".format(args.label, model_name, test_name)
-        try:
-            with open(prop_filename, "r") as model_data_file:
-                cur_model_data[test_name] = json.load(model_data_file)
-        except:
-            print "No properties file '{}'".format(prop_filename)
-            continue
-
-    data[model_name] = cur_model_data
+data = read_properties(models, tests, args.label)
 
 n_fig = 0
 for model_name in models:
