@@ -45,7 +45,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
     n_types = len(cur_composition)
     Leq = []
     Veq = cur_min_EV * sum( [x[1] for x in cur_composition ] )
-    print "equality constraint:",
+    print "mu_range: equality constraint:",
     cur_elements = []
     i_of_element = {}
     for (i, element) in enumerate(cur_composition):

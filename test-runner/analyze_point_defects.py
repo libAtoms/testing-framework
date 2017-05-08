@@ -3,6 +3,7 @@
 # import matplotlib
 # matplotlib.use('PDF')
 # from matplotlib.pyplot import *
+
 import json
 import argparse
 import glob, os
@@ -44,6 +45,7 @@ if args.label is None:
 else:
     args.label = args.label+"-"
 
+
 (mcc_compositions, mcc_energies) = get_multicomponent_constraints(args.label, models, default_analysis_settings["multicomponent_constraints"])
 
 # print "multicomponent_constraints_data ", multicomponent_constraints_data
@@ -53,11 +55,11 @@ from multicomponent_mu_range import mu_range
 # read and parse all data
 data = {}
 for model_name in models:
-    sys.stderr.write("reading data for model {}\n".format(model_name))
+    print "reading data for model {}".format(model_name)
     data[model_name] = {}
     cur_model_data = {}
     for test_name in tests:
-        sys.stderr.write("   reading data for test {}\n".format(test_name))
+        print "   reading data for test {}".format(test_name)
 
         # read bulk test structure
         struct_filename_re = "{}model-{}-test-{}-ind_*_Z_*-relaxed.xyz".format(args.label, model_name, test_name)
@@ -65,7 +67,7 @@ for model_name in models:
             try:
                 struct = ase.io.read(struct_filename, format="extxyz")
             except:
-                sys.stderr.write("No struct file '{}'\n".format(struct_filename))
+                print "No struct file '{}'".format(struct_filename)
                 continue
 
             # read bulk test properties
@@ -74,7 +76,7 @@ for model_name in models:
                 with open(prop_filename, "r") as model_data_file:
                     json_data = json.load(model_data_file)
             except:
-                sys.stderr.write("No properties file '{}'\n".format(prop_filename))
+                print "No properties file '{}'".format(prop_filename)
                 continue
 
             json_data["corresponding_bulk_struct"] = struct.info["corresponding_bulk_struct"]
@@ -82,13 +84,24 @@ for model_name in models:
 
     data[model_name] = cur_model_data.copy()
 
+n_fig = 0
 for model_name in models:
     for test_name in tests:
-        sys.stderr.write("do {} {}\n".format(model_name, test_name))
+        print "DO {} {}".format(model_name, test_name)
 
         (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.label, model_name, data[model_name][test_name]["corresponding_bulk_struct"])
-        mu_extrema = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["corresponding_bulk_struct"], mcc_compositions, mcc_energies[model_name])
-        # print "mu_extrema", mu_extrema
+        (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["corresponding_bulk_struct"], mcc_compositions, mcc_energies[model_name])
+        # print model_name, test_name, "stable_mu_extrema", stable_mu_extrema
+        # print "full_mu_range", full_mu_range
+        if stable_mu_extrema is not None:
+            if len(stable_mu_extrema) > 0:
+                print "stable mu range:"
+                for pt in stable_mu_extrema:
+                    for Z in sorted(pt.keys()):
+                        print "mu_{} = {}".format(Z, pt[Z]),
+                    print ""
+            else:
+                print "stable mu range: None"
 
         for vac in data[model_name][test_name]:
             m = re.search("^ind_([0-9]*)_Z_([0-9]*)$", vac)
@@ -97,12 +110,18 @@ for model_name in models:
                 ind = m.group(1)
                 Z = m.group(2)
                 if isinstance(data[model_name][test_name][vac], float) :
-                    print model_name, test_name, ind, Z, data[model_name][test_name][vac]
+                    print "DEFECT", model_name, test_name, ind, Z, data[model_name][test_name][vac]
                 else:
+
                     Ef0 = data[model_name][test_name][vac][0]
                     mu_str = data[model_name][test_name][vac][1]
                     m = re.search('^\+mu_([0-9]*)$', mu_str)
                     mu_Z = int(m.group(1))
-                    for mu_pt in mu_extrema:
-                        print model_name, test_name, ind, Z, "(E_f0 =",Ef0,") + (mu_{} =".format(mu_Z), mu_pt[mu_Z],") = ",Ef0 + mu_pt[mu_Z], \
-                            "all_mus",[ (ZZ, mu_pt[ZZ]) for ZZ in sorted(mu_pt.keys()) ]
+                    if len(stable_mu_extrema) == 0:
+                        print "DEFECT", model_name, test_name, ind, Z, "(E_f0 =", Ef0,") but no stable mu range exists"
+                    else:
+                        mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
+                        mu_max = max([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
+                        print "DEFECT", model_name, test_name, "atom",ind, "Z",Z, "Ef ",Ef0," + ( mu_{} = [".format(mu_Z),mu_min,"--",mu_max,"] ) = [",Ef0+mu_min,"--",Ef0+mu_max,"]"
+
+        print ""
