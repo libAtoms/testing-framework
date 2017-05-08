@@ -3,6 +3,7 @@
 import matplotlib
 matplotlib.use('PDF')
 from matplotlib.pyplot import *
+
 import json
 import ase.io
 from ase.data import chemical_symbols

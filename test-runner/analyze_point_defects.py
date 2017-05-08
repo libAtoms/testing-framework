@@ -5,13 +5,7 @@
 # from matplotlib.pyplot import *
 
 import json
-import ase.io
-from ase.data import chemical_symbols
 from analyze_utils import *
-import sys
-import re
-from itertools import izip
-import numpy as np
 
 (args, models, tests, default_analysis_settings) = analyze_start('*vacancy*,*interstitial*')
 
