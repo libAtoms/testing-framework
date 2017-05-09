@@ -57,7 +57,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.0e-3, method='fire'):
       E_vs_V.insert(0, (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
 
    scaled_bulk = bulk.copy()
-   for i in range(0,n_steps+1):
+   for i in range(1,n_steps+1):
       V_cur = scaled_bulk.get_volume()
       scaled_bulk.set_cell(scaled_bulk.get_cell()*((V0+i*dV)/V_cur)**(1.0/3.0), scale_atoms=True)
       scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
