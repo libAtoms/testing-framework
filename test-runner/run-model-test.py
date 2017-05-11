@@ -86,7 +86,7 @@ sys.path.insert(0, test_dir)
 
 _stdout, _stderr = sys.stdout, sys.stderr
 if __builtin__.do_io:
-    log = open(os.path.join('..',run_root+'.txt'), 'w')
+    log = open(os.path.join('..',run_root+'.txt'), 'w', 0)
     sys.stdout, sys.stderr = log, log
 else:
     sys.stdout = open(os.devnull, "w")
