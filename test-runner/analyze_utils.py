@@ -11,6 +11,13 @@ def gcd(l):
         divisor = fractions.gcd(divisor, l[i])
     return divisor
 
+def formula_unit(atomic_numbers):
+    composition = []
+    for Z in set(atomic_numbers):
+        composition.append([Z, sum(atomic_numbers == Z)])
+    divisor = gcd([ x[1] for x in composition ])
+    return [ [x[0], x[1]/divisor] for x in composition ]
+
 def read_ref_bulk_model_struct(label, model_name, struct_name=None, struct_file=None):
     # min E from properties
     with open("{}model-{}-test-{}-properties.json".format(label, model_name, struct_name), "r") as f:
@@ -18,13 +25,8 @@ def read_ref_bulk_model_struct(label, model_name, struct_name=None, struct_file=
     min_EV = min(d["E_vs_V"], key = lambda x : x[1])[1]
 
     # composition from relaxed struct
-    composition = []
     at = ase.io.read("{}model-{}-test-{}-relaxed.xyz".format(label, model_name, struct_name), format="extxyz")
-    for Z in set(at.get_atomic_numbers()):
-        composition.append([Z, sum(at.get_atomic_numbers() == Z)])
-
-    divisor = gcd([ x[1] for x in composition ])
-    composition = [ [x[0], x[1]/divisor] for x in composition ]
+    composition = formula_unit(at.get_atomic_numbers())
 
     return (min_EV, composition)
 
