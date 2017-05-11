@@ -11,7 +11,7 @@ def gcd(l):
         divisor = fractions.gcd(divisor, l[i])
     return divisor
 
-def read_ref_bulk_model_struct(label, model_name, struct_name):
+def read_ref_bulk_model_struct(label, model_name, struct_name=None, struct_file=None):
     # min E from properties
     with open("{}model-{}-test-{}-properties.json".format(label, model_name, struct_name), "r") as f:
         d = json.load(f)
@@ -35,20 +35,32 @@ def get_element_ref_structs(label, models, element_ref_struct):
         struct_name = element_ref_struct[symb]
         data[symb] = { "min_Es" : {}, "ref_struct" : struct_name }
         for model_name in models:
-            (min_EV, composition) = read_ref_bulk_model_struct(label, model_name, struct_name)
+            try:
+                (min_EV, composition) = read_ref_bulk_model_struct(label, model_name, struct_name)
+            except:
+                continue
             data[symb]["min_Es"][model_name] = min_EV
             if not "composition" in data[symb]: 
                 data[symb]["composition"] = composition
     return data
 
-def get_multicomponent_constraints(label, models, multicomponent_constraints):
+def get_multicomponent_constraints(label, models, multicomponent_constraints_structs):
     composition_data = {}
     energy_data = {}
 
     for model_name in models:
         # print "get_multicomponent_constraints", struct_name
         energy_data[model_name] = {}
-        for struct_name in multicomponent_constraints:
+        if istype(multicomponent_constraints_structs, str):
+            struct_name_list = glob.glob("{}model-{}-test-{}-properties.json".format(label, model_name, multicomponent_constraints_structs))
+            struct_name_list = [ x.replace("{}model-{}-test-".format(label.model_name),"").replace("-properties.json","") for x in struct_name_list ]
+        else:
+            struct_name_list = multicomponent_constraints_structs
+
+        print "get_multicomponent_constraints", struct_name_list
+        sys.exit(1)
+
+        for struct_name in struct_name_list:
             (min_EV, composition) = read_ref_bulk_model_struct(label, model_name, struct_name)
             energy_data[model_name][struct_name] = min_EV
             if not "struct_name" in composition_data: 
@@ -77,7 +89,9 @@ def analyze_start(default_tests_re):
         if 'label' in default_run_opts and not args.label:
             args.label = default_run_opts['label']
 
-    models = [os.path.basename(f) for f in glob.glob(os.path.join('..', 'models',args.label,args.models_re))]
+    models = []
+    for models_re in args.models_re.split(','):
+        models.extend( [os.path.basename(f) for f in glob.glob(os.path.join('..', 'models',args.label,models_re))] )
     tests = []
     for tests_re in args.tests_re.split(','):
         tests.extend( [os.path.basename(f) for f in glob.glob(os.path.join('..', 'tests',args.label,tests_re))] )

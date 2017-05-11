@@ -8,12 +8,13 @@ import json
 import ase.io
 from ase.data import chemical_symbols
 from analyze_utils import *
+import math
 
 (args, models, bulk_tests, default_analysis_settings) = analyze_start('bulk_*')
 
-ref_symbol="-"
-other_symbol="--"
-struct_colors = [ "black", "red", "blue", "cyan", "orange", "magenta", "green", "grey" ] 
+ref_symbols=[ "-", "--" ]
+other_symbols=[ ":", "-." ]
+struct_colors = [ "black", "red", "blue", "cyan", "orange", "magenta", "green", "grey", "brown" ]
 
 element_ref_struct_data = get_element_ref_structs(args.label, models, default_analysis_settings["element_ref_struct"])
 
@@ -71,10 +72,12 @@ ref_model_name = default_analysis_settings["ref_model"]
 n_fig = 1
 for model_name in models:
     for bulk_test_name in bulk_tests:
-        min_EV  = min(data[model_name][bulk_test_name]["E_vs_V"], key = lambda x : x[1])
-        print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
-    if model_name == ref_model_name:
+        try:
+            min_EV  = min(data[model_name][bulk_test_name]["E_vs_V"], key = lambda x : x[1])
+        except:
+            print "no data for",model_name,bulk_test_name
         continue
+        print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
 
     bulk_ind = -1
     figure(n_fig)
@@ -84,10 +87,16 @@ for model_name in models:
             sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
             continue
 
-        line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_symbol)
-        line.set_color(struct_colors[bulk_ind])
+        ref_symbol = ref_symbols[int(math.floor(bulk_ind/len(struct_colors)))]
+        other_symbol = other_symbols[int(math.floor(bulk_ind/len(struct_colors)))]
+        color = struct_colors[bulk_ind % len(struct_colors)]
+        if model_name != ref_model_name:
+            line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_symbol)
+            line.set_color(color)
+            line.set_marker('o')
+            line.set_markersize(2.5)
         line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_symbol, label=bulk_test_name)
-        line.set_color(struct_colors[bulk_ind])
+        line.set_color(color)
 
     legend(loc="center left", bbox_to_anchor=[1, 0.5])
     xlabel("V ($A^3$/atom)")
