@@ -39,7 +39,7 @@ class SymmetrizedCalculator(Calculator):
    def __init__(self, calc, atoms, *args, **kwargs):
       Calculator.__init__(self, *args, **kwargs)
       self.calc = calc
-      (self.rotations, self.translations, self.symm_map) = symmetrize.prep(atoms)
+      (self.rotations, self.translations, self.symm_map) = symmetrize.prep(atoms, symprec = 0.01)
 
    def calculate(self, atoms, properties, system_changes):
         Calculator.calculate(self, atoms, properties, system_changes)
@@ -97,6 +97,8 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
                 write(traj, atoms, format='extxyz')
             opt.attach(write_trajectory)
     elif method == 'cg_n':
+        if strain_mask is not None:
+            raise(Exception("strain_mask not supported with method='cg_n'"))
         atoms.info['Minim_Constant_Volume'] = constant_volume
         opt = Minim(atoms, relax_positions=relax_pos, relax_cell=relax_cell, method='cg_n')
     else:

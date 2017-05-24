@@ -5,28 +5,28 @@ import spglib
 
 def prep(at, symprec=1.0e-5):
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    print "symmetry.prep got symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
     rotations = dataset['rotations'].copy()
     translations = dataset['translations'].copy()
     symm_map=[]
-    pos = at.get_scaled_positions()
-    first_cell_pos = pos
+    scaled_pos = at.get_scaled_positions()
     for (r, t) in zip(rotations, translations):
         # print "op"
         this_op_map = [-1] * len(at)
         for i_at in range(len(at)):
-            new_p = np.dot(r, first_cell_pos[i_at,:]) + t
-            dp = first_cell_pos - new_p
+            new_p = np.dot(r, scaled_pos[i_at,:]) + t
+            dp = scaled_pos - new_p
             dp -= np.round(dp)
             i_at_map = np.argmin(np.linalg.norm(dp,  axis=1))
             this_op_map[i_at] = i_at_map
         symm_map.append(this_op_map)
     return (rotations, translations, symm_map)
 
+# lattice vectors expected as row vectors (same as ASE get_cell() convention), inv_lattice is its matrix inverse (get_reciprocal_cell().T)
 def forces(lattice, inv_lattice, forces, rot, trans, symm_map):
-    scaled_symmetrized_forces_T = forces.copy().T
-    scaled_symmetrized_forces_T[:,:] = 0.0
+    scaled_symmetrized_forces_T = np.zeros(forces.T.shape)
 
-    scaled_forces_T = np.dot(inv_lattice,forces.T)
+    scaled_forces_T = np.dot(inv_lattice.T,forces.T)
     for (r, t, this_op_map) in zip(rot, trans, symm_map):
         # print "op "
         # print r, t, this_op_map
@@ -34,10 +34,11 @@ def forces(lattice, inv_lattice, forces, rot, trans, symm_map):
         scaled_symmetrized_forces_T[:,this_op_map[:]] += transformed_forces_T[:,:]
     scaled_symmetrized_forces_T /= len(rot)
 
-    symmetrized_forces = np.dot(lattice, scaled_symmetrized_forces_T).T
+    symmetrized_forces = np.dot(lattice.T, scaled_symmetrized_forces_T).T
 
     return symmetrized_forces
 
+# lattice vectors expected as row vectors (same as ASE get_cell() convention), inv_lattice is its matrix inverse (get_reciprocal_cell().T)
 def stress(lattice, lattice_inv, stress_3_3, rot):
     scaled_stress = np.dot(np.dot(lattice, stress_3_3), lattice.T)
 

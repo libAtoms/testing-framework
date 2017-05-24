@@ -74,11 +74,12 @@ def do_lattice(test_dir, lattice_type):
 
    tol = 1e-3 # max force tol for relaxation
 
+   print "relax bulk"
    # relax the initial unit cell and atomic positions
    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, method='cg_n', 
      keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
 
-   print "relaxed bulk"
+   print "final relaxed bulk"
    ase.io.write(sys.stdout, bulk, format='extxyz')
    ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  bulk, format='extxyz')
 
