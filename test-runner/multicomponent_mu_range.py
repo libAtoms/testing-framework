@@ -1,6 +1,8 @@
 import numpy as np
 from itertools import izip
 
+debug = False
+
 def intersect_half_plane(polygon, L, V):
     # print "check intersection ", L, V
     # print "polygon", polygon
@@ -38,12 +40,14 @@ def intersect_half_plane(polygon, L, V):
     return new_polygon
 
 def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc_energies):
-    # print "mu_range got compositions ", mcc_compositions
-    # print "mu_range got energies ", mcc_energies
-    # print "got ref_bulk_model ", cur_min_EV, cur_composition
+    if debug:
+        print "mu_range got compositions ", mcc_compositions
+        print "mu_range got energies ", mcc_energies
+        print "got ref_bulk_model ", cur_min_EV, cur_composition
 
     n_types = len(cur_composition)
     Leq = []
+    print "getting Veq from cur_min_EV, cur_composition"
     Veq = cur_min_EV * sum( [x[1] for x in cur_composition ] )
     print "mu_range: equality constraint:",
     cur_elements = []
@@ -57,7 +61,8 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         i_of_element[element[0]] = i
     print " = mu_{} = {}".format(cur_bulk_struct, Veq)
 
-    ## print "constraint i_of_element, L, V ", i_of_element, Leq, "=", Veq
+    if debug:
+        print "constraint i_of_element, L, V ", i_of_element, Leq, "=", Veq
 
     Lne = []
     Vne = []
@@ -77,7 +82,8 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
 
         # determine inequality
         Lne_cur = [0] * n_types
-        # print "   ", struct, multicomponent_constraints_data[struct]["E_per_atom"][model_name], multicomponent_constraints_data[struct]["composition"]
+        ## if debug:
+            ## print "   ", struct, mcc_energies, mcc_compositions
         n_atoms = 0
         for (i, element) in enumerate(mcc_compositions[struct]):
             if i > 0:
@@ -89,15 +95,27 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         Lne.append(np.array(Lne_cur))
         Vne.append(mcc_energies[struct]*n_atoms)
 
-    ## for (L, V) in izip(Lne, Vne):
-        ## print "inequality i_of_element, L, V ", i_of_element, L, "<=", V
+    if debug:
+        for (L, V) in izip(Lne, Vne):
+            print "inequality i_of_element, L, V ", i_of_element, L, "<=", V
 
     full_mu_range = None
     stable_mu_range = None
     if n_types == 2: # binary
+        if debug:
+            print "****************************************************************************************************"
+            print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
         Leq_3 = np.array([Leq[0], Leq[1], 0.0])
         stable_mu_range = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
         for (L, V) in izip(Lne, Vne):
+            if np.all(L == Leq): # skip instance when inequality corresponds to same composition as base structure equilibrium equality
+                continue
+            if debug:
+                print "inequality"
+                print "Leq",Leq
+                print "L from ne",L
+                print "Veq",Veq
+                print "V from ne",V
             A_lin_sys = np.array( [Leq, L] )
             b_lin_sys = np.array( [Veq, V] )
             x = np.linalg.solve(A_lin_sys, b_lin_sys)
@@ -115,8 +133,9 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         full_mu_range = stable_mu_range
 
     elif n_types == 3: # ternary
-        # print "****************************************************************************************************"
-        # print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
+        if debug:
+            print "****************************************************************************************************"
+            print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
         # do monatomic limits first
         vertices = []
         for (L1, V1) in izip(Lne, Vne):
@@ -141,11 +160,13 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         full_mu_range = []
         for e in polygon:
             full_mu_range.append(e[0])
-        # print "initial polygon ", polygon
+        if debug:
+            print "initial polygon ", polygon
         for (L, V) in izip(Lne, Vne):
             if sum(L != 0) > 1:
                 polygon = intersect_half_plane (polygon, L, V)
-        # print "****************************************************************************************************"
+        if debug:
+            print "****************************************************************************************************"
         stable_mu_range = []
         for e in polygon:
             stable_mu_range.append(e[0])

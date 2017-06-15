@@ -6,6 +6,7 @@ import glob
 import re
 import json
 import argparse
+import itertools
 
 parser = argparse.ArgumentParser(description='Run all tests on all models')
 parser.add_argument('--models', '-m', action='store', nargs='*', type=str, help='models to include')
@@ -52,11 +53,11 @@ models = None
 tests = None
 omittests = None
 if args.models is not None:
-    models = [ os.path.join("../models/"+args.label, d) for d in args.models ]
+    models = list(itertools.chain.from_iterable([ glob.glob(os.path.join("../models/"+args.label, d)) for d in args.models ]))
 if args.tests is not None:
-    tests = [ os.path.join("../tests/"+args.label, d) for d in args.tests ]
+    tests = list(itertools.chain.from_iterable([ glob.glob(os.path.join("../tests/"+args.label, d)) for d in args.tests ]))
 if args.omit_tests is not None:
-    omittests = [ os.path.join("../tests/"+args.label, d) for d in args.omit_tests ]
+    omittests = list(itertools.chain.from_iterable([ glob.glob(os.path.join("../tests/"+args.label, d)) for d in args.omit_tests ]))
 force = args.force
 bugs = args.bugs
 

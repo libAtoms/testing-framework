@@ -30,7 +30,7 @@ def do_one_vacancy(relaxed_bulk, vac_i, relax_radial=0.0, relax_symm_break=0.0, 
         Ef0 =  vac_pe - relaxed_bulk.get_potential_energy()
     return ( label, run_root+"-%s-relaxed.xyz" % label, Ef0, relaxed_bulk.get_atomic_numbers()[vac_i] )
 
-def do_all_vacancies(test_dir, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-3):
+def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-3):
     print "doing do_all_vacancies"
     bulk = ase.io.read(os.path.join(test_dir,"bulk_supercell.xyz"), format="extxyz")
     print "got bulk ", len(bulk)
@@ -45,11 +45,12 @@ def do_all_vacancies(test_dir, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff
     print "got relaxed_bulk ", relaxed_bulk.get_cell()
 
     properties = { "bulk_struct" : bulk.info["bulk_struct"], "bulk_E_per_atom" : relaxed_bulk_pe / len(relaxed_bulk), "defects" : {} }
-    try:
-        vacancy_list = [ int(i) for i in relaxed_bulk.info['vacancies'].split(',') ]
-    except:
-        vacancy_list = [ relaxed_bulk.info['vacancies'] ]
+    vacancy_list = [ int(i) for i in relaxed_bulk.info['vacancies'].split(',') ]
+
     for vac_i in vacancy_list:
+        # maybe set up a system to read these from xyz file?
+        relax_radial = 0.0
+        relax_symm_break = 0.0
         (label, filename, Ef0, vac_Z) = do_one_vacancy(relaxed_bulk, vac_i, relax_radial, relax_symm_break, nn_cutoff, tol)
         if len(set(relaxed_bulk.get_atomic_numbers())) == 1:
             properties["defects"][label] = { 'Ef' : Ef0, 'filename' : filename, 'atom_ind' : vac_i, 'Z' : vac_Z }

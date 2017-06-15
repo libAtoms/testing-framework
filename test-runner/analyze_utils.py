@@ -5,12 +5,16 @@ import ase.io
 import fractions
 import argparse, os, glob
 
+debug = False
+
+# greatest common divisor
 def gcd(l):
     divisor = l[0]
     for i in range(1, len(l)):
         divisor = fractions.gcd(divisor, l[i])
     return divisor
 
+# formula unit from an array of atomic numbers
 def formula_unit(atomic_numbers):
     composition = []
     for Z in set(atomic_numbers):
@@ -18,7 +22,8 @@ def formula_unit(atomic_numbers):
     divisor = gcd([ x[1] for x in composition ])
     return [ [x[0], x[1]/divisor] for x in composition ]
 
-def read_ref_bulk_model_struct(label, model_name, struct_name=None, struct_file=None):
+# read a reference bulk structure, return lowest E and corresponding V, and composition
+def read_ref_bulk_model_struct(label, model_name, struct_name):
     # min E from properties
     with open("{}model-{}-test-{}-properties.json".format(label, model_name, struct_name), "r") as f:
         d = json.load(f)
@@ -30,6 +35,7 @@ def read_ref_bulk_model_struct(label, model_name, struct_name=None, struct_file=
 
     return (min_EV, composition)
 
+# get energies and volumes for every element's reference structure, for all models
 def get_element_ref_structs(label, models, element_ref_struct):
     data = {}
 
@@ -46,30 +52,39 @@ def get_element_ref_structs(label, models, element_ref_struct):
                 data[symb]["composition"] = composition
     return data
 
+# get the multicomponent constraints, from a list or a glob, and store their compositions and energies
 def get_multicomponent_constraints(label, models, multicomponent_constraints_structs):
     composition_data = {}
     energy_data = {}
+    if debug:
+        print "get_multicomponent_constraints", multicomponent_constraints_structs, isinstance(multicomponent_constraints_structs, basestring)
 
     for model_name in models:
-        # print "get_multicomponent_constraints", struct_name
+        if debug:
+            print "get_multicomponent_constraints model_name", model_name
         energy_data[model_name] = {}
-        if istype(multicomponent_constraints_structs, str):
+        if isinstance(multicomponent_constraints_structs, basestring):
+            # print "globbing multicomponent_constraints_struct"
             struct_name_list = glob.glob("{}model-{}-test-{}-properties.json".format(label, model_name, multicomponent_constraints_structs))
-            struct_name_list = [ x.replace("{}model-{}-test-".format(label.model_name),"").replace("-properties.json","") for x in struct_name_list ]
+            struct_name_list = [ x.replace("{}model-{}-test-".format(label, model_name),"").replace("-properties.json","") for x in struct_name_list ]
         else:
+            # print "not globbing multicomponent_constraints_struct"
             struct_name_list = multicomponent_constraints_structs
-
-        print "get_multicomponent_constraints", struct_name_list
-        sys.exit(1)
+        # print "get_multicomponent_constraints struct_name_list",struct_name_list
 
         for struct_name in struct_name_list:
+            if debug:
+                print "get_multicomponent_constraints struct_name",struct_name
             (min_EV, composition) = read_ref_bulk_model_struct(label, model_name, struct_name)
             energy_data[model_name][struct_name] = min_EV
             if not "struct_name" in composition_data: 
                 composition_data[struct_name] = composition
+            if debug:
+                print "min_EV, composition ",min_EV, composition
 
     return (composition_data, energy_data)
 
+# start an analysis by parsing arguments, reading defaults
 def analyze_start(default_tests_re):
     parser = argparse.ArgumentParser(description='Analyze bulk lattices')
     parser.add_argument('--models_re', '-m', action='store', type=str, help='models to include', default='*')
@@ -104,6 +119,7 @@ def analyze_start(default_tests_re):
         args.label = args.label+"-"
     return (args, models, tests, default_analysis_settings)
 
+# read the properties for a set of models and tests with a given label
 def read_properties(models, tests, label):
     data = {}
     for model_name in models:
