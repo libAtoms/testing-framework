@@ -90,15 +90,27 @@ for model in models:
 
     model_name = os.path.split(model)[-1]
 
+    use_model_run_defaults = {}
+    # check for exact matches
+    for model_default_key in model_run_defaults:
+        if model_name == model_default_key:
+            use_model_run_defaults = model_run_defaults[model_default_key]
+    # check for regexp
+    if len(use_model_run_defaults) == 0:
+        for model_default_key in model_run_defaults:
+            if re.search(model_default_key, model_name) is not None:
+                use_model_run_defaults = model_run_defaults[model_default_key]
+                break
+
     if not args.MPI:
         try:
-            args.MPI = 'MPI' in model_run_defaults[model_name]
+            args.MPI = 'MPI' in use_model_run_defaults
         except:
             pass
 
     if not args.OpenMP:
         try:
-            args.OpenMP = 'OpenMP' in model_run_defaults[model_name]
+            args.OpenMP = 'OpenMP' in use_model_run_defaults
         except:
             pass
 
