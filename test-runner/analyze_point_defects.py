@@ -22,7 +22,11 @@ for model_name in models:
     for test_name in tests:
         print "DO {} {}".format(model_name, test_name)
 
-        (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.label, model_name, data[model_name][test_name]["bulk_struct"])
+        try:
+            (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.label, model_name, data[model_name][test_name]["bulk_struct"])
+        except:
+            print "No data"
+            continue
         (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["bulk_struct"], mcc_compositions, mcc_energies[model_name])
         # print model_name, test_name, "stable_mu_extrema", stable_mu_extrema
         # print "full_mu_range", full_mu_range

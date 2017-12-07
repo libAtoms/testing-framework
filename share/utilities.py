@@ -56,7 +56,7 @@ class SymmetrizedCalculator(Calculator):
             symmetrized_stress = symmetrize.stress(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_stress, self.rotations)
             self.results['stress'] = full_3x3_to_voigt_6_stress(symmetrized_stress)
 
-def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=1000, traj_file=None, constant_volume=False,
+def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
     keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, **kwargs):
 
     # get from base model if requested

@@ -42,7 +42,7 @@ def VRH_B(c11, c33, c12, c13, c44, c66):
 
     return (Bv+Br)/2.0
 
-def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.0e-3, method='fire'):
+def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.5e-3, method='fire'): # hack tol to deal with Te C2/m
    V0 = bulk.get_volume()
    dV = bulk.get_volume()*vol_range/n_steps
    E_vs_V=[]
@@ -68,7 +68,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.0e-3, method='fire'):
    return E_vs_V
 
 
-def do_lattice(test_dir, lattice_type):
+def do_lattice(test_dir, lattice_type, vol_range=0.25):
 
    bulk = ase.io.read(test_dir+"/bulk.xyz", format="extxyz")
 
@@ -84,7 +84,7 @@ def do_lattice(test_dir, lattice_type):
    ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  bulk, format='extxyz')
 
    print "calculating E vs. V"
-   E_vs_V = calc_E_vs_V(bulk, method='cg_n')
+   E_vs_V = calc_E_vs_V(bulk, method='cg_n', vol_range=vol_range)
 
    print "calculating elastic constants"
    precon = Exp(3.0)

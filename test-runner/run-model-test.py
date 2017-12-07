@@ -37,6 +37,7 @@ parser.add_argument('test', type=str, action='store', help='test name')
 parser.add_argument('--force','-f', action='store_true', help='force rerunning of test')
 parser.add_argument('--label','-l', type=str, action='store', help='optional label for tests/models directories')
 parser.add_argument('--base_model','-B', type=str, action='store', help='optional base model to start from')
+parser.add_argument('--no_redirect_io','-N', action='store_true', help='do not redirect io')
 args = parser.parse_args()
 
 if args.label is not None:
@@ -84,13 +85,14 @@ sys.path.insert(0, share_dir)
 sys.path.insert(0, model_dir)
 sys.path.insert(0, test_dir)
 
-_stdout, _stderr = sys.stdout, sys.stderr
-if __builtin__.do_io:
-    log = open(os.path.join('..',run_root+'.txt'), 'w', 0)
-    sys.stdout, sys.stderr = log, log
-else:
-    sys.stdout = open(os.devnull, "w")
-    sys.stderr = open(os.devnull, "w")
+if not args.no_redirect_io:
+    _stdout, _stderr = sys.stdout, sys.stderr
+    if __builtin__.do_io:
+        log = open(os.path.join('..',run_root+'.txt'), 'w', 0)
+        sys.stdout, sys.stderr = log, log
+    else:
+        sys.stdout = open(os.devnull, "w")
+        sys.stderr = open(os.devnull, "w")
 
 import logging
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -143,9 +145,10 @@ print test.properties
 
 print '='*60
 
-sys.stdout, sys.stderr = _stdout, _stderr
-if __builtin__.do_io:
-    log.close()
+if not args.no_redirect_io:
+    sys.stdout, sys.stderr = _stdout, _stderr
+    if __builtin__.do_io:
+        log.close()
 
 if hasattr(model, 'shutdown'):
     model.shutdown()

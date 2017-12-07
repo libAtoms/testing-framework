@@ -12,8 +12,8 @@ import math
 
 (args, models, bulk_tests, default_analysis_settings) = analyze_start('bulk_*')
 
-ref_symbols=[ "-", "--" ]
-other_symbols=[ ":", "-." ]
+ref_linestyles=[ "-", "--" ]
+other_linestyles=[ ":", "-." ]
 struct_colors = [ "black", "red", "blue", "cyan", "orange", "magenta", "green", "grey", "brown" ]
 
 element_ref_struct_data = get_element_ref_structs(args.label, models, default_analysis_settings["element_ref_struct"])
@@ -57,8 +57,11 @@ for model_name in models:
         for Z in elements_present:
             symb = chemical_symbols[Z]
             print "looking for min E ",symb,model_name
-            E = element_ref_struct_data[symb]["min_Es"][model_name]
-            E0 += sum(struct.get_atomic_numbers() == Z)*E
+            try:
+                E = element_ref_struct_data[symb]["min_Es"][model_name]
+                E0 += sum(struct.get_atomic_numbers() == Z)*E
+            except:
+                pass
         E0 /= len(struct)
 
         # shift E_vs_V
@@ -104,15 +107,19 @@ for model_name in models:
             sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
             continue
 
-        ref_symbol = ref_symbols[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
-        other_symbol = other_symbols[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
+        ref_linestyle = ref_linestyles[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
+        other_linestyle = other_linestyles[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
         color = struct_colors[bulk_inds[fu] % len(struct_colors)]
         if model_name != ref_model_name:
-            line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_symbol)
+            line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_linestyle)
             line.set_color(color)
             line.set_marker('o')
             line.set_markersize(2.5)
-        line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_symbol, label=bulk_test_name)
+        try:
+            line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_linestyle, label=bulk_test_name)
+        except:
+            print "no data for struct",bulk_test_name,"ref model",ref_model_name
+            pass
         line.set_color(color)
 
     for fu in figure_nums:
