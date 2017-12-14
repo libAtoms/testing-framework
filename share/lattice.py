@@ -42,7 +42,7 @@ def VRH_B(c11, c33, c12, c13, c44, c66):
 
     return (Bv+Br)/2.0
 
-def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.5e-3, method='fire'): # hack tol to deal with Te C2/m
+def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.5e-3, method='lbfgs'): # hack tol to deal with Te C2/m
    V0 = bulk.get_volume()
    dV = bulk.get_volume()*vol_range/n_steps
    E_vs_V=[]
@@ -51,8 +51,9 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.5e-3, method='fire'): # 
    for i in range(0, -n_steps-1, -1):
       V_cur = scaled_bulk.get_volume()
       scaled_bulk.set_cell(scaled_bulk.get_cell()*((V0+i*dV)/V_cur)**(1.0/3.0), scale_atoms=True)
+      ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
-          keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
+          refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       E_vs_V.insert(0, (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
 
@@ -60,8 +61,9 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1.5e-3, method='fire'): # 
    for i in range(1,n_steps+1):
       V_cur = scaled_bulk.get_volume()
       scaled_bulk.set_cell(scaled_bulk.get_cell()*((V0+i*dV)/V_cur)**(1.0/3.0), scale_atoms=True)
+      ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
-          keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
+          refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       E_vs_V.append( (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
 
@@ -77,14 +79,14 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
    print "relax bulk"
    # relax the initial unit cell and atomic positions
    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, method='cg_n', 
-     keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
+     refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
 
    print "final relaxed bulk"
    ase.io.write(sys.stdout, bulk, format='extxyz')
    ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  bulk, format='extxyz')
 
    print "calculating E vs. V"
-   E_vs_V = calc_E_vs_V(bulk, method='cg_n', vol_range=vol_range)
+   E_vs_V = calc_E_vs_V(bulk, vol_range=vol_range)
 
    print "calculating elastic constants"
    precon = Exp(3.0)

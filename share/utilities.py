@@ -39,7 +39,7 @@ class SymmetrizedCalculator(Calculator):
    def __init__(self, calc, atoms, *args, **kwargs):
       Calculator.__init__(self, *args, **kwargs)
       self.calc = calc
-      (self.rotations, self.translations, self.symm_map) = symmetrize.prep(atoms, symprec = 0.01)
+      (self.rotations, self.translations, self.symm_map) = symmetrize.prep(atoms)
 
    def calculate(self, atoms, properties, system_changes):
         Calculator.calculate(self, atoms, properties, system_changes)
@@ -57,7 +57,7 @@ class SymmetrizedCalculator(Calculator):
             self.results['stress'] = full_3x3_to_voigt_6_stress(symmetrized_stress)
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
-    keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, **kwargs):
+    refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, **kwargs):
 
     # get from base model if requested
     import model
@@ -79,6 +79,8 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
             except:
                 print "relax_config failed to determined base_run_root"
 
+    if refine_symmetry_tol is not None:
+        symmetrize.refine_symmetry(atoms, refine_symmetry_tol)
     if keep_symmetry:
         atoms.set_calculator(SymmetrizedCalculator(model.calculator, atoms))
     else:

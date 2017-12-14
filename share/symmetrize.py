@@ -1,9 +1,45 @@
 # import ase.io
-# import sys
+import sys
 import numpy as np
 import spglib
 
-def prep(at, symprec=1.0e-5):
+def refine_symmetry(at, symprec=0.01):
+    dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    print "loose ({}) initial symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(symprec, dataset["number"],dataset["international"],dataset["hall"])
+
+    p = at.get_scaled_positions()
+    cell = at.get_cell()
+
+    new_p = np.zeros(at.get_positions().shape)
+    # reimplement algorithm from
+    for i in range(len(at)):
+        # zero accumulators for rot and transl
+        mean_r = np.zeros((3,3))
+        mean_t = np.zeros((3))
+        n_contrib=0
+        position = p[i][:]
+        # loop over opreations
+        for (r, t) in zip(dataset['rotations'], dataset['translations']):
+            # transformed position
+            pos = np.dot(r, position) + t 
+            # if it's close to periodic image, contribute to accumulators
+            dp = pos - position
+            dp_min_image = dp - np.round(dp)
+            if np.linalg.norm(np.dot(dp_min_image,cell)) < symprec:
+                mean_r += r
+                mean_t += t - np.round(dp)
+                n_contrib += 1
+        mean_r /= float(n_contrib)
+        mean_t /= float(n_contrib)
+
+        new_p[i,:] = np.dot(position, mean_r) + mean_t
+
+    at.set_scaled_positions(new_p)
+
+    dataset = spglib.get_symmetry_dataset(at, symprec=1.0e-6)
+    print "precise ({}) symmetrized symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(1.0e-6, dataset["number"],dataset["international"],dataset["hall"])
+
+def prep(at, symprec=1.0e-6):
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
     print "symmetry.prep got symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
     rotations = dataset['rotations'].copy()

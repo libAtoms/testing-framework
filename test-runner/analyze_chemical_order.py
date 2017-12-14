@@ -39,7 +39,7 @@ for model_name in models:
 
 n_fig = 0
 figure_nums = {}
-for model_name in data:
+for (model_i, model_name) in enumerate(sorted(data)):
     print "plot model",model_name, data[model_name]
 
     for chem_order_test_name in chem_order_tests:
@@ -55,16 +55,16 @@ for model_name in data:
             if 'unrelaxed_energy_per_atom' in data[model_name][chem_order_test_name]:
                 line, = plot( data[ref_model_name][chem_order_test_name]["unrelaxed_energy_per_atom"],
                               data[model_name][chem_order_test_name]["unrelaxed_energy_per_atom"],
-                              ' ', label="{} {} unrelaxed".format(model_name,chem_order_test_name) )
+                              ' ', color='C{}'.format(model_i), label="{} {} unrelaxed".format(model_name,chem_order_test_name) )
                 line.set_marker('o')
                 line.set_markerfacecolor("None")
-                line.set_markersize(2.5)
+                line.set_markersize(4.0)
             if 'relaxed_energy_per_atom' in data[model_name][chem_order_test_name]:
                 line, = plot( data[ref_model_name][chem_order_test_name]["relaxed_energy_per_atom"],
                               data[model_name][chem_order_test_name]["relaxed_energy_per_atom"],
-                              ' ', label="{} {} relaxed".format(model_name,chem_order_test_name) )
+                              ' ', color='C{}'.format(model_i), label="{} {} relaxed".format(model_name,chem_order_test_name) )
                 line.set_marker('o')
-                line.set_markersize(2.5)
+                line.set_markersize(4.0)
 
 for chem_order_test_name in figure_nums:
     figure(figure_nums[chem_order_test_name])
