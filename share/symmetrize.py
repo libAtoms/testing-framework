@@ -7,6 +7,20 @@ def refine_symmetry(at, symprec=0.01):
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
     print "loose ({}) initial symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(symprec, dataset["number"],dataset["international"],dataset["hall"])
 
+    # symmetrize cell
+    # create symmetrized rotated cell from standard lattice and transformation matrix
+    symmetrized_rotated_cell = np.dot(dataset['std_lattice'].T, dataset['transformation_matrix']).T
+    # SVD decompose transformation from symmetrized cell to original cell to extract rotation
+    # see https://igl.ethz.ch/projects/ARAP/svd_rot.pdf Eq. 17 and 21
+    # S = X Y^T, X = symm_cell.T, Y = orig_cell.T
+    (u, s, v_T) = np.linalg.svd(np.dot(symmetrized_rotated_cell.T, at.get_cell()))
+    rotation = np.dot(v_T.T, u.T) 
+    # create symmetrized aligned cell by rotating symmetrized rotated cell
+    symmetrized_aligned_cell = np.dot(rotation, symmetrized_rotated_cell.T).T
+    # set new cell back to symmetrized aligned cell (approx. aligned with original directions, not axes)
+    at.set_cell(symmetrized_aligned_cell, True)
+
+    # symmetrize positions
     p = at.get_scaled_positions()
     cell = at.get_cell()
 
