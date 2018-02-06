@@ -80,7 +80,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
                 print "relax_config failed to determined base_run_root"
 
     if refine_symmetry_tol is not None:
-        symmetrize.refine_symmetry(atoms, refine_symmetry_tol)
+        symmetrize.refine(atoms, refine_symmetry_tol)
     if keep_symmetry:
         atoms.set_calculator(SymmetrizedCalculator(model.calculator, atoms))
     else:
@@ -113,6 +113,9 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         atoms = atoms.atoms
     except:
         pass
+
+    symmetrize.check(atoms, refine_symmetry_tol)
+    symmetrize.check(atoms, 1.0e-6)
 
     # in case we had a trajectory saved
     try:

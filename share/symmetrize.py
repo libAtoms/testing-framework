@@ -3,9 +3,10 @@ import sys
 import numpy as np
 import spglib
 
-def refine_symmetry(at, symprec=0.01):
+def refine(at, symprec=0.01):
+    # test orig config with desired tol
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
-    print "loose ({}) initial symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(symprec, dataset["number"],dataset["international"],dataset["hall"])
+    print "symmetry.refine_symmetry: loose ({}) initial symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(symprec, dataset["number"],dataset["international"],dataset["hall"])
 
     # symmetrize cell
     # create symmetrized rotated cell from standard lattice and transformation matrix
@@ -20,42 +21,40 @@ def refine_symmetry(at, symprec=0.01):
     # set new cell back to symmetrized aligned cell (approx. aligned with original directions, not axes)
     at.set_cell(symmetrized_aligned_cell, True)
 
-    # symmetrize positions
-    p = at.get_scaled_positions()
-    cell = at.get_cell()
+    dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    orig_mapping = dataset['mapping_to_primitive']
 
-    new_p = np.zeros(at.get_positions().shape)
-    # reimplement algorithm from
+    # create primitive cell
+    (prim_cell, prim_scaled_pos, prim_types) = spglib.find_primitive(at, symprec=symprec)
+
+    #rotate to align with orig cell
+    prim_cell = np.dot(rotation, prim_cell.T).T
+    prim_pos = np.dot(prim_scaled_pos, prim_cell)
+
+    # align prim cell atom 0 with atom in orig cell that maps to it
+    p = at.get_positions()
+    dp0 = p[list(orig_mapping).index(0),:] - prim_pos[0,:]
+    prim_pos += dp0
+
+    # create symmetrized orig pos from prim cell pos + integer * prim cell lattice vectors
+    prim_inv_cell = np.linalg.inv(prim_cell)
     for i in range(len(at)):
-        # zero accumulators for rot and transl
-        mean_r = np.zeros((3,3))
-        mean_t = np.zeros((3))
-        n_contrib=0
-        position = p[i][:]
-        # loop over opreations
-        for (r, t) in zip(dataset['rotations'], dataset['translations']):
-            # transformed position
-            pos = np.dot(r, position) + t 
-            # if it's close to periodic image, contribute to accumulators
-            dp = pos - position
-            dp_min_image = dp - np.round(dp)
-            if np.linalg.norm(np.dot(dp_min_image,cell)) < symprec:
-                mean_r += r
-                mean_t += t - np.round(dp)
-                n_contrib += 1
-        mean_r /= float(n_contrib)
-        mean_t /= float(n_contrib)
+        dp_rounded = np.round( np.dot(p[i,:]-prim_pos[orig_mapping[i],:], prim_inv_cell) )
+        p[i,:] = prim_pos[orig_mapping[i],:] + np.dot(dp_rounded, prim_cell)
 
-        new_p[i,:] = np.dot(position, mean_r) + mean_t
+    at.set_positions(p)
 
-    at.set_scaled_positions(new_p)
-
+    # test final config with tight tol
     dataset = spglib.get_symmetry_dataset(at, symprec=1.0e-6)
-    print "precise ({}) symmetrized symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(1.0e-6, dataset["number"],dataset["international"],dataset["hall"])
+    print "symmetry.refine_symmetry: precise ({}) symmetrized symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(1.0e-6, dataset["number"],dataset["international"],dataset["hall"])
+
+def check(at, symprec=1.0e-6):
+    dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    print "symmetry.check: prec",symprec,"got symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
 
 def prep(at, symprec=1.0e-6):
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
-    print "symmetry.prep got symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
+    print "symmetry.prep: symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
     rotations = dataset['rotations'].copy()
     translations = dataset['translations'].copy()
     symm_map=[]
