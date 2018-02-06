@@ -91,7 +91,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
             atoms.set_constraint(FixAtoms(np.where(atoms.arrays['move_mask'] == 0)[0]))
         if relax_cell:
             atoms = UnitCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
-        precon = Exp(3.0, use_pyamg=False)
+        precon = Exp(3.0)
         opt = PreconLBFGS(atoms, precon=precon, **kwargs)
         if traj_file is not None:
             traj = open(traj_file, "w")
