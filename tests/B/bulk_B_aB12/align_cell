@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import ase.io, numpy as np, sys
+
+at = ase.io.read("REF_relaxed.min.EVs_DFT_aB12.xyz")
+cell = at.get_cell()
+z_hat = cell[0,:] + cell[1,:] + cell[2,:]
+z_hat /= np.linalg.norm(z_hat)
+x_hat = cell[0,:]
+x_hat -= z_hat * np.dot(x_hat, z_hat)
+x_hat /= np.linalg.norm(x_hat)
+# print x_hat
+# print z_hat
+# print np.dot(x_hat, z_hat)
+y_hat = np.cross(z_hat, x_hat)
+
+coord_sys = [x_hat, y_hat, z_hat]
+# coord_sys . r = identity
+r = np.linalg.inv(coord_sys)
+
+at.set_cell(np.dot(at.get_cell(),r), True)
+ase.io.write(sys.stdout, at, format="extxyz")
+
