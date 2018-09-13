@@ -2,7 +2,7 @@ from ase.io import read, write
 from ase.calculators.calculator import Calculator
 from ase.calculators.singlepoint import SinglePointCalculator
 from ase.optimize import FIRE
-from ase.optimize.precon import Exp, PreconLBFGS
+from ase.optimize.precon import PreconLBFGS
 from ase.constraints import UnitCellFilter, FixAtoms, voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
 from quippy.potential import Minim
 import numpy as np
@@ -34,27 +34,6 @@ def model_test_root(u_model_name=None, u_test_name=None, base_model=False):
     else:
         return 'model-{0}-test-{1}'.format(model_name, test_name)
 
-class SymmetrizedCalculator(Calculator):
-   implemented_properties = ['energy','forces','stress']
-   def __init__(self, calc, atoms, *args, **kwargs):
-      Calculator.__init__(self, *args, **kwargs)
-      self.calc = calc
-      (self.rotations, self.translations, self.symm_map) = symmetrize.prep(atoms)
-
-   def calculate(self, atoms, properties, system_changes):
-        Calculator.calculate(self, atoms, properties, system_changes)
-        if system_changes:
-            self.results = {}
-        if 'energy' in properties and 'energy' not in self.results:
-            self.results['energy'] = self.calc.get_potential_energy(atoms)
-        if 'forces' in properties and 'forces' not in self.results:
-            raw_forces = self.calc.get_forces(atoms)
-            self.results['forces'] = symmetrize.forces(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_forces, 
-                self.rotations, self.translations, self.symm_map)
-        if 'stress' in properties and 'stress' not in self.results:
-            raw_stress = voigt_6_to_full_3x3_stress(self.calc.get_stress(atoms))
-            symmetrized_stress = symmetrize.stress(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_stress, self.rotations)
-            self.results['stress'] = full_3x3_to_voigt_6_stress(symmetrized_stress)
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
     refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, **kwargs):
@@ -82,7 +61,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
     if refine_symmetry_tol is not None:
         symmetrize.refine(atoms, refine_symmetry_tol)
     if keep_symmetry:
-        atoms.set_calculator(SymmetrizedCalculator(model.calculator, atoms))
+        atoms.set_calculator(symmetrize.SymmetrizedCalculator(model.calculator, atoms))
     else:
         atoms.set_calculator(model.calculator)
 
@@ -90,9 +69,10 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         if 'move_mask' in atoms.arrays:
             atoms.set_constraint(FixAtoms(np.where(atoms.arrays['move_mask'] == 0)[0]))
         if relax_cell:
-            atoms = UnitCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
-        precon = Exp(3.0)
-        opt = PreconLBFGS(atoms, precon=precon, **kwargs)
+            atoms_cell = UnitCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
+        else:
+            atoms_cell = atoms
+        opt = PreconLBFGS(atoms_cell, **kwargs)
         if traj_file is not None:
             traj = open(traj_file, "w")
             def write_trajectory():
@@ -108,13 +88,8 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
 
     opt.run(tol, max_steps)
 
-    # in case we wrapped in a UnitCellFilter
-    try:
-        atoms = atoms.atoms
-    except:
-        pass
-
-    symmetrize.check(atoms, refine_symmetry_tol)
+    if refine_symmetry_tol is not None:
+        symmetrize.check(atoms, refine_symmetry_tol)
     symmetrize.check(atoms, 1.0e-6)
 
     # in case we had a trajectory saved

@@ -1,11 +1,16 @@
-# import ase.io
 import sys
 import numpy as np
 import spglib
+from ase.calculators.calculator import Calculator
+from ase.constraints import voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
+
+__all__ = ['refine', 'SymmetrizedCalculator']
 
 def refine(at, symprec=0.01):
     # test orig config with desired tol
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    if dataset is None:
+        raise ValueError("Failed to get symmetry dataset")
     print "symmetry.refine_symmetry: loose ({}) initial symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(symprec, dataset["number"],dataset["international"],dataset["hall"])
 
     # symmetrize cell
@@ -22,6 +27,8 @@ def refine(at, symprec=0.01):
     at.set_cell(symmetrized_aligned_cell, True)
 
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    if dataset is None:
+        raise ValueError("Failed to get symmetry dataset")
     orig_mapping = dataset['mapping_to_primitive']
 
     # create primitive cell
@@ -46,14 +53,21 @@ def refine(at, symprec=0.01):
 
     # test final config with tight tol
     dataset = spglib.get_symmetry_dataset(at, symprec=1.0e-6)
+    if dataset is None:
+        raise ValueError("Failed to get symmetry dataset")
     print "symmetry.refine_symmetry: precise ({}) symmetrized symmetry group number {}, international (Hermann-Mauguin) {} Hall {}".format(1.0e-6, dataset["number"],dataset["international"],dataset["hall"])
 
 def check(at, symprec=1.0e-6):
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
-    print "symmetry.check: prec",symprec,"got symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
+    if dataset is None:
+        print "symmetry.check failed to get symmetry"
+    else:
+        print "symmetry.check: prec",symprec,"got symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
 
 def prep(at, symprec=1.0e-6):
     dataset = spglib.get_symmetry_dataset(at, symprec=symprec)
+    if dataset is None:
+        raise ValueError("Failed to get symmetry dataset")
     print "symmetry.prep: symmetry group number",dataset["number"],", international (Hermann-Mauguin)",dataset["international"],", Hall",dataset["hall"]
     rotations = dataset['rotations'].copy()
     translations = dataset['translations'].copy()
@@ -98,16 +112,29 @@ def stress(lattice, lattice_inv, stress_3_3, rot):
 
     return np.dot(np.dot(lattice_inv, symmetrized_scaled_stress), lattice_inv.T)
 
-# at = ase.io.read(sys.argv[1])
-# 
-# (rot, trans, symm_map) = prep(at)
-# symm_for = force_symmetrize(at.get_cell(), at.get_reciprocal_cell().T, at.get_forces(), rot, trans, symm_map)
-# symm_s = stress_symmetrize(at.get_cell(), at.get_reciprocal_cell().T, at.info['Virial'], rot)
-# 
-# print "forces before and after"
-# for i_at in range(len(at)):
-#     print at.get_forces()[i_at,:], symm_for[i_at,:]
-# 
-# print "stress before and after"
-# print at.info['Virial']
-# print symm_s
+class SymmetrizedCalculator(Calculator):
+   implemented_properties = ['free_energy', 'energy','forces','stress']
+   def __init__(self, calc, atoms, symprec=1.0e-6, *args, **kwargs):
+      Calculator.__init__(self, *args, **kwargs)
+      self.calc = calc
+      (self.rotations, self.translations, self.symm_map) = prep(atoms, symprec=symprec)
+
+   def get_potential_energy(self, atoms, force_consistent=True):
+      return self.calc.get_potential_energy(atoms, force_consistent)
+
+   def calculate(self, atoms, properties, system_changes):
+        Calculator.calculate(self, atoms, properties, system_changes)
+        if system_changes:
+            self.results = {}
+        if 'free_energy' in properties and 'free_energy' not in self.results:
+            self.results['free_energy'] = self.calc.get_potential_energy(atoms, force_consistent=True)
+        if 'energy' in properties and 'energy' not in self.results:
+            self.results['energy'] = self.calc.get_potential_energy(atoms)
+        if 'forces' in properties and 'forces' not in self.results:
+            raw_forces = self.calc.get_forces(atoms)
+            self.results['forces'] = forces(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_forces, 
+                self.rotations, self.translations, self.symm_map)
+        if 'stress' in properties and 'stress' not in self.results:
+            raw_stress = voigt_6_to_full_3x3_stress(self.calc.get_stress(atoms))
+            symmetrized_stress = stress(atoms.get_cell(), atoms.get_reciprocal_cell().T, raw_stress, self.rotations)
+            self.results['stress'] = full_3x3_to_voigt_6_stress(symmetrized_stress)

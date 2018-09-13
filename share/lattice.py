@@ -1,7 +1,7 @@
 import numpy as np
 from utilities import relax_config, run_root
 import ase.io, sys, os.path
-from ase.optimize.precon import Exp, PreconLBFGS
+from ase.optimize.precon import PreconLBFGS
 import matscipy.elasticity
 from ase.units import GPa
 
@@ -88,7 +88,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
 
    print "relax bulk"
    # relax the initial unit cell and atomic positions
-   bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, method='cg_n', 
+   bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method='lbfgs',
      refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
 
    print "final relaxed bulk"
@@ -99,8 +99,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
    E_vs_V = calc_E_vs_V(bulk, vol_range=vol_range)
 
    print "calculating elastic constants"
-   precon = Exp(3.0)
-   opt = lambda atoms, **kwargs: PreconLBFGS(atoms, precon=precon, **kwargs)
+   opt = lambda atoms, **kwargs: PreconLBFGS(atoms, **kwargs)
    if lattice_type == 'cubic':
        elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, symmetry='cubic', optimizer=opt, logfile=sys.stdout)
        c11 = elastic_consts[0][0,0]/GPa
