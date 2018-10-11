@@ -7,6 +7,7 @@ from ase.constraints import UnitCellFilter, FixAtoms, voigt_6_to_full_3x3_stress
 from quippy.potential import Minim
 import numpy as np
 import os.path
+import sys
 
 import symmetrize
 
@@ -33,6 +34,91 @@ def model_test_root(u_model_name=None, u_test_name=None, base_model=False):
         return '{0}-model-{1}-test-{2}'.format(system_label, u_model_name, u_test_name)
     else:
         return 'model-{0}-test-{1}'.format(model_name, test_name)
+
+def sd2_run(log_prefix, config_minim, tol, converged, max_iter=1000, max_cell_vec_change_ratio=3.0, exception_if_invalid_config = None):
+    traj = []
+    x = config_minim.get_positions()
+    # x_old = 0.0
+    # grad_f_old = 0.0
+    try:
+        initial_cell_mag = np.linalg.norm(config_minim.atoms.get_cell(), axis=1)
+    except:
+        initial_cell_mag = None
+
+    try:
+        underlying_atoms = config_minim.atoms
+    except:
+        underlying_atoms = config_minim
+
+    return_stat = "unconverged"
+    for i_minim in range(max_iter):
+        if "n_minim_iter" in underlying_atoms.info:
+            underlying_atoms.info["n_minim_iter"] += 1
+        if initial_cell_mag is not None:
+            cur_cell_mag = np.linalg.norm(config_minim.atoms.get_cell(), axis=1)
+            if np.max(cur_cell_mag/initial_cell_mag) > max_cell_vec_change_ratio:
+                print "SD2: i {} bad lattice constant".format(i_minim)
+                sys.stdout.flush()
+                return_stat="failed"
+                break
+
+        config_minim.set_positions(x)
+        if exception_if_invalid_config is not None:
+            exception_if_invalid_config(config_minim)
+        grad_f = - config_minim.get_forces()
+        E = config_minim.get_potential_energy()
+        done = converged(i_minim)
+
+        try: # UnitCellFilter
+            traj.append(config_minim.atoms.copy())
+        except:
+            traj.append(config_minim.copy())
+
+        if done:
+            print log_prefix,"SD2: i {} E {} {} {}".format(i_minim, E, config_minim.log_message, done)
+            sys.stdout.flush()
+            return_stat="converged"
+            break
+
+        if i_minim == 0:
+            alpha = 1.0e-4
+        else:
+            alpha_num = np.sum((x-x_old)*(grad_f-grad_f_old))
+            if alpha_num < 0.0:
+                alpha = 1.0e-2
+            else:
+                alpha = alpha_num / np.sum((grad_f-grad_f_old)**2)
+
+        print log_prefix,"SD2: i {} E {} {} alpha {} {}".format(i_minim, E, config_minim.log_message, alpha, done)
+        sys.stdout.flush()
+
+        x_old = x.copy()
+        grad_f_old = grad_f.copy()
+        x -= alpha*grad_f
+
+    return (traj, return_stat)
+
+def f_conv_crit_sq(forces):
+    return (forces**2).sum(axis=1).max()
+def s_conv_crit_sq(stress):
+    return (stress**2).max()
+
+def sd2_converged(minim_ind, atoms, fmax, smax=None):
+    forces = atoms.get_forces()
+
+    if isinstance(atoms, UnitCellFilter):
+        fmax_sq = f_conv_crit_sq(forces[:len(atoms)-3])
+        smax_sq = s_conv_crit_sq(forces[len(atoms)-3:])
+        if smax is None:
+            smax = fmax
+        atoms.log_message = "f {} s {} ".format(np.sqrt(fmax_sq), np.sqrt(smax_sq))
+        f_conv = (fmax_sq < fmax**2 and smax_sq < smax**2)
+    else:
+        fmax_sq = f_conv_crit_sq(forces)
+        atoms.log_message = "f {} ".format(np.sqrt(fmax_sq))
+        f_conv = fmax_sq < fmax**2
+
+    return f_conv
 
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
@@ -65,19 +151,27 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
     else:
         atoms.set_calculator(model.calculator)
 
-    if method == 'lbfgs':
+    if method == 'lbfgs' or method == 'sd2':
         if 'move_mask' in atoms.arrays:
             atoms.set_constraint(FixAtoms(np.where(atoms.arrays['move_mask'] == 0)[0]))
         if relax_cell:
             atoms_cell = UnitCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
         else:
             atoms_cell = atoms
-        opt = PreconLBFGS(atoms_cell, **kwargs)
-        if traj_file is not None:
-            traj = open(traj_file, "w")
-            def write_trajectory():
-                write(traj, atoms, format='extxyz')
-            opt.attach(write_trajectory)
+        atoms.info["n_minim_iter"] = 0
+        if method == 'sd2':
+            (traj, run_stat) = sd2_run("", atoms_cell, tol, lambda i : sd2_converged(i, atoms_cell, tol), max_steps)
+            if traj_file is not None:
+                write(traj_file, traj)
+        else:
+            opt = PreconLBFGS(atoms_cell, **kwargs)
+            if traj_file is not None:
+                traj = open(traj_file, "w")
+                def write_trajectory():
+                    if "n_minim_iter" in atoms.info:
+                        atoms.info["n_minim_iter"] += 1
+                    write(traj, atoms, format='extxyz')
+                opt.attach(write_trajectory)
     elif method == 'cg_n':
         if strain_mask is not None:
             raise(Exception("strain_mask not supported with method='cg_n'"))
@@ -86,7 +180,8 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
     else:
         raise ValueError('unknown method %s!' % method)
 
-    opt.run(tol, max_steps)
+    if method != 'sd2':
+        opt.run(tol, max_steps)
 
     if refine_symmetry_tol is not None:
         symmetrize.check(atoms, refine_symmetry_tol)
@@ -131,3 +226,26 @@ def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True):
                                 stress=stress)
     atoms.set_calculator(spc)
     return atoms
+
+def robust_minim(atoms, final_tol, label="robust_minim", max_sd2_iter=50, sd2_tol=1.0, max_lbfgs_iter=20, max_n_lbfgs=50):
+    import model
+
+    if hasattr(model, "new_cell"):
+        model.new_cell(atoms)
+    relax_config(atoms, relax_pos=True, relax_cell=True, tol=sd2_tol, max_steps=max_sd2_iter,
+        traj_file="%s_sd2_traj.extxyz" % label, method='sd2', keep_symmetry=True, config_label=label )
+
+    done=False
+    i_iter = 0
+    while not done and i_iter < max_n_lbfgs:
+        if hasattr(model, "new_cell"):
+            model.new_cell(atoms)
+        try:
+            relax_config(atoms, relax_pos=True, relax_cell=True, tol=final_tol, max_steps=max_lbfgs_iter,
+                traj_file="%s_lbfgs_traj.%02d.extxyz" % (label, i_iter), method='lbfgs', keep_symmetry=True, config_label=label )
+            done = (atoms.info["n_minim_iter"] < max_lbfgs_iter)
+            print "robust_minim relax_configs LBFGS finished in ",atoms.info["n_minim_iter"],"iters, max", max_lbfgs_iter
+        except:
+            print "robust_minim relax_configs LBFGS failed, trying again"
+        i_iter += 1
+
