@@ -112,6 +112,9 @@ def stress(lattice, lattice_inv, stress_3_3, rot):
 
     return np.dot(np.dot(lattice_inv, symmetrized_scaled_stress), lattice_inv.T)
 
+
+from ase.calculators.calculator import PropertyNotImplementedError
+
 class SymmetrizedCalculator(Calculator):
    implemented_properties = ['free_energy', 'energy','forces','stress']
    def __init__(self, calc, atoms, symprec=1.0e-6, *args, **kwargs):
@@ -120,7 +123,10 @@ class SymmetrizedCalculator(Calculator):
       (self.rotations, self.translations, self.symm_map) = prep(atoms, symprec=symprec)
 
    def get_potential_energy(self, atoms, force_consistent=True):
-      return self.calc.get_potential_energy(atoms, force_consistent)
+      try:
+         return self.calc.get_potential_energy(atoms, force_consistent)
+      except PropertyNotImplementedError:
+         return self.calc.get_potential_energy(atoms)
 
    def calculate(self, atoms, properties, system_changes):
         Calculator.calculate(self, atoms, properties, system_changes)
