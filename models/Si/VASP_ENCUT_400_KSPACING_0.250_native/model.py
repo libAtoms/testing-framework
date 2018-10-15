@@ -11,7 +11,7 @@ mydir=os.path.abspath(os.path.dirname(__file__))
 os.environ["VASP_PP_PATH"]=mydir
 kspacing_value=0.250
 
-calculator = Vasp(encut=400.0,kpts=1,
+calculator = Vasp(encut=400.0,kspacing=kspacing_value,kgamma=True,
     xc='pbesol',prec='Accurate',ismear=0,sigma=0.05,ediff=1.0e-7,nelm=150,
     ncore=16,lscalapack=False,lplane=False,
     addgrid=True,lreal=False,
