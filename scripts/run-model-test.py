@@ -34,7 +34,7 @@ except:
 parser = argparse.ArgumentParser(description='Run a particular model-test combination')
 parser.add_argument('model', type=str, action='store', help='model name')
 parser.add_argument('test', type=str, action='store', help='test name')
-parser.add_argument('--system','-s', type=str, action='store', help='label for tests directory', required=True)
+parser.add_argument('--test_set','-s', type=str, action='store', help='label for tests directory', required=True)
 parser.add_argument('--force','-f', action='store_true', help='force rerunning of test')
 parser.add_argument('--base_model','-B', type=str, action='store', help='optional base model to start from')
 parser.add_argument('--no_redirect_io','-N', action='store_true', help='do not redirect io')
@@ -60,7 +60,7 @@ import utilities
 utilities.model_name = model_name
 utilities.base_model_name = args.base_model
 utilities.test_name = test_name
-utilities.system_label = args.system
+utilities.system_label = args.test_set
 
 run_root = utilities.model_test_root()
 dir_name = "run_"+run_root # maybe a different name?
@@ -78,7 +78,7 @@ if not force and os.path.isfile(json_file_name) and os.path.getsize(json_file_na
     sys.exit(0)
 
 model_dir = os.path.join(model_path, model_name)
-test_dir = os.path.join(my_path, '..', 'tests', args.system, test_name)
+test_dir = os.path.join(my_path, '..', 'tests', args.test_set, test_name)
 
 ## sys.path.insert(0, share_dir)
 sys.path.insert(0, model_dir)

@@ -8,14 +8,14 @@ from analyze_utils import *
 
 (args, models, tests, default_analysis_settings) = analyze_start(['vacancy_*','interstitial_*'])
 
-(mcc_compositions, mcc_energies) = get_multicomponent_constraints(args.system, models, default_analysis_settings["multicomponent_constraints"])
+(mcc_compositions, mcc_energies) = get_multicomponent_constraints(args.test_set, models, default_analysis_settings["multicomponent_constraints"])
 
 # print "multicomponent_constraints_data ", multicomponent_constraints_data
 
 from multicomponent_mu_range import mu_range
 
 # read and parse all data
-data = read_properties(models, tests, args.system)
+data = read_properties(models, tests, args.test_set)
 
 n_fig = 0
 for model_name in models:
@@ -23,7 +23,7 @@ for model_name in models:
         print "DO {} {}".format(model_name, test_name)
 
         try:
-            (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.system, model_name, data[model_name][test_name]["bulk_struct_test"])
+            (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.test_set, model_name, data[model_name][test_name]["bulk_struct_test"])
         except:
             print "No data"
             continue

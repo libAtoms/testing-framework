@@ -10,7 +10,7 @@ from ase.data import chemical_symbols
 from analyze_utils import *
 import math
 
-(args, models, chem_order_tests, default_analysis_settings) = analyze_start('*chemical_order*')
+(args, models, chem_order_tests, default_analysis_settings) = analyze_start('chemical_order_*')
 print "got tests",chem_order_tests
 ref_model_name = default_analysis_settings["ref_model"]
 
@@ -23,7 +23,7 @@ for model_name in models:
         sys.stderr.write("   reading data for test {}\n".format(chem_order_test_name))
 
         # read chem_order test properties
-        prop_filename ="{}-model-{}-test-{}-properties.json".format(args.system, model_name, chem_order_test_name)
+        prop_filename ="{}-model-{}-test-{}-properties.json".format(args.test_set, model_name, chem_order_test_name)
         try:
             with open(prop_filename, "r") as model_data_file:
                 json_data = json.load(model_data_file)

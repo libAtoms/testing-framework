@@ -16,7 +16,7 @@ ref_linestyles=[ "-", "--" ]
 other_linestyles=[ ":", "-." ]
 struct_colors = [ "black", "red", "blue", "cyan", "orange", "magenta", "green", "grey", "brown" ]
 
-element_ref_struct_data = get_element_ref_structs(args.system, models, default_analysis_settings["element_ref_struct"])
+element_ref_struct_data = get_element_ref_structs(args.test_set, models, default_analysis_settings["element_ref_struct"])
 
 # read and parse all data
 data = {}
@@ -29,7 +29,7 @@ for model_name in models:
         sys.stderr.write("   reading data for test {}\n".format(bulk_test_name))
 
         # read bulk test structure
-        struct_filename = "{}-model-{}-test-{}-relaxed.xyz".format(args.system, model_name, bulk_test_name)
+        struct_filename = "{}-model-{}-test-{}-relaxed.xyz".format(args.test_set, model_name, bulk_test_name)
         try:
             struct = ase.io.read(struct_filename, format="extxyz")
         except:
@@ -37,7 +37,7 @@ for model_name in models:
             continue
 
         # read bulk test properties
-        prop_filename ="{}-model-{}-test-{}-properties.json".format(args.system, model_name, bulk_test_name)
+        prop_filename ="{}-model-{}-test-{}-properties.json".format(args.test_set, model_name, bulk_test_name)
         try:
             with open(prop_filename, "r") as model_data_file:
                 json_data = json.load(model_data_file)

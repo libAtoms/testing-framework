@@ -11,7 +11,7 @@ import itertools
 my_path=os.path.dirname(os.path.realpath(__file__))
 
 parser = argparse.ArgumentParser(description='Run all tests on all models.  Default command line options in dict of lists in "default_run_opts.json", keys are "global" or regexps matching model names')
-parser.add_argument('--system', '-s', action='store', help='label for tests directories',required=True)
+parser.add_argument('--test_set', '-s', action='store', help='label for tests directories',required=True)
 parser.add_argument('--models', '-m', action='store', nargs='+', type=str, help='models to include')
 parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='tests to include')
 parser.add_argument('--omit-tests', '-o', action='store', nargs='+', type=str, help='tests to omit')
@@ -35,7 +35,7 @@ else:
 
 args = parser.parse_args(sys.argv[1:] + global_default_run_opts)
 
-tests_path = os.path.join(my_path,"..","tests",args.system)
+tests_path = os.path.join(my_path,"..","tests",args.test_set)
 
 models = None
 tests = None
@@ -91,14 +91,14 @@ for model in models:
         if np < 16:
             np = 16
 
-        cmd_args = '{0} {1} {2} --system {3}'.format(run_model_test, os.path.join(args.models_path,model_name), test_name, args.system)
+        cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, os.path.join(args.models_path,model_name), test_name, args.test_set)
         if force:
             cmd_args += ' -force'
         if args.base_model is not None:
             cmd_args += ' --base_model '+args.base_model
 
         if args.bugs:
-            ident_string= '{0}_{1}_{2}'.format(args.system, model_name, test_name)
+            ident_string= '{0}_{1}_{2}'.format(args.test_set, model_name, test_name)
             if args.MPI:
                 bugs_script='test.bugs_script_mpi'
                 mpi_cmd=''
