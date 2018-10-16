@@ -249,3 +249,27 @@ def robust_minim(atoms, final_tol, label="robust_minim", max_sd2_iter=50, sd2_to
             print "robust_minim relax_configs LBFGS failed, trying again"
         i_iter += 1
 
+def rescale_to_relaxed_bulk(supercell):
+    # read bulk
+    bulk_struct_test=supercell.info['bulk_struct_test']
+    bulk_model_test_relaxed = os.path.join('..',model_test_root(u_test_name=bulk_struct_test)+"-relaxed.xyz")
+
+    try:
+        bulk = read(bulk_model_test_relaxed, format='extxyz')
+    except:
+        sys.stderr.write("Failed to read relaxed bulk '{}', perhaps bulk test hasn't been run yet\n".format(bulk_model_test_relaxed))
+        sys.exit(1)
+
+    # rescale supercell cell
+    supercell_a1_lattice = supercell.info['supercell_a1_in_bulk_lattice_coords']
+    bulk_lattice = bulk.get_cell()
+    supercell_a1_in_bulk = np.dot(supercell_a1_lattice,bulk_lattice)
+    cell_ratio = np.linalg.norm(supercell_a1_in_bulk) / np.linalg.norm(supercell.get_cell()[0,:])
+    if 'supercell_a2_in_lattice_coords' in supercell.info:
+        raise ValueError('anisotropic rescaling of supercellace cell not implemented')
+    if 'supercell_a3_in_lattice_coords' in supercell.info:
+        raise ValueError('anisotropic rescaling of supercellace cell not implemented')
+
+    supercell.set_cell(supercell.get_cell()*cell_ratio, scale_atoms=True)
+
+    return bulk
