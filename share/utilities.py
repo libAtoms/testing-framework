@@ -3,7 +3,7 @@ from ase.calculators.calculator import Calculator
 from ase.calculators.singlepoint import SinglePointCalculator
 from ase.optimize import FIRE
 from ase.optimize.precon import PreconLBFGS
-from ase.constraints import UnitCellFilter, FixAtoms, voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
+from ase.constraints import ExpCellFilter, FixAtoms, voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
 from quippy.potential import Minim
 import numpy as np
 import os.path
@@ -69,7 +69,7 @@ def sd2_run(log_prefix, config_minim, tol, converged, max_iter=1000, max_cell_ve
         E = config_minim.get_potential_energy()
         done = converged(i_minim)
 
-        try: # UnitCellFilter
+        try: # ExpCellFilter
             traj.append(config_minim.atoms.copy())
         except:
             traj.append(config_minim.copy())
@@ -106,7 +106,7 @@ def s_conv_crit_sq(stress):
 def sd2_converged(minim_ind, atoms, fmax, smax=None):
     forces = atoms.get_forces()
 
-    if isinstance(atoms, UnitCellFilter):
+    if isinstance(atoms, ExpCellFilter):
         fmax_sq = f_conv_crit_sq(forces[:len(atoms)-3])
         smax_sq = s_conv_crit_sq(forces[len(atoms)-3:])
         if smax is None:
@@ -155,7 +155,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         if 'move_mask' in atoms.arrays:
             atoms.set_constraint(FixAtoms(np.where(atoms.arrays['move_mask'] == 0)[0]))
         if relax_cell:
-            atoms_cell = UnitCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
+            atoms_cell = ExpCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
         else:
             atoms_cell = atoms
         atoms.info["n_minim_iter"] = 0

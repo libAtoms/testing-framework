@@ -57,7 +57,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
           scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
-          print "failed", str(e)
+          print "WARNING: failed config in calc_E_vs_V", str(e)
           break
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       E_vs_V.insert(0, (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
