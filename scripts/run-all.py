@@ -22,11 +22,9 @@ parser.add_argument('--OpenMP', '-O', action='store_true', help='use OpenMP')
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
 parser.add_argument('--models_path', '-P', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
 
-try:
+if os.path.exists("default_run_opts.json"):
     with open("default_run_opts.json","r") as f:
         default_run_opts = json.load(f)
-except:
-    default_run_opts={}
 
 if "global" in default_run_opts:
     global_default_run_opts = default_run_opts["global"]
