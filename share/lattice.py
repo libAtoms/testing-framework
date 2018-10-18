@@ -30,7 +30,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       print "trying to relax i",i
       try:
           if hasattr(model, "fix_cell_dependence"):
-               model.fix_cell_depedence(atoms)
+               model.fix_cell_dependence(atoms)
           scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
@@ -47,7 +47,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       print "trying to relax i",i
       try:
           if hasattr(model, "fix_cell_dependence"):
-               model.fix_cell_depedence(atoms)
+               model.fix_cell_dependence(atoms)
           scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
@@ -57,7 +57,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       E_vs_V.append( (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
 
    if hasattr(model, "fix_cell_dependence"):
-       model.fix_cell_depedence()
+       model.fix_cell_dependence()
 
    return E_vs_V
 
@@ -87,7 +87,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
    print "calculating elastic constants"
 
    if hasattr(model, "fix_cell_dependence"):
-       model.fix_cell_depedence(atoms)
+       model.fix_cell_dependence(atoms)
 
    opt = lambda atoms, **kwargs: PreconLBFGS(atoms, **kwargs)
    if lattice_type == 'cubic':
@@ -121,6 +121,6 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
         'B' : VRH_B(c11, c33, c12, c13, c44, c66)})
 
    if hasattr(model, "fix_cell_dependence"):
-       model.fix_cell_depedence()
+       model.fix_cell_dependence()
 
    return results_dict
