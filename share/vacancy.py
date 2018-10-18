@@ -26,9 +26,12 @@ def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, r
 
     vac_pe = vac.get_potential_energy()
     if len(set(bulk_supercell.get_atomic_numbers())) == 1:
-        Ef0 = vac_pe - float(len(vac))/float(len(bulk_supercell)) * bulk_supercell_pe
+        Ebulk = float(len(vac))/float(len(bulk_supercell)) * bulk_supercell_pe
     else:
-        Ef0 =  vac_pe - bulk_supercell_pe
+        Ebulk = bulk_supercell_pe
+    Ef0 = vac_pe - Ebulk
+    print "got vacancy {} cell energy".format(label),vac_pe
+    print "got bulk energy", Ebulk
     return ( label, run_root+"-%s-relaxed.xyz" % label, Ef0, bulk_supercell.get_atomic_numbers()[vac_i] )
 
 def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-3):

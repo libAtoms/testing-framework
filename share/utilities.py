@@ -122,7 +122,8 @@ def sd2_converged(minim_ind, atoms, fmax, smax=None):
 
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
-    refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, **kwargs):
+    refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, 
+    **kwargs):
 
     # get from base model if requested
     import model
@@ -227,27 +228,33 @@ def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True):
     atoms.set_calculator(spc)
     return atoms
 
-def robust_minim(atoms, final_tol, label="robust_minim", max_sd2_iter=50, sd2_tol=1.0, max_lbfgs_iter=20, max_n_lbfgs=50):
+def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=50, sd2_tol=1.0, max_lbfgs_iter=20, max_n_lbfgs=50, keep_symmetry=True):
     import model
 
-    if hasattr(model, "new_cell"):
-        model.new_cell(atoms)
+    # do each minim at fixed cell-dependent model params (e.g. k-point mesh)
+    if hasattr(model.calculator, "fix_cell_dependence"):
+        model.calculator.fix_cell_depedence(atoms)
     relax_config(atoms, relax_pos=True, relax_cell=True, tol=sd2_tol, max_steps=max_sd2_iter,
-        traj_file="%s_sd2_traj.extxyz" % label, method='sd2', keep_symmetry=True, config_label=label )
+        traj_file="%s_sd2_traj.extxyz" % label, method='sd2', keep_symmetry=keep_symmetry, config_label=label )
 
     done=False
     i_iter = 0
     while not done and i_iter < max_n_lbfgs:
-        if hasattr(model, "new_cell"):
-            model.new_cell(atoms)
         try:
+            if hasattr(model.calculator, "fix_cell_dependence"):
+                model.calculator.fix_cell_depedence(atoms)
             relax_config(atoms, relax_pos=True, relax_cell=True, tol=final_tol, max_steps=max_lbfgs_iter,
-                traj_file="%s_lbfgs_traj.%02d.extxyz" % (label, i_iter), method='lbfgs', keep_symmetry=True, config_label=label )
+                traj_file="%s_lbfgs_traj.%02d.extxyz" % (label, i_iter), method='lbfgs', keep_symmetry=keep_symmetry, config_label=label )
             done = (atoms.info["n_minim_iter"] < max_lbfgs_iter)
             print "robust_minim relax_configs LBFGS finished in ",atoms.info["n_minim_iter"],"iters, max", max_lbfgs_iter
         except:
             print "robust_minim relax_configs LBFGS failed, trying again"
         i_iter += 1
+
+    # Undo fixed cell dependence. Hopefully no one is using robust_minim as part of a 
+    # more complex process that is doing its own fix_cell_depdence()
+    if hasattr(model.calculator, "fix_cell_dependence"):
+        model.calculator.fix_cell_depedence()
 
 def rescale_to_relaxed_bulk(supercell):
     # read bulk

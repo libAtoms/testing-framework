@@ -33,4 +33,9 @@ def do_symmetric_surface(test_dir):
 
     # calculate surface energy
     area = np.linalg.norm(np.cross(surf.get_cell()[0,:],surf.get_cell()[1,:]))
-    return { "bulk_struct_test" : surf.info["bulk_struct_test"],  "Ef" : (surf.get_potential_energy() - bulk.get_potential_energy()*n_bulk_cells)/(2.0*area), "dmu" : n_dmu }
+
+    print "got surface cell potential energy", surf.get_potential_energy()
+    print "got bulk potential energy",bulk.get_potential_energy()*n_bulk_cells
+    print "got area",area
+
+    return { "bulk_struct_test" : surf.info["bulk_struct_test"],  "Ef" : (surf.get_potential_energy() - bulk.get_potential_energy()*n_bulk_cells)/(2.0*area), "dmu" : n_dmu, 'filename' : run_root+"-relaxed.xyz" }
