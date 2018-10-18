@@ -3,7 +3,7 @@ from utilities import relax_config, run_root, rescale_to_relaxed_bulk, evaluate
 from ase.neighborlist import NeighborList
 import numpy as np
 
-def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-3):
+def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-2):
 
     vac = bulk_supercell.copy()
 
@@ -34,14 +34,13 @@ def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, r
     print "got bulk energy", Ebulk
     return ( label, run_root+"-%s-relaxed.xyz" % label, Ef0, bulk_supercell.get_atomic_numbers()[vac_i] )
 
-def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-3):
+def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
     print "doing do_all_vacancies"
     bulk_supercell = ase.io.read(os.path.join(test_dir,"bulk_supercell.xyz"), format="extxyz")
     print "got bulk_supercell ", len(bulk_supercell)
 
     bulk = rescale_to_relaxed_bulk(bulk_supercell)
 
-    tol = 1.0e-3
     evaluate(bulk_supercell)
     bulk_supercell_pe = bulk_supercell.get_potential_energy()
 

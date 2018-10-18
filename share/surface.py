@@ -14,7 +14,7 @@ def do_symmetric_surface(test_dir):
     print "got rescaled surf cell ", surf.get_cell()
 
     # relax surface system
-    tol = 1.0e-3
+    tol = 1.0e-2
     surf = relax_config(surf, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, config_label="surface", from_base_model=True, save_config=True)
 
     ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  surf, format='extxyz')
