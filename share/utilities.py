@@ -232,8 +232,8 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
     import model
 
     # do each minim at fixed cell-dependent model params (e.g. k-point mesh)
-    if hasattr(model.calculator, "fix_cell_dependence"):
-        model.calculator.fix_cell_depedence(atoms)
+    if hasattr(model, "fix_cell_dependence"):
+        model.fix_cell_depedence(atoms)
     relax_config(atoms, relax_pos=True, relax_cell=True, tol=sd2_tol, max_steps=max_sd2_iter,
         traj_file="%s_sd2_traj.extxyz" % label, method='sd2', keep_symmetry=keep_symmetry, config_label=label )
 
@@ -241,8 +241,8 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
     i_iter = 0
     while not done and i_iter < max_n_lbfgs:
         try:
-            if hasattr(model.calculator, "fix_cell_dependence"):
-                model.calculator.fix_cell_depedence(atoms)
+            if hasattr(model, "fix_cell_dependence"):
+                model.fix_cell_depedence(atoms)
             relax_config(atoms, relax_pos=True, relax_cell=True, tol=final_tol, max_steps=max_lbfgs_iter,
                 traj_file="%s_lbfgs_traj.%02d.extxyz" % (label, i_iter), method='lbfgs', keep_symmetry=keep_symmetry, config_label=label )
             done = (atoms.info["n_minim_iter"] < max_lbfgs_iter)
@@ -253,8 +253,8 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
 
     # Undo fixed cell dependence. Hopefully no one is using robust_minim as part of a 
     # more complex process that is doing its own fix_cell_depdence()
-    if hasattr(model.calculator, "fix_cell_dependence"):
-        model.calculator.fix_cell_depedence()
+    if hasattr(model, "fix_cell_dependence"):
+        model.fix_cell_depedence()
 
 def rescale_to_relaxed_bulk(supercell):
     # read bulk

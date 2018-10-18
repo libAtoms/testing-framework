@@ -29,8 +29,8 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       print "trying to relax i",i
       try:
-          if hasattr(model.calculator, "fix_cell_dependence"):
-               model.calculator.fix_cell_depedence(atoms)
+          if hasattr(model, "fix_cell_dependence"):
+               model.fix_cell_depedence(atoms)
           scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
@@ -46,8 +46,8 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       print "trying to relax i",i
       try:
-          if hasattr(model.calculator, "fix_cell_dependence"):
-               model.calculator.fix_cell_depedence(atoms)
+          if hasattr(model, "fix_cell_dependence"):
+               model.fix_cell_depedence(atoms)
           scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
@@ -56,8 +56,8 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
       E_vs_V.append( (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
 
-   if hasattr(model.calculator, "fix_cell_dependence"):
-       model.calculator.fix_cell_depedence()
+   if hasattr(model, "fix_cell_dependence"):
+       model.fix_cell_depedence()
 
    return E_vs_V
 
@@ -86,8 +86,8 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
 
    print "calculating elastic constants"
 
-   if hasattr(model.calculator, "fix_cell_dependence"):
-       model.calculator.fix_cell_depedence(atoms)
+   if hasattr(model, "fix_cell_dependence"):
+       model.fix_cell_depedence(atoms)
 
    opt = lambda atoms, **kwargs: PreconLBFGS(atoms, **kwargs)
    if lattice_type == 'cubic':
@@ -120,7 +120,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
        results_dict.update({'c11' : c11, 'c33' : c33, 'c12': c12, 'c13' : c13, 'c44' : c44, 'c66' : c66,
         'B' : VRH_B(c11, c33, c12, c13, c44, c66)})
 
-   if hasattr(model.calculator, "fix_cell_dependence"):
-       model.calculator.fix_cell_depedence()
+   if hasattr(model, "fix_cell_dependence"):
+       model.fix_cell_depedence()
 
    return results_dict
