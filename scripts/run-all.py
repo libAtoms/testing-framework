@@ -21,6 +21,7 @@ parser.add_argument('--MPI', '-M', action='store_true', help='use MPI')
 parser.add_argument('--OpenMP', '-O', action='store_true', help='use OpenMP')
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
 parser.add_argument('--models_path', '-P', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
+parser.add_argument('--n_procs', '-N', action='store', type=int, help='number of processors to round to', default=16)
 
 if os.path.exists("default_run_opts.json"):
     with open("default_run_opts.json","r") as f:
@@ -85,9 +86,9 @@ for model in models:
             test_cost = float(fp.readline().strip())
         except:
             test_cost = 1.0
-        np=int(round(int(test_cost*model_cost*16)/16.0))*16
-        if np < 16:
-            np = 16
+        np=int(round(int(test_cost*model_cost*args.n_procs)/float(args.n_procs)))*args.n_procs
+        if np < args.n_procs:
+            np = args.n_procs
 
         cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, os.path.join(args.models_path,model_name), test_name, args.test_set)
         if force:
