@@ -1,7 +1,9 @@
 import ase.io, os.path
 from utilities import relax_config, run_root, rescale_to_relaxed_bulk, evaluate
 from ase.neighborlist import NeighborList
+import ase.build
 import numpy as np
+import spglib
 
 def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-2):
 
@@ -41,19 +43,41 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
 
     bulk = rescale_to_relaxed_bulk(bulk_supercell)
 
-    evaluate(bulk_supercell)
-    bulk_supercell_pe = bulk_supercell.get_potential_energy()
-
     ase.io.write(os.path.join("..",run_root+"-rescaled-bulk.xyz"),  bulk_supercell, format='extxyz')
 
     print "got bulk primitive cell ", bulk.get_cell()
     print "got rescaled bulk_supercell cell ", bulk_supercell.get_cell()
 
+    if bulk_supercell.info['vacancies'] == "inequivalent":
+        sym_data = spglib.get_symmetry_dataset(bulk_supercell, symprec=0.01)
+        prim_vacancy_list = np.unique(sym_data["equivalent_atoms"])
+        print "orig cell vacancy_list", prim_vacancy_list
+        if 'arb_supercell' in bulk_supercell.info:
+            bulk_supersupercell = ase.build.cut(bulk_supercell, bulk_supercell.info['arb_supercell'].T[0], 
+                bulk_supercell.info['arb_supercell'].T[1], bulk_supercell.info['arb_supercell'].T[2])
+            print "get supersupercell with ",len(bulk_supersupercell),"atoms, cell\n",bulk_supersupercell.get_cell()
+            vacancy_list = []
+            for i in prim_vacancy_list:
+                p = bulk_supercell.get_positions()[i]
+                dv = bulk_supersupercell.get_positions() - p
+                dv_scaled = np.dot(dv, bulk_supersupercell.get_reciprocal_cell().T)
+                dv -= np.dot(np.round(dv_scaled), bulk_supersupercell.get_cell())
+                i_closest = np.argmin(np.linalg.norm(dv, axis=1))
+                print "found closest in new cell", i_closest, "distance in orig cell lattice coords", np.dot((bulk_supersupercell.get_positions()[i_closest]-p), bulk_supercell.get_reciprocal_cell().T)
+                vacancy_list.append(i_closest)
+            bulk_supercell = bulk_supersupercell
+        else:
+            vacancy_list = prim_vacancy_list
+        print "final vacancy_list", vacancy_list
+    else:
+        try:
+            vacancy_list = [ int(i) for i in bulk_supercell.info['vacancies'] ]
+        except:
+            vacancy_list = [ int(bulk_supercell.info['vacancies']) ]
+
+    evaluate(bulk_supercell)
+    bulk_supercell_pe = bulk_supercell.get_potential_energy()
     properties = { "bulk_struct_test" : bulk_supercell.info["bulk_struct_test"], "bulk_E_per_atom" : bulk_supercell_pe / len(bulk_supercell), "defects" : {} }
-    try:
-        vacancy_list = [ int(i) for i in bulk_supercell.info['vacancies'] ]
-    except:
-        vacancy_list = [ int(bulk_supercell.info['vacancies']) ]
 
     for vac_i in vacancy_list:
         # maybe set up a system to read these from xyz file?
