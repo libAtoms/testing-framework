@@ -6,7 +6,7 @@
 
 from analyze_utils import *
 
-(args, models, tests, default_analysis_settings) = analyze_start(['vacancy_*','interstitial_*'])
+(args, models, tests, default_analysis_settings) = analyze_start(['point_defect_*'])
 
 (mcc_compositions, mcc_energies) = get_multicomponent_constraints(args.test_set, models, default_analysis_settings["multicomponent_constraints"])
 
