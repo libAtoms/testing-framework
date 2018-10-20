@@ -1,0 +1,2 @@
+make_arbitrary_supercell 1 -1 0   1 0 -1  1 1 1 < ../bulk_Si_diamond/bulk.xyz  | \
+    convert.py -e 'import numpy as np; at=supercell(at,1,1,3); c = at.get_cell(); a3=c[2,:]; c[2,:] *= (np.linalg.norm(a3)+10)/np.linalg.norm(a3); at.set_cell(c, False)' - -o surface.xyz
