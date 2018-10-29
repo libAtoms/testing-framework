@@ -69,12 +69,16 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25):
 
    results_dict = {}
 
-   tol = 1e-3 # max force tol for relaxation
+   tol = 1e-2 # max force tol for relaxation
 
    print "relax bulk"
    # relax the initial unit cell and atomic positions
+   if hasattr(model, "fix_cell_dependence"):
+       model.fix_cell_dependence(bulk)
    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method='lbfgs',
      refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
+   if hasattr(model, "fix_cell_dependence"):
+       model.fix_cell_dependence()
 
    print "final relaxed bulk"
    ase.io.write(sys.stdout, bulk, format='extxyz')
