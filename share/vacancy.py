@@ -20,21 +20,29 @@ def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, r
            offset_factor += relax_symm_break
 
     del vac[vac_i]
+
     label = "ind_%d_Z_%d" % (vac_i, bulk_supercell.get_atomic_numbers()[vac_i])
+    unrelaxed_filename=run_root+"-%s-unrelaxed.xyz" % label
+    ase.io.write(os.path.join("..",unrelaxed_filename), vac, format='extxyz')
+    evaluate(vac)
+    unrelaxed_vac_pe = vac.get_potential_energy()
+
     vac = relax_config(vac, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
         config_label=label, from_base_model=True, save_config=True)
+    relaxed_filename=run_root+"-%s-relaxed.xyz" % label
+    ase.io.write(os.path.join("..",relaxed_filename), vac, format='extxyz')
 
-    ase.io.write(os.path.join("..",run_root+"-%s-relaxed.xyz" % label),  vac, format='extxyz')
-
+    # already has calculator from relax_configs
     vac_pe = vac.get_potential_energy()
     if len(set(bulk_supercell.get_atomic_numbers())) == 1:
         Ebulk = float(len(vac))/float(len(bulk_supercell)) * bulk_supercell_pe
     else:
         Ebulk = bulk_supercell_pe
-    Ef0 = vac_pe - Ebulk
+    Ef0 = unrelaxed_vac_pe - Ebulk
+    Ef = vac_pe - Ebulk
     print "got vacancy",label,"cell energy",vac_pe,"n_atoms",len(vac)
     print "got bulk energy", Ebulk," (scaled to (N-1)/N if single component)"
-    return ( label, run_root+"-%s-relaxed.xyz" % label, Ef0, bulk_supercell.get_atomic_numbers()[vac_i] )
+    return ( label, unrelaxed_filename, Ef0, relaxed_filename, Ef, bulk_supercell.get_atomic_numbers()[vac_i] )
 
 def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
     print "doing do_all_vacancies"
@@ -42,6 +50,10 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
     print "got bulk_supercell ", len(bulk_supercell)
 
     bulk = rescale_to_relaxed_bulk(bulk_supercell)
+    # relax bulk supercell positions in case it's only approximate (as it must be for different models), but stick 
+    # to relaxed bulk's lattice constants as set by rescale_to_relaxed_bulk
+    bulk_supercell = relax_config(bulk_supercell, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
+        config_label="rescaled_bulk", from_base_model=True, save_config=True)
 
     ase.io.write(os.path.join("..",run_root+"-rescaled-bulk.xyz"),  bulk_supercell, format='extxyz')
 
@@ -63,7 +75,8 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
                 dv_scaled = np.dot(dv, bulk_supersupercell.get_reciprocal_cell().T)
                 dv -= np.dot(np.round(dv_scaled), bulk_supersupercell.get_cell())
                 i_closest = np.argmin(np.linalg.norm(dv, axis=1))
-                print "found closest in new cell", i_closest, "distance in orig cell lattice coords", np.dot((bulk_supersupercell.get_positions()[i_closest]-p), bulk_supercell.get_reciprocal_cell().T)
+                print "found closest in new cell", i_closest, "distance in orig cell lattice coords", np.dot((bulk_supersupercell.get_positions()[i_closest]-p), 
+                    bulk_supercell.get_reciprocal_cell().T)
                 vacancy_list.append(i_closest)
             bulk_supercell = bulk_supersupercell
         else:
@@ -89,10 +102,10 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
             relax_symm_break = bulk_supercell.info['relax_symm_break_{}'.format(vac_i)]
         except:
             relax_symm_break = 0.0
-        (label, filename, Ef0, vac_Z) = do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial, relax_symm_break, nn_cutoff, tol)
-        if len(set(bulk_supercell.get_atomic_numbers())) == 1:
-            properties["defects"][label] = { 'Ef' : Ef0, 'filename' : filename, 'atom_ind' : vac_i, 'Z' : vac_Z }
-        else:
-            properties["defects"][label] = { 'Ef' : Ef0, 'filename' : filename, 'atom_ind' : vac_i, 'Z' : vac_Z, 'dmu' : [1, vac_Z] }
+        (label, unrelaxed_filename, Ef0, relaxed_filename, Ef, vac_Z) = do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial, relax_symm_break, nn_cutoff, tol)
+
+        properties["defects"][label] = { 'Ef0' : Ef0, 'Ef' : Ef, 'unrelaxed_filename' : unrelaxed_filename,'relaxed_filename' : relaxed_filename, 'atom_ind' : vac_i, 'Z' : vac_Z }
+        if len(set(bulk_supercell.get_atomic_numbers())) > 1:
+            properties["defects"][label]["dmu"] = [1, vac_Z]
 
     return properties

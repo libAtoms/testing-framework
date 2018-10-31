@@ -41,21 +41,28 @@ def do_one_interstitial(bulk_supercell, bulk_supercell_pe, interstitial_Z, inter
         else:
             raise ValueError("unknown interstitial constraint type '{}'".format(bulk_supercell.info["interstitial_constraint"]))
 
+    evaluate(interst)
+    unrelaxed_interstitial_pe = interst.get_potential_energy()
+
     label = "Z_%d" % (interstitial_Z)
+    unrelaxed_filename=run_root+"-%s-unrelaxed.xyz" % label
+    ase.io.write(os.path.join("..",unrelaxed_filename),  interst, format='extxyz')
     interst = relax_config(interst, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
         config_label=label, from_base_model=True, save_config=True)
 
-    ase.io.write(os.path.join("..",run_root+"-%s-relaxed.xyz" % label),  interst, format='extxyz')
+    relaxed_filename=run_root+"-%s-relaxed.xyz" % label
+    ase.io.write(os.path.join("..",relaxed_filename),  interst, format='extxyz')
 
     interstitial_pe = interst.get_potential_energy()
     if len(set(bulk_supercell.get_atomic_numbers())) == 1:
         Ebulk = float(len(interst))/float(len(bulk_supercell)) * bulk_supercell_pe
     else:
         Ebulk = bulk_supercell_pe
-    Ef0 = interstitial_pe - Ebulk
+    Ef0 = unrelaxed_interstitial_pe - Ebulk
+    Ef = interstitial_pe - Ebulk
     print "got interstitial {} cell energy".format(label),interstitial_pe
     print "got bulk energy", Ebulk
-    return ( label, run_root+"-%s-relaxed.xyz" % label, Ef0, interstitial_i)
+    return ( label, unrelaxed_filename, Ef0, relaxed_filename, Ef, interstitial_i)
 
 
 def do_interstitial(test_dir, nn_cutoff=0.0, tol=1.0e-2):
@@ -64,6 +71,10 @@ def do_interstitial(test_dir, nn_cutoff=0.0, tol=1.0e-2):
     print "got bulk_supercell ", len(bulk_supercell)
 
     bulk = rescale_to_relaxed_bulk(bulk_supercell)
+    # relax bulk supercell positions in case it's only approximate (as it must be for different models), but stick 
+    # to relaxed bulk's lattice constants as set by rescale_to_relaxed_bulk
+    bulk_supercell = relax_config(bulk_supercell, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
+        config_label="relaxed_bulk", from_base_model=True, save_config=True)
 
     evaluate(bulk_supercell)
     bulk_supercell_pe = bulk_supercell.get_potential_energy()
@@ -104,11 +115,10 @@ def do_interstitial(test_dir, nn_cutoff=0.0, tol=1.0e-2):
         except:
             relax_symm_break = 0.0
 
-        (label, filename, Ef0, interstitial_i) = do_one_interstitial(bulk_supercell, bulk_supercell_pe, interstitial_Z, interstitial_pos, relax_radial, relax_symm_break, nn_cutoff, tol)
+        (label, unrelaxed_filename, Ef0, relaxed_filename, Ef, interstitial_i) = do_one_interstitial(bulk_supercell, bulk_supercell_pe, interstitial_Z, interstitial_pos, relax_radial, relax_symm_break, nn_cutoff, tol)
 
-    if len(set(bulk_supercell.get_atomic_numbers())) == 1:
-        properties["defects"][label] = { 'Ef' : Ef0, 'filename' : filename, 'atom_ind' : interstitial_i, 'Z' : interstitial_Z }
-    else:
-        properties["defects"][label] = { 'Ef' : Ef0, 'filename' : filename, 'atom_ind' : interstitial_i, 'Z' : interstitial_Z, 'dmu' : [-1, interstitial_Z] }
+    properties["defects"][label] = { 'Ef0' : Ef0, 'Ef' : Ef, 'unrelaxed_filename' : unrelaxed_filename, 'relaxed_filename' : relaxed_filename, 'atom_ind' : interstitial_i, 'Z' : interstitial_Z }
+    if len(set(bulk_supercell.get_atomic_numbers())) != 1:
+        properties["defects"][label]['dmu'] = [-1, interstitial_Z]
 
     return properties
