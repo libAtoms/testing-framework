@@ -1,5 +1,5 @@
 import ase.io, os
-from utilities import relax_config, model_test_root, run_root, rescale_to_relaxed_bulk
+from utilities import relax_config, model_test_root, run_root, rescale_to_relaxed_bulk, evaluate
 import numpy as np
 
 # the current 
@@ -9,6 +9,7 @@ def do_symmetric_surface(test_dir):
     surf = ase.io.read(test_dir+"/surface.xyz", format="extxyz")
 
     bulk = rescale_to_relaxed_bulk(surf)
+    evaluate(bulk)
 
     print "got relaxed bulk cell ", bulk.get_cell()
     print "got rescaled surf cell ", surf.get_cell()
