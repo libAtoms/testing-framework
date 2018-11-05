@@ -9,6 +9,7 @@ import ase.io
 from ase.data import chemical_symbols
 from analyze_utils import *
 import math
+import re
 
 (args, models, bulk_tests, default_analysis_settings) = analyze_start('bulk_*')
 
@@ -77,6 +78,7 @@ for model_name in models:
 
 ref_model_name = default_analysis_settings["ref_model"]
 n_fig = 1
+elastic_const_tables = {}
 for model_name in models:
     figure_nums = {}
     bulk_inds = {}
@@ -89,6 +91,9 @@ for model_name in models:
         print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
 
     for bulk_test_name in bulk_tests:
+        if bulk_test_name not in data[model_name]:
+            sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
+            continue
         fu = ""
         for (Z, i) in struct_data[bulk_test_name]["formula_unit"]:
             if i == 1:
@@ -103,9 +108,6 @@ for model_name in models:
             bulk_inds[fu] = 0
         else:
             bulk_inds[fu] += 1
-        if bulk_test_name not in data[model_name]:
-            sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
-            continue
 
         ref_linestyle = ref_linestyles[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
         other_linestyle = other_linestyles[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
@@ -122,9 +124,20 @@ for model_name in models:
             pass
         line.set_color(color)
 
+        # make elastic constants table
+        sorted_consts = sorted([k for k in data[model_name][bulk_test_name].keys() if (re.match("^c[0-9][0-9]$",k) or k == 'B') ])
+        if bulk_test_name not in elastic_const_tables:
+            elastic_const_tables[bulk_test_name] = "\\begin{tabular}{ l l " + " ".join(["c"]*len(sorted_consts))+" }\n"
+            elastic_const_tables[bulk_test_name] += "model & struct & " + " & ".join(sorted_consts)
+        elastic_const_tables[bulk_test_name] += " \\\\\n" + model_name.replace("_","\\_")+" & " +bulk_test_name.replace("bulk_","").replace("_"," ") + " & " + " & ".join(["{0:.1f}".format(data[model_name][bulk_test_name][k]) for k in sorted_consts])
+
     for fu in figure_nums:
         figure(figure_nums[fu])
         legend(loc="center left", bbox_to_anchor=[1, 0.5])
         xlabel("V ($A^3$/atom)")
         ylabel("E (eV/atom)")
         savefig("{}_{}_bulk.pdf".format(model_name,fu), bbox_inches='tight')
+
+for struct in elastic_const_tables:
+    print "table for struct",struct
+    print elastic_const_tables[struct]+"\n\\end{tabular}\n"
