@@ -11,7 +11,7 @@ relaxed_bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol,
 relaxed_bulk_pe = relaxed_bulk.get_potential_energy()/len(relaxed_bulk)
 ase.io.write(sys.stdout, relaxed_bulk, format="extxyz")
 
-tol=2.0e-3 # hack to work around convergence issues
+tol=1.0e-2 # hack to work around convergence issues
 antisites = relaxed_bulk * (2,2,2)
 
 random.seed(10)
