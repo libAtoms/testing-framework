@@ -145,6 +145,19 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25, method='lbfgs'):
        c66 = elastic_consts[0][5,5]/GPa
        results_dict.update({'c11' : c11, 'c33' : c33, 'c12': c12, 'c13' : c13, 'c44' : c44, 'c14' : c14,
                             'c15' : c15, 'c25' : c25, 'c66' : c66, 'B' : HTT_B(c11, c33, c12, c13)})
+   elif lattice_type == 'trigonal':
+       elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, symmetry='trigonal_high', optimizer=opt, logfile=sys.stdout)
+       c11 = elastic_consts[0][0,0]/GPa
+       c33 = elastic_consts[0][2,2]/GPa
+       c12 = elastic_consts[0][0,1]/GPa
+       c13 = elastic_consts[0][0,2]/GPa
+       c44 = elastic_consts[0][3,3]/GPa
+       c14 = elastic_consts[0][0,3]/GPa
+       c15 = elastic_consts[0][0,4]/GPa
+       c25 = elastic_consts[0][1,4]/GPa
+       c66 = elastic_consts[0][5,5]/GPa
+       results_dict.update({'c11' : c11, 'c33' : c33, 'c12': c12, 'c13' : c13, 'c44' : c44, 'c14' : c14,
+                            'c15' : c15, 'c25' : c25, 'c66' : c66, 'B' : HTT_B(c11, c33, c12, c13)})
 
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence()
