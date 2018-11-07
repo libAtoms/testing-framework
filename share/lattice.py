@@ -4,6 +4,13 @@ import ase.io, sys, os.path
 from ase.optimize.precon import PreconLBFGS
 import matscipy.elasticity
 from ase.units import GPa
+# Calculate B for Hexagonal, Tetragonal & Trigonal
+# DOI: 10.1103/PhysRevB.77.104118 Eq. (29)
+def HTT_B(c11, c33, c12, c13):
+    numerator   = c33 * (c11 + c12) - 2*c13**2
+    denominator = c11 + c12 + 2*c33 - 4*c13
+
+    return numerator / denominator
 
 # Mater Trans v 53 p 1247 (2012), Eq. 4-10
 def VRH_B(c11, c33, c12, c13, c44, c66):
@@ -137,7 +144,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25, method='lbfgs'):
        c25 = elastic_consts[0][1,4]/GPa
        c66 = elastic_consts[0][5,5]/GPa
        results_dict.update({'c11' : c11, 'c33' : c33, 'c12': c12, 'c13' : c13, 'c44' : c44, 'c14' : c14,
-                            'c15' : c15, 'c25' : c25, 'c66' : c66})
+                            'c15' : c15, 'c25' : c25, 'c66' : c66, 'B' : HTT_B(c11, c33, c12, c13)})
 
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence()
