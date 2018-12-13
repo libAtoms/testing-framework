@@ -11,7 +11,6 @@ import sys
 import time
 
 import symmetrize
-import quippy
 
 #from quippy.io import AtomsWriter
 #from quippy.cinoutput import CInOutput,OUTPUT
@@ -247,17 +246,6 @@ def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True, do_predictiv
         except AttributeError:
             pass
 
-    # For do predictive error results to be passed back out in arrays, atoms has to be quippy.Atoms.
-    # However, if atoms is quippy.Atoms and ASE native DFT calculator is used, and atoms.info['cutoff'] is
-    # set (e.g. if read from xyz file), cutoff will always mismatch and ASE will never cache
-    # expensive DFT results (due to using __eq__ from quippy/oo_fortray.py which tests cutoffs)
-    # Therefore, only convert to quippy.Atoms if predictive_error is requested, and hope that it's
-    # never requested for DFT calculator.  Really this should be handled better by ASE/quippy.
-    if do_predictive_error:
-        atoms_orig = atoms
-        atoms = quippy.Atoms(atoms)
-    else:
-        atoms_orig = None
     atoms.set_calculator(model.calculator)
 
     stress = None
@@ -277,11 +265,9 @@ def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True, do_predictiv
                                 forces=forces,
                                 stress=stress)
     atoms.set_calculator(spc)
-    if atoms_orig is not None:
-        atoms_orig.set_calculator(spc)
 
     if do_predictive_error:
-        atoms.arrays["predictive_error"] = np.sqrt(atoms.arrays["predictive_error"])
+        atoms.arrays["predictive_error"] = np.sqrt(model.calculator.results["predictive_error"])
         try:
             model.calculator.set_calc_args(orig_calc_args)
         except AttributeError:
