@@ -318,14 +318,18 @@ def rescale_to_relaxed_bulk(supercell):
     bulk = get_relaxed_bulk(supercell.info['bulk_struct_test'])
 
     # rescale supercell cell
-    supercell_a1_lattice = supercell.info['supercell_a1_in_bulk_lattice_coords']
-    bulk_lattice = bulk.get_cell()
-    supercell_a1_in_bulk = np.dot(supercell_a1_lattice,bulk_lattice)
-    cell_ratio = np.linalg.norm(supercell_a1_in_bulk) / np.linalg.norm(supercell.get_cell()[0,:])
-    if 'supercell_a2_in_lattice_coords' in supercell.info:
-        raise ValueError('anisotropic rescaling of supercellace cell not implemented')
-    if 'supercell_a3_in_lattice_coords' in supercell.info:
-        raise ValueError('anisotropic rescaling of supercellace cell not implemented')
+    try:
+        supercell_a1_lattice = supercell.info['supercell_a1_in_bulk_lattice_coords']
+        bulk_lattice = bulk.get_cell()
+        supercell_a1_in_bulk = np.dot(supercell_a1_lattice,bulk_lattice)
+        cell_ratio = np.linalg.norm(supercell_a1_in_bulk) / np.linalg.norm(supercell.get_cell()[0,:])
+        if 'supercell_a2_in_lattice_coords' in supercell.info:
+            raise ValueError('anisotropic rescaling of supercellace cell not implemented')
+        if 'supercell_a3_in_lattice_coords' in supercell.info:
+            raise ValueError('anisotropic rescaling of supercellace cell not implemented')
+    except:
+        print "'supercell_a1_in_bulk_lattice_coords' is not in supercell.info (imported from surface.xyz). Assuming a cell_ratio of 1.0"
+        cell_ratio = 1.0
 
     supercell.set_cell(supercell.get_cell()*cell_ratio, scale_atoms=True)
 
