@@ -40,13 +40,15 @@ models = None
 tests = None
 omittests = None
 if args.models is not None:
-    models = list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d)) for d in args.models ]))
+    models = list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d, 'model.py')) for d in args.models ]))
 else:
-    models = glob.glob(os.path.join(args.models_path, '*'))
+    models = glob.glob(os.path.join(args.models_path, '*', 'model.py'))
+models = [ os.path.split(d)[0] for d in models ]
 if args.tests is not None:
-    tests = list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.tests ]))
+    tests = list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d, 'test.py')) for d in args.tests ]))
 else:
-    tests = glob.glob(os.path.join(tests_path, '*'))
+    tests = glob.glob(os.path.join(tests_path, '*', 'test.py'))
+tests = [ os.path.split(t)[0] for t in tests ]
 if args.omit_tests is not None:
     for omit_test in list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.omit_tests ])):
         if omit_test in tests:
