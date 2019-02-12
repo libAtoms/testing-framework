@@ -73,7 +73,7 @@ for chem_order_test_name in figure_nums:
     ylabel("E (eV/atom)")
     x_range = ( min(data[ref_model_name][chem_order_test_name]["unrelaxed_energy_per_atom"]), max(data[ref_model_name][chem_order_test_name]["unrelaxed_energy_per_atom"]) ) 
     try:
-        x_range = ( min(x_range[0], min(data[ref_model_name][chem_order_test_name]["relaxed_energy_per_atom"])), max(x_range[0], max(data[ref_model_name][chem_order_test_name]["relaxed_energy_per_atom"])))
+        x_range = ( min(x_range[0], min(data[ref_model_name][chem_order_test_name]["relaxed_energy_per_atom"])), max(x_range[1], max(data[ref_model_name][chem_order_test_name]["relaxed_energy_per_atom"])))
     except:
         pass
     plot([x_range[0],x_range[1]], [x_range[0],x_range[1]], '--', color='black', label=None)

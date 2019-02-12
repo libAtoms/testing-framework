@@ -95,6 +95,7 @@ def analyze_start(default_tests=['*']):
     # duplicates of stuff in scripts/run-all.py
     parser.add_argument('--test_set', '-s', action='store', help='label for tests directories', required=True)
     parser.add_argument('--models_path', '-P', action='store', help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
+    parser.add_argument('--REF_E_offset', type=float, action='store', help='offset of reference model energy/atom', default=0.0)
 
     try:
         with open("default_analysis_opts.json","r") as f:

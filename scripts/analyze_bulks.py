@@ -92,7 +92,7 @@ for model_name in models:
             min_EV  = min(data[model_name][bulk_test_name]["E_vs_V"], key = lambda x : x[1])
         except:
             print "no data for",model_name,bulk_test_name
-        continue
+            continue
         print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
 
     for bulk_test_name in bulk_tests:
@@ -129,7 +129,7 @@ for model_name in models:
             line.set_markersize(2.5)
 
         try:
-            line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_linestyle, label=bulk_test_name)
+            line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1]-args.REF_E_offset for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_linestyle, label=bulk_test_name)
         except Exception, e:
             print "exception ", str(e)
             print "no data for struct",bulk_test_name,"ref model",ref_model_name
