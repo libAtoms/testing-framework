@@ -303,8 +303,8 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
     if hasattr(model, "fix_cell_dependence"):
         model.fix_cell_dependence()
 
-def get_relaxed_bulk(bulk_struct_test):
-    bulk_model_test_relaxed = os.path.join('..',model_test_root(u_test_name=bulk_struct_test)+"-relaxed.xyz")
+def get_relaxed_bulk(bulk_struct_test, model_name=None):
+    bulk_model_test_relaxed = os.path.join('..',model_test_root(u_model_name=model_name, u_test_name=bulk_struct_test)+"-relaxed.xyz")
     try:
         bulk = read(bulk_model_test_relaxed, format='extxyz')
     except:
