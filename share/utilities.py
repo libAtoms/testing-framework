@@ -4,7 +4,6 @@ from ase.calculators.singlepoint import SinglePointCalculator
 from ase.optimize import FIRE
 from ase.optimize.precon import PreconLBFGS
 from ase.constraints import ExpCellFilter, FixAtoms, voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
-from quippy.potential import Minim
 import numpy as np
 import os.path
 import sys
@@ -58,7 +57,7 @@ def sd2_run(log_prefix, config_minim, tol, converged, max_iter=1000, max_cell_ve
         if initial_cell_mag is not None:
             cur_cell_mag = np.linalg.norm(config_minim.atoms.get_cell(), axis=1)
             if np.max(cur_cell_mag/initial_cell_mag) > max_cell_vec_change_ratio:
-                print "SD2: i {} bad lattice constant".format(i_minim)
+                print("SD2: i {} bad lattice constant".format(i_minim))
                 sys.stdout.flush()
                 return_stat="failed"
                 break
@@ -76,7 +75,7 @@ def sd2_run(log_prefix, config_minim, tol, converged, max_iter=1000, max_cell_ve
             traj.append(config_minim.copy())
 
         if done:
-            print log_prefix,"SD2: i {} E {} {} {}".format(i_minim, E, config_minim.log_message, done)
+            print(log_prefix,"SD2: i {} E {} {} {}".format(i_minim, E, config_minim.log_message, done))
             sys.stdout.flush()
             return_stat="converged"
             break
@@ -90,7 +89,7 @@ def sd2_run(log_prefix, config_minim, tol, converged, max_iter=1000, max_cell_ve
             else:
                 alpha = alpha_num / np.sum((grad_f-grad_f_old)**2)
 
-        print log_prefix,"SD2: i {} E {} {} alpha {} {}".format(i_minim, E, config_minim.log_message, alpha, done)
+        print(log_prefix,"SD2: i {} E {} {} alpha {} {}".format(i_minim, E, config_minim.log_message, alpha, done))
         sys.stdout.flush()
 
         x_old = x.copy()
@@ -139,21 +138,21 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
             atoms.set_cell(atoms_in.get_cell())
             atoms.set_positions(atoms_in.get_positions())
             atoms.set_cell(saved_cell, scale_atoms=True)
-            print "relax_config read config from ",base_run_file
+            print("relax_config read config from ",base_run_file)
         except:
             try:
-                print "relax_config failed to read base run config from ",base_run_root+'-'+config_label+'-relaxed.xyz'
+                print("relax_config failed to read base run config from ",base_run_root+'-'+config_label+'-relaxed.xyz')
             except:
-                print "relax_config failed to determined base_run_root"
+                print("relax_config failed to determined base_run_root")
 
-    print "relax_config symmetry before refinement at default tol 1.0e-6"
-    print symmetrize.check(atoms, 1.0e-6)
+    print("relax_config symmetry before refinement at default tol 1.0e-6")
+    print(symmetrize.check(atoms, 1.0e-6))
     if refine_symmetry_tol is not None:
         symmetrize.refine(atoms, refine_symmetry_tol)
-        print "relax_config symmetry after refinement"
-        print symmetrize.check(atoms, refine_symmetry_tol)
+        print("relax_config symmetry after refinement")
+        print(symmetrize.check(atoms, refine_symmetry_tol))
     if keep_symmetry:
-        print "relax_config trying to maintain symmetry"
+        print("relax_config trying to maintain symmetry")
         atoms.set_calculator(symmetrize.SymmetrizedCalculator(model.calculator, atoms))
     else:
         atoms.set_calculator(model.calculator)
@@ -185,10 +184,11 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
                     write(traj, atoms, format='extxyz')
                 opt.attach(write_trajectory)
     elif method == 'cg_n':
-        if strain_mask is not None:
-            raise(Exception("strain_mask not supported with method='cg_n'"))
-        atoms.info['Minim_Constant_Volume'] = constant_volume
-        opt = Minim(atoms, relax_positions=relax_pos, relax_cell=relax_cell, method='cg_n')
+        raise ValueError('minim method cg_n not supported in new python3 quippy')
+        # if strain_mask is not None:
+            # raise(Exception("strain_mask not supported with method='cg_n'"))
+        # atoms.info['Minim_Constant_Volume'] = constant_volume
+        # opt = Minim(atoms, relax_positions=relax_pos, relax_cell=relax_cell, method='cg_n')
     else:
         raise ValueError('unknown method %s!' % method)
 
@@ -196,10 +196,10 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         opt.run(tol, max_steps)
 
     if refine_symmetry_tol is not None:
-        print "symmetry at end of relaxation at desired tol"
-        print symmetrize.check(atoms, refine_symmetry_tol)
-    print "symmetry at end of relaxation at default tol 1e-6"
-    print symmetrize.check(atoms, 1.0e-6)
+        print("symmetry at end of relaxation at desired tol")
+        print(symmetrize.check(atoms, refine_symmetry_tol))
+    print("symmetry at end of relaxation at default tol 1e-6")
+    print(symmetrize.check(atoms, 1.0e-6))
 
     # in case we had a trajectory saved
     try:
@@ -225,7 +225,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
 def do_evaluations(atoms_list, do_energy=True, do_forces=True, do_stress=True):
     results = []
     for (at_i, at) in enumerate(atoms_list):
-        print "evaluation ",at_i,"/",len(atoms_list)
+        print("evaluation ",at_i,"/",len(atoms_list))
         evaluate(at, do_energy, do_forces, do_stress)
         result = {}
         if do_energy:
@@ -300,9 +300,9 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
             relax_config(atoms, relax_pos=True, relax_cell=True, tol=final_tol, max_steps=max_lbfgs_iter,
                 traj_file="%s_lbfgs_traj.%02d.extxyz" % (label, i_iter), method='lbfgs', keep_symmetry=keep_symmetry, config_label=label )
             done = (atoms.info["n_minim_iter"] < max_lbfgs_iter)
-            print "robust_minim relax_configs LBFGS finished in ",atoms.info["n_minim_iter"],"iters, max", max_lbfgs_iter
+            print("robust_minim relax_configs LBFGS finished in ",atoms.info["n_minim_iter"],"iters, max", max_lbfgs_iter)
         except:
-            print "robust_minim relax_configs LBFGS failed, trying again"
+            print("robust_minim relax_configs LBFGS failed, trying again")
         i_iter += 1
 
     # Undo fixed cell dependence. Hopefully no one is using robust_minim as part of a 
@@ -335,7 +335,7 @@ def rescale_to_relaxed_bulk(supercell):
         if 'supercell_a3_in_lattice_coords' in supercell.info:
             raise ValueError('anisotropic rescaling of supercellace cell not implemented')
     except:
-        print "'supercell_a1_in_bulk_lattice_coords' is not in supercell.info (imported from surface.xyz). Assuming a cell_ratio of 1.0"
+        print("'supercell_a1_in_bulk_lattice_coords' is not in supercell.info (imported from surface.xyz). Assuming a cell_ratio of 1.0")
         cell_ratio = 1.0
 
     supercell.set_cell(supercell.get_cell()*cell_ratio, scale_atoms=True)

@@ -36,7 +36,7 @@ def do_one_interstitial(bulk_supercell, bulk_supercell_pe, interstitial_Z, inter
             else:
                 raise ValueError("unknown interstitial constraint subtype for plane '{}'".format(bulk_supercell.info["interstitial_constraint"]))
 
-            print "setting constraint FixedPlane with normal", constr_normal
+            print("setting constraint FixedPlane with normal", constr_normal)
             interst.set_constraint(FixedPlane(interstitial_i, constr_normal))
         else:
             raise ValueError("unknown interstitial constraint type '{}'".format(bulk_supercell.info["interstitial_constraint"]))
@@ -60,15 +60,15 @@ def do_one_interstitial(bulk_supercell, bulk_supercell_pe, interstitial_Z, inter
         Ebulk = bulk_supercell_pe
     Ef0 = unrelaxed_interstitial_pe - Ebulk
     Ef = interstitial_pe - Ebulk
-    print "got interstitial {} cell energy".format(label),interstitial_pe
-    print "got bulk energy", Ebulk
+    print("got interstitial {} cell energy".format(label),interstitial_pe)
+    print("got bulk energy", Ebulk)
     return ( label, unrelaxed_filename, Ef0, relaxed_filename, Ef, interstitial_i)
 
 
 def do_interstitial(test_dir, nn_cutoff=0.0, tol=1.0e-2):
-    print "doing do_interstitial"
+    print("doing do_interstitial")
     bulk_supercell = ase.io.read(os.path.join(test_dir,"bulk_supercell.xyz"), format="extxyz")
-    print "got bulk_supercell ", len(bulk_supercell)
+    print("got bulk_supercell ", len(bulk_supercell))
 
     bulk = rescale_to_relaxed_bulk(bulk_supercell)
     # relax bulk supercell positions in case it's only approximate (as it must be for different models), but stick 
@@ -81,8 +81,8 @@ def do_interstitial(test_dir, nn_cutoff=0.0, tol=1.0e-2):
 
     ase.io.write(os.path.join("..",run_root+"-rescaled-bulk.xyz"),  bulk_supercell, format='extxyz')
 
-    print "got bulk primitive cell ", bulk.get_cell()
-    print "got rescaled bulk_supercell cell ", bulk_supercell.get_cell()
+    print("got bulk primitive cell ", bulk.get_cell())
+    print("got rescaled bulk_supercell cell ", bulk_supercell.get_cell())
 
     properties = { "bulk_struct_test" : bulk_supercell.info["bulk_struct_test"], "bulk_E_per_atom" : bulk_supercell_pe / len(bulk_supercell), "defects" : {} }
 

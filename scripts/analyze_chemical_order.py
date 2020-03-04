@@ -11,7 +11,7 @@ from analyze_utils import *
 import math
 
 (args, models, chem_order_tests, default_analysis_settings) = analyze_start('chemical_order_*')
-print "got tests",chem_order_tests
+print("got tests",chem_order_tests)
 ref_model_name = default_analysis_settings["ref_model"]
 
 # read and parse all data
@@ -34,13 +34,13 @@ for model_name in models:
         cur_model_data[chem_order_test_name] = json_data.copy()
 
     if len(cur_model_data.keys()) > 0:
-        print "got data for ",model_name, cur_model_data.keys()
+        print("got data for ",model_name, cur_model_data.keys())
         data[model_name] = cur_model_data.copy()
 
 n_fig = 0
 figure_nums = {}
 for (model_i, model_name) in enumerate(sorted(data)):
-    print "plot model",model_name, data[model_name]
+    print("plot model",model_name, data[model_name])
 
     for chem_order_test_name in chem_order_tests:
         if chem_order_test_name not in figure_nums:

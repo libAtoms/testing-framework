@@ -58,30 +58,30 @@ def get_multicomponent_constraints(test_set, models, multicomponent_constraints_
     composition_data = {}
     energy_data = {}
     if debug:
-        print "get_multicomponent_constraints", multicomponent_constraints_structs, isinstance(multicomponent_constraints_structs, basestring)
+        print("get_multicomponent_constraints", multicomponent_constraints_structs, isinstance(multicomponent_constraints_structs, basestring))
 
     for model_name in models:
         if debug:
-            print "get_multicomponent_constraints model_name", model_name
+            print("get_multicomponent_constraints model_name", model_name)
         energy_data[model_name] = {}
         if isinstance(multicomponent_constraints_structs, basestring):
-            # print "globbing multicomponent_constraints_struct"
+            # print("globbing multicomponent_constraints_struct")
             struct_name_list = glob.glob("{}-model-{}-test-{}-properties.json".format(test_set, model_name, multicomponent_constraints_structs))
             struct_name_list = [ x.replace("{}-model-{}-test-".format(test_set, model_name),"").replace("-properties.json","") for x in struct_name_list ]
         else:
-            # print "not globbing multicomponent_constraints_struct"
+            # print("not globbing multicomponent_constraints_struct")
             struct_name_list = multicomponent_constraints_structs
-        # print "get_multicomponent_constraints struct_name_list",struct_name_list
+        # print("get_multicomponent_constraints struct_name_list",struct_name_list)
 
         for struct_name in struct_name_list:
             if debug:
-                print "get_multicomponent_constraints struct_name",struct_name
+                print("get_multicomponent_constraints struct_name",struct_name)
             (min_EV, composition) = read_ref_bulk_model_struct(test_set, model_name, struct_name)
             energy_data[model_name][struct_name] = min_EV
             if not "struct_name" in composition_data: 
                 composition_data[struct_name] = composition
             if debug:
-                print "min_EV, composition ",min_EV, composition
+                print("min_EV, composition ",min_EV, composition)
 
     return (composition_data, energy_data)
 
@@ -120,18 +120,18 @@ def analyze_start(default_tests=['*']):
 def read_properties(models, tests, test_set):
     data = {}
     for model_name in models:
-        print "reading data for model {}".format(model_name)
+        print("reading data for model {}".format(model_name))
         data[model_name] = {}
         cur_model_data = {}
         for test_name in tests:
-            print "   reading data for test {}".format(test_name)
+            print("   reading data for test {}".format(test_name))
 
             prop_filename ="{}-model-{}-test-{}-properties.json".format(test_set, model_name, test_name)
             try:
                 with open(prop_filename, "r") as model_data_file:
                     cur_model_data[test_name] = json.load(model_data_file)
             except:
-                print "No properties file '{}'".format(prop_filename)
+                print("No properties file '{}'".format(prop_filename))
                 continue
 
         data[model_name] = cur_model_data

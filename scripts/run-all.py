@@ -62,8 +62,8 @@ bugs = args.bugs
 
 run_model_test = os.path.join(my_path,'run-model-test.py')
 
-print 'Models:', models
-print 'Tests:', tests
+print('Models:', models)
+print('Tests:', tests)
 
 for model in models:
     model_name = os.path.split(model)[-1]
@@ -113,5 +113,5 @@ for model in models:
                  ' -name='+ident_string+' -fileroot='+ident_string+' -in_cwd -output=job.'+ident_string)
         else:
             cmd="python "+cmd_args
-        print cmd
+        print(cmd)
         os.system(cmd)

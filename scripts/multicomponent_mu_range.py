@@ -1,5 +1,4 @@
 import numpy as np
-from itertools import izip
 
 debug = False
 
@@ -96,7 +95,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         Vne.append(mcc_energies[struct]*n_atoms)
 
     if debug:
-        for (L, V) in izip(Lne, Vne):
+        for (L, V) in zip(Lne, Vne):
             print "inequality i_of_element, L, V ", i_of_element, L, "<=", V
 
     full_mu_range = None
@@ -107,7 +106,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
             print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
         Leq_3 = np.array([Leq[0], Leq[1], 0.0])
         stable_mu_range = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
-        for (L, V) in izip(Lne, Vne):
+        for (L, V) in zip(Lne, Vne):
             if np.all(L == Leq): # skip instance when inequality corresponds to same composition as base structure equilibrium equality
                 continue
             if debug:
@@ -138,10 +137,10 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
             print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
         # do monatomic limits first
         vertices = []
-        for (L1, V1) in izip(Lne, Vne):
+        for (L1, V1) in zip(Lne, Vne):
             if sum(L1 != 0) == 1: # monatomic
                 i1 = np.where(L1 != 0)[0][0]
-                for (L2, V2) in izip(Lne, Vne): # monatomic
+                for (L2, V2) in zip(Lne, Vne): # monatomic
                     i2 = np.where(L2 != 0)[0][0]
                     if sum(L2 != 0) == 1 and i1 < i2:
                         i3 = [0, 1, 2]
@@ -162,7 +161,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
             full_mu_range.append(e[0])
         if debug:
             print "initial polygon ", polygon
-        for (L, V) in izip(Lne, Vne):
+        for (L, V) in zip(Lne, Vne):
             if sum(L != 0) > 1:
                 polygon = intersect_half_plane (polygon, L, V)
         if debug:
@@ -171,7 +170,7 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         for e in polygon:
             stable_mu_range.append(e[0])
     elif n_types > 1: # n >= 4
-        raise Exception("Can't do mu_range for %d-ary".format(n_types))
+        raise ValueError("Can't do mu_range for %d-ary".format(n_types))
 
     if stable_mu_range is None:
         stable_mu_range_Z = None

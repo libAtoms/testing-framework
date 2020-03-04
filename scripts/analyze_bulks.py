@@ -57,7 +57,7 @@ for model_name in models:
         E0 = 0.0
         ## for Z in elements_present:
             ## symb = chemical_symbols[Z]
-            ## print "looking for min E ",symb,model_name
+            ## print("looking for min E ",symb,model_name)
             ## try:
                 ## E = element_ref_struct_data[symb]["min_Es"][model_name]
                 ## E0 += sum(struct.get_atomic_numbers() == Z)*E
@@ -73,30 +73,30 @@ for model_name in models:
             struct_data[bulk_test_name] = {}
         struct_data[bulk_test_name]["formula_unit"] = formula_unit(struct.get_atomic_numbers())
 
-    # print "got data for ",model_name, cur_model_data.keys()
+    # print("got data for ",model_name, cur_model_data.keys())
     data[model_name] = cur_model_data.copy()
 
-print ""
-print "plotting bulks"
+print("")
+print("plotting bulks")
 
 ref_model_name = default_analysis_settings["ref_model"]
 n_fig = 1
 elastic_const_tables = {}
 for model_name in models:
-    print ""
-    print "plot model", model_name
+    print("")
+    print("plot model", model_name)
     figure_nums = {}
     bulk_inds = {}
     for bulk_test_name in bulk_tests:
         try:
             min_EV  = min(data[model_name][bulk_test_name]["E_vs_V"], key = lambda x : x[1])
         except:
-            print "no data for",model_name,bulk_test_name
+            print("no data for",model_name,bulk_test_name)
             continue
-        print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
+        print("BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1])
 
     for bulk_test_name in bulk_tests:
-        print "   bulk_test_name", bulk_test_name
+        print("   bulk_test_name", bulk_test_name)
         if bulk_test_name not in data[model_name]:
             sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
             continue
@@ -130,9 +130,9 @@ for model_name in models:
 
         try:
             line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1]-args.REF_E_offset for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_linestyle, label=bulk_test_name)
-        except Exception, e:
-            print "exception ", str(e)
-            print "no data for struct",bulk_test_name,"ref model",ref_model_name
+        except Exception as e:
+            print("exception ", str(e))
+            print("no data for struct",bulk_test_name,"ref model",ref_model_name)
             pass
         line.set_color(color)
 
@@ -150,8 +150,8 @@ for model_name in models:
         ylabel("E (eV/atom)")
         savefig("{}_{}_bulk.pdf".format(model_name,fu), bbox_inches='tight')
 
-print ""
+print("")
 
 for struct in elastic_const_tables:
-    print "table for struct",struct
-    print elastic_const_tables[struct]+"\n\\end{tabular}\n"
+    print("table for struct",struct)
+    print(elastic_const_tables[struct]+"\n\\end{tabular}\n")

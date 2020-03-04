@@ -22,47 +22,49 @@ def VRH_B(c11, c33, c12, c13, c44, c66):
 
     return (Bv+Br)/2.0
 
-def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # hack tol to deal with Te C2/m
+def calc_E_vs_V(bulk, dV=0.025, n_steps=(-10,10), tol=1e-2, method='lbfgs'): # hack tol to deal with Te C2/m
    import model
 
    V0 = bulk.get_volume()
-   dV = bulk.get_volume()*vol_range/n_steps
+   dV *= V0
    E_vs_V=[]
 
    scaled_bulk = bulk.copy()
-   for i in range(0, -n_steps-1, -1):
+   for i in range(0, n_steps[0]-1, -1):
       V_cur = scaled_bulk.get_volume()
       scaled_bulk.set_cell(scaled_bulk.get_cell()*((V0+i*dV)/V_cur)**(1.0/3.0), scale_atoms=True)
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
-      print "trying to relax i",i
+      print("trying to relax i",i)
       try:
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
-          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file=None, constant_volume=True, method=method,
+          ase.io.write(run_root+"-E_vs_V_%02d-unrelaxed.xyz" % i,  scaled_bulk, format='extxyz')
+          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file="E_vs_V_traj_%02d.extxyz" % i, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-1, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
-      except Exception, e:
-          print "WARNING: failed config in calc_E_vs_V", str(e)
+      except Exception as e:
+          print("WARNING: failed config in calc_E_vs_V", str(e))
           sys.exit(1) #### NB
           break
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
-      E_vs_V.insert(0, (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
+      E_vs_V.insert(0, (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk), list(scaled_bulk.get_stress())) )
 
    scaled_bulk = bulk.copy()
-   for i in range(1,n_steps+1):
+   for i in range(1,n_steps[1]+1):
       V_cur = scaled_bulk.get_volume()
       scaled_bulk.set_cell(scaled_bulk.get_cell()*((V0+i*dV)/V_cur)**(1.0/3.0), scale_atoms=True)
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
-      print "trying to relax i",i
+      print("trying to relax i",i)
       try:
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
-          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file=None, constant_volume=True, method=method,
+          ase.io.write(run_root+"-E_vs_V_%02d-unrelaxed.xyz" % i,  scaled_bulk, format='extxyz')
+          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file="E_vs_V_traj_%02d.extxyz" % i, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-1, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
-      except Exception, e:
-          print "failed", str(e)
+      except Exception as e:
+          print("failed", str(e))
           break
       ase.io.write(sys.stdout, scaled_bulk, format='extxyz')
-      E_vs_V.append( (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk)) )
+      E_vs_V.append( (scaled_bulk.get_volume()/len(scaled_bulk), scaled_bulk.get_potential_energy()/len(bulk), list(scaled_bulk.get_stress())) )
 
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence()
@@ -70,7 +72,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
    return E_vs_V
 
 
-def do_lattice(test_dir, lattice_type, vol_range=0.25, tol=1.0e-2, method='lbfgs'):
+def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, method='lbfgs'):
 
    import model
    bulk = ase.io.read(test_dir+"/bulk.xyz", format="extxyz")
@@ -79,7 +81,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25, tol=1.0e-2, method='lbfgs
 
    tol = 1e-2 # max force tol for relaxation
 
-   print "relax bulk"
+   print("relax bulk")
    # relax the initial unit cell and atomic positions
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence(bulk)
@@ -88,15 +90,15 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25, tol=1.0e-2, method='lbfgs
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence()
 
-   print "final relaxed bulk"
+   print("final relaxed bulk")
    ase.io.write(sys.stdout, bulk, format='extxyz')
    ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  bulk, format='extxyz')
 
-   print "calculating E vs. V"
-   E_vs_V = calc_E_vs_V(bulk, vol_range=vol_range, tol=tol)
+   print("calculating E vs. V")
+   E_vs_V = calc_E_vs_V(bulk, dV=dV, n_steps=n_steps, tol=tol)
    results_dict.update({ 'E_vs_V' : E_vs_V })
 
-   print "calculating elastic constants"
+   print("calculating elastic constants")
 
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence(bulk)
