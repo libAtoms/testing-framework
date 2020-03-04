@@ -72,7 +72,7 @@ def calc_E_vs_V(bulk, dV=0.025, n_steps=(-10,10), tol=1e-2, method='lbfgs'): # h
    return E_vs_V
 
 
-def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, method='lbfgs'):
+def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, method='lbfgs', applied_P=0.0):
 
    import model
    bulk = ase.io.read(test_dir+"/bulk.xyz", format="extxyz")
@@ -83,12 +83,18 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
 
    print("relax bulk")
    # relax the initial unit cell and atomic positions
-   if hasattr(model, "fix_cell_dependence"):
-       model.fix_cell_dependence(bulk)
-   bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method, 
-                       refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True)
-   if hasattr(model, "fix_cell_dependence"):
-       model.fix_cell_dependence()
+   (orig_cell, new_cell) = (None, None)
+   while new_cell is None or np.max(np.abs(np.dot(np.linalg.inv(new_cell),orig_cell) - np.eye(3))) > 0.05:
+       if hasattr(model, "fix_cell_dependence"):
+           model.fix_cell_dependence(bulk)
+       orig_cell = bulk.get_cell()
+       bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method, 
+                           refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True, applied_P=applied_P)
+       new_cell = bulk.get_cell()
+       if hasattr(model, "fix_cell_dependence"):
+           model.fix_cell_dependence()
+       else:
+           break
 
    print("final relaxed bulk")
    ase.io.write(sys.stdout, bulk, format='extxyz')

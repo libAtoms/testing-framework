@@ -99,7 +99,11 @@ def analyze_start(default_tests=['*']):
 
     try:
         with open("default_analysis_opts.json","r") as f:
-            default_analysis_opts = json.load(f)
+            try:
+                default_analysis_opts = json.load(f)
+            except Exception as e:
+                sys.stderr.write("ERROR json.load on file default_analysis_opts.json\n")
+                raise e
     except:
         default_analysis_opts=[]
 
@@ -112,7 +116,11 @@ def analyze_start(default_tests=['*']):
     tests = [ os.path.split(f)[1] for f in list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.tests ])) ]
 
     with open("default_analysis_settings.json") as default_analysis_file:
-        default_analysis_settings = json.load(default_analysis_file)
+        try:
+            default_analysis_settings = json.load(default_analysis_file)
+        except Exception as e:
+            sys.stderr.write("ERROR json.load on file default_analysis_settings.json\n")
+            raise e
 
     return (args, models, tests, default_analysis_settings)
 

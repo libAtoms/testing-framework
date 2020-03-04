@@ -4,6 +4,7 @@ from ase.calculators.singlepoint import SinglePointCalculator
 from ase.optimize import FIRE
 from ase.optimize.precon import PreconLBFGS
 from ase.constraints import ExpCellFilter, FixAtoms, voigt_6_to_full_3x3_stress, full_3x3_to_voigt_6_stress
+from ase.units import GPa
 import numpy as np
 import os.path
 import sys
@@ -123,7 +124,7 @@ def sd2_converged(minim_ind, atoms, fmax, smax=None):
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
     refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, 
-    fix_cell_dependence=False, **kwargs):
+    fix_cell_dependence=False, applied_P=0.0, **kwargs):
 
     # get from base model if requested
     import model
@@ -165,7 +166,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         if 'move_mask' in atoms.arrays:
             atoms.set_constraint(FixAtoms(np.where(atoms.arrays['move_mask'] == 0)[0]))
         if relax_cell:
-            atoms_cell = ExpCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume)
+            atoms_cell = ExpCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume, scalar_pressure=applied_P*GPa)
         else:
             atoms_cell = atoms
         atoms.info["n_minim_iter"] = 0
