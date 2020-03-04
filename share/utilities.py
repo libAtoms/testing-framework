@@ -8,8 +8,10 @@ from quippy.potential import Minim
 import numpy as np
 import os.path
 import sys
+import time
 
 import symmetrize
+import quippy
 
 #from quippy.io import AtomsWriter
 #from quippy.cinoutput import CInOutput,OUTPUT
@@ -123,7 +125,7 @@ def sd2_converged(minim_ind, atoms, fmax, smax=None):
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
     refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, 
-    **kwargs):
+    fix_cell_dependence=False, **kwargs):
 
     # get from base model if requested
     import model
@@ -151,6 +153,10 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         atoms.set_calculator(symmetrize.SymmetrizedCalculator(model.calculator, atoms))
     else:
         atoms.set_calculator(model.calculator)
+
+    # if needed, fix cell dependence before running
+    if fix_cell_dependence and hasattr(model, "fix_cell_dependence"):
+        model.fix_cell_dependence(atoms)
 
     if method == 'lbfgs' or method == 'sd2':
         if 'move_mask' in atoms.arrays:
@@ -203,30 +209,84 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
     if keep_symmetry:
         atoms.set_calculator(model.calculator)
 
+    # undo fix cell dependence
+    if fix_cell_dependence and hasattr(model, "fix_cell_dependence"):
+        sys.stderr.write("WARNING: relax_config undoing fix_cell_dependence, whether or not it was set before it started\n")
+        model.fix_cell_dependence()
+
     return atoms
 
+def do_evaluations(atoms_list, do_energy=True, do_forces=True, do_stress=True):
+    results = []
+    for (at_i, at) in enumerate(atoms_list):
+        print "evaluation ",at_i,"/",len(atoms_list)
+        evaluate(at, do_energy, do_forces, do_stress)
+        result = {}
+        if do_energy:
+            result["energy"] = at.get_potential_energy()
+        if do_forces:
+            result["forces"] = at.get_forces().tolist()
+        if do_stress:
+            result["stress"] = at.get_stress().tolist()
+        results.append(result)
+    return results
 
-def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True):
+def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True, do_predictive_error=None):
     import model
+
+    if do_predictive_error:
+        try:
+            orig_calc_args = model.calculator.get_calc_args()
+            new_calc_args = orig_calc_args.copy()
+            new_calc_args["local_gap_variance"] = "predictive_error"
+            if isinstance(do_predictive_error,float):
+                new_calc_args["gap_variance_regularisation"] = do_predictive_error
+            elif not isinstance(do_predictive_error,bool):
+                raise ValueError("do_predictive_error not float or bool {}".format(str(do_predictive_error)))
+            model.calculator.set_calc_args(new_calc_args)
+        except AttributeError:
+            pass
+
+    # For do predictive error results to be passed back out in arrays, atoms has to be quippy.Atoms.
+    # However, if atoms is quippy.Atoms and ASE native DFT calculator is used, and atoms.info['cutoff'] is
+    # set (e.g. if read from xyz file), cutoff will always mismatch and ASE will never cache
+    # expensive DFT results (due to using __eq__ from quippy/oo_fortray.py which tests cutoffs)
+    # Therefore, only convert to quippy.Atoms if predictive_error is requested, and hope that it's
+    # never requested for DFT calculator.  Really this should be handled better by ASE/quippy.
+    if do_predictive_error:
+        atoms_orig = atoms
+        atoms = quippy.Atoms(atoms)
+    else:
+        atoms_orig = None
     atoms.set_calculator(model.calculator)
 
-    energy = None
-    if do_energy:
-        energy = atoms.get_potential_energy()
+    stress = None
+    if do_stress:
+        stress = atoms.get_stress()
 
     forces = None
     if do_forces:
         forces = atoms.get_forces()
 
-    stress = None
-    if do_stress:
-        stress = atoms.get_stress()
+    energy = None
+    if do_energy:
+        energy = atoms.get_potential_energy()
 
     spc = SinglePointCalculator(atoms,
                                 energy=energy,
                                 forces=forces,
                                 stress=stress)
     atoms.set_calculator(spc)
+    if atoms_orig is not None:
+        atoms_orig.set_calculator(spc)
+
+    if do_predictive_error:
+        atoms.arrays["predictive_error"] = np.sqrt(atoms.arrays["predictive_error"])
+        try:
+            model.calculator.set_calc_args(orig_calc_args)
+        except AttributeError:
+            pass
+
     return atoms
 
 def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=50, sd2_tol=1.0, max_lbfgs_iter=20, max_n_lbfgs=50, keep_symmetry=True):
@@ -257,16 +317,19 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
     if hasattr(model, "fix_cell_dependence"):
         model.fix_cell_dependence()
 
-def rescale_to_relaxed_bulk(supercell):
-    # read bulk
-    bulk_struct_test=supercell.info['bulk_struct_test']
+def get_relaxed_bulk(bulk_struct_test):
     bulk_model_test_relaxed = os.path.join('..',model_test_root(u_test_name=bulk_struct_test)+"-relaxed.xyz")
-
     try:
         bulk = read(bulk_model_test_relaxed, format='extxyz')
     except:
         sys.stderr.write("Failed to read relaxed bulk '{}', perhaps bulk test hasn't been run yet\n".format(bulk_model_test_relaxed))
         sys.exit(1)
+
+    return bulk
+
+def rescale_to_relaxed_bulk(supercell):
+    # read bulk
+    bulk = get_relaxed_bulk(supercell.info['bulk_struct_test'])
 
     # rescale supercell cell
     supercell_a1_lattice = supercell.info['supercell_a1_in_bulk_lattice_coords']

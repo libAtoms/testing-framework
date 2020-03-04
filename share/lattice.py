@@ -38,7 +38,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       try:
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
-          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
+          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=20, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
           print "WARNING: failed config in calc_E_vs_V", str(e)
@@ -55,7 +55,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
       try:
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
-          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None, constant_volume=True, method=method,
+          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=20, traj_file=None, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-4, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception, e:
           print "failed", str(e)
@@ -69,7 +69,7 @@ def calc_E_vs_V(bulk, vol_range=0.25, n_steps=10, tol=1e-2, method='lbfgs'): # h
    return E_vs_V
 
 
-def do_lattice(test_dir, lattice_type, vol_range=0.25, method='lbfgs'):
+def do_lattice(test_dir, lattice_type, vol_range=0.25, tol=1.0e-2, method='lbfgs'):
 
    import model
    bulk = ase.io.read(test_dir+"/bulk.xyz", format="extxyz")
@@ -92,7 +92,7 @@ def do_lattice(test_dir, lattice_type, vol_range=0.25, method='lbfgs'):
    ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  bulk, format='extxyz')
 
    print "calculating E vs. V"
-   E_vs_V = calc_E_vs_V(bulk, vol_range=vol_range)
+   E_vs_V = calc_E_vs_V(bulk, vol_range=vol_range, tol=tol)
    results_dict.update({ 'E_vs_V' : E_vs_V })
 
    print "calculating elastic constants"

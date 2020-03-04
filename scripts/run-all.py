@@ -106,7 +106,7 @@ for model in models:
                 bugs_script='test.bugs_script'
             if args.OpenMP:
                 bugs_script+='_openmp'
-            bugs_script += '.'+os.environ['HOSTNAME']
+            bugs_script += '.'+os.environ['HOSTNAME'].split('.')[0]
             cmd=('env REDIRECT_IO="'+cmd_args+'" bugs -exec=python '+mpi_cmd+' -time=96h -np='+('%d' % np)+' -script='+bugs_script+
                  ' -name='+ident_string+' -fileroot='+ident_string+' -in_cwd -output=job.'+ident_string)
         else:

@@ -7,6 +7,17 @@ import spglib
 
 def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, relax_symm_break=0.0, nn_cutoff=0.0, tol=1.0e-2):
 
+    # do unrelaxed (without perturbations)
+    vac = bulk_supercell.copy()
+    del vac[vac_i]
+
+    label = "ind_%d_Z_%d" % (vac_i, bulk_supercell.get_atomic_numbers()[vac_i])
+    unrelaxed_filename=run_root+"-%s-unrelaxed.xyz" % label
+    ase.io.write(os.path.join("..",unrelaxed_filename), vac, format='extxyz')
+    evaluate(vac)
+    unrelaxed_vac_pe = vac.get_potential_energy()
+
+    # recreate with perturbations for relaxation
     vac = bulk_supercell.copy()
 
     if relax_radial != 0.0 or relax_symm_break != 0.0:
@@ -20,12 +31,6 @@ def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, r
            offset_factor += relax_symm_break
 
     del vac[vac_i]
-
-    label = "ind_%d_Z_%d" % (vac_i, bulk_supercell.get_atomic_numbers()[vac_i])
-    unrelaxed_filename=run_root+"-%s-unrelaxed.xyz" % label
-    ase.io.write(os.path.join("..",unrelaxed_filename), vac, format='extxyz')
-    evaluate(vac)
-    unrelaxed_vac_pe = vac.get_potential_energy()
 
     vac = relax_config(vac, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, 
         config_label=label, from_base_model=True, save_config=True)

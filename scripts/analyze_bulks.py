@@ -55,15 +55,15 @@ for model_name in models:
 
         # shift energy by minimum energies of reference element structures
         E0 = 0.0
-        for Z in elements_present:
-            symb = chemical_symbols[Z]
-            print "looking for min E ",symb,model_name
-            try:
-                E = element_ref_struct_data[symb]["min_Es"][model_name]
-                E0 += sum(struct.get_atomic_numbers() == Z)*E
-            except:
-                pass
-        E0 /= len(struct)
+        ## for Z in elements_present:
+            ## symb = chemical_symbols[Z]
+            ## print "looking for min E ",symb,model_name
+            ## try:
+                ## E = element_ref_struct_data[symb]["min_Es"][model_name]
+                ## E0 += sum(struct.get_atomic_numbers() == Z)*E
+            ## except:
+                ## pass
+        ## E0 /= len(struct)
 
         # shift E_vs_V
         E_vs_V_orig = cur_model_data[bulk_test_name]["E_vs_V"]
@@ -76,10 +76,15 @@ for model_name in models:
     # print "got data for ",model_name, cur_model_data.keys()
     data[model_name] = cur_model_data.copy()
 
+print ""
+print "plotting bulks"
+
 ref_model_name = default_analysis_settings["ref_model"]
 n_fig = 1
 elastic_const_tables = {}
 for model_name in models:
+    print ""
+    print "plot model", model_name
     figure_nums = {}
     bulk_inds = {}
     for bulk_test_name in bulk_tests:
@@ -91,6 +96,7 @@ for model_name in models:
         print "BULK_E_V_MIN",model_name,bulk_test_name, min_EV[0], min_EV[1]
 
     for bulk_test_name in bulk_tests:
+        print "   bulk_test_name", bulk_test_name
         if bulk_test_name not in data[model_name]:
             sys.stderr.write("skipping struct {} in plotting model {}\n".format(bulk_test_name, model_name))
             continue
@@ -113,13 +119,19 @@ for model_name in models:
         other_linestyle = other_linestyles[int(math.floor(bulk_inds[fu]/len(struct_colors)))]
         color = struct_colors[bulk_inds[fu] % len(struct_colors)]
         if model_name != ref_model_name:
-            line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_linestyle)
+            if bulk_test_name not in data[ref_model_name]:
+                label=bulk_test_name
+            else:
+                label=None
+            line, = plot( [x[0] for x in data[model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[model_name][bulk_test_name]["E_vs_V"]], other_linestyle, label=label)
             line.set_color(color)
             line.set_marker('o')
             line.set_markersize(2.5)
+
         try:
             line, = plot( [x[0] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], [x[1] for x in data[ref_model_name][bulk_test_name]["E_vs_V"]], ref_linestyle, label=bulk_test_name)
-        except:
+        except Exception, e:
+            print "exception ", str(e)
             print "no data for struct",bulk_test_name,"ref model",ref_model_name
             pass
         line.set_color(color)
@@ -137,6 +149,8 @@ for model_name in models:
         xlabel("V ($A^3$/atom)")
         ylabel("E (eV/atom)")
         savefig("{}_{}_bulk.pdf".format(model_name,fu), bbox_inches='tight')
+
+print ""
 
 for struct in elastic_const_tables:
     print "table for struct",struct
