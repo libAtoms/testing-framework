@@ -93,7 +93,7 @@ for model in models:
         if np < args.n_procs:
             np = args.n_procs
 
-        cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, os.path.join(args.models_path,model_name), test_name, args.test_set)
+        cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, "'"+os.path.join(args.models_path,model_name)+"'", test_name, args.test_set)
         if force:
             cmd_args += ' -force'
         if args.base_model is not None:
