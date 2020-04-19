@@ -23,14 +23,14 @@ parser.add_argument('--base_model', '-B', action='store', type=str, help='model 
 parser.add_argument('--models_path', '-P', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
 parser.add_argument('--n_procs', '-N', action='store', type=int, help='number of processors to round to', default=16)
 
+global_default_run_opts = []
+default_run_opts = []
 if os.path.exists("default_run_opts.json"):
     with open("default_run_opts.json","r") as f:
         default_run_opts = json.load(f)
 
-if "global" in default_run_opts:
-    global_default_run_opts = default_run_opts["global"]
-else:
-    global_default_run_opts = []
+    if "global" in default_run_opts:
+        global_default_run_opts = default_run_opts["global"]
 
 args = parser.parse_args(sys.argv[1:] + global_default_run_opts)
 
@@ -69,10 +69,11 @@ for model in models:
     model_name = os.path.split(model)[-1]
 
     model_default_run_opts = []
-    for m in default_run_opts:
-        if re.search(m, model_name) is not None:
-            model_default_run_opts = default_run_opts[m]
-            break
+    if default_run_opts is not None: 
+        for m in default_run_opts:
+            if re.search(m, model_name) is not None:
+                model_default_run_opts = default_run_opts[m]
+                break
 
     args = parser.parse_args(sys.argv[1:] + model_default_run_opts + global_default_run_opts)
 
