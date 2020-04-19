@@ -10,15 +10,18 @@ import os.path
 import sys
 import time
 
-import symmetrize
+from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry, refine_symmetry
 
 #from quippy.io import AtomsWriter
 #from quippy.cinoutput import CInOutput,OUTPUT
 #from quippy.atoms import Atoms
 
+def path_of_file(file):
+    return os.path.abspath(os.path.dirname(file))
+
 def name_of_file(file):
     if '/' in file:
-        name = os.path.basename(os.path.dirname(file))
+        name = os.path.basename(file)
     else:
         name = file
     return name
@@ -147,14 +150,15 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
                 print("relax_config failed to determined base_run_root")
 
     print("relax_config symmetry before refinement at default tol 1.0e-6")
-    print(symmetrize.check(atoms, 1.0e-6))
+    check_symmetry(atoms, 1.0e-6, verbose=True)
     if refine_symmetry_tol is not None:
-        symmetrize.refine(atoms, refine_symmetry_tol)
+        refine_symmetry(atoms, refine_symmetry_tol)
         print("relax_config symmetry after refinement")
-        print(symmetrize.check(atoms, refine_symmetry_tol))
+        check_symmetry(atoms, refine_symmetry_tol, verbose=True)
     if keep_symmetry:
         print("relax_config trying to maintain symmetry")
-        atoms.set_calculator(symmetrize.SymmetrizedCalculator(model.calculator, atoms))
+        atoms.set_calculator(model.calculator)
+        atoms.set_constraint(FixSymmetry(atoms))
     else:
         atoms.set_calculator(model.calculator)
 
@@ -198,9 +202,9 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
 
     if refine_symmetry_tol is not None:
         print("symmetry at end of relaxation at desired tol")
-        print(symmetrize.check(atoms, refine_symmetry_tol))
+        check_symmetry(atoms, refine_symmetry_tol, verbose=True)
     print("symmetry at end of relaxation at default tol 1e-6")
-    print(symmetrize.check(atoms, 1.0e-6))
+    check_symmetry(atoms, 1.0e-6, verbose=True)
 
     # in case we had a trajectory saved
     try:
@@ -223,7 +227,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
 
     return atoms
 
-def do_evaluations(atoms_list, do_energy=True, do_forces=True, do_stress=True):
+def evaluate_atoms_list(atoms_list, do_energy=True, do_forces=True, do_stress=True):
     results = []
     for (at_i, at) in enumerate(atoms_list):
         print("evaluation ",at_i,"/",len(atoms_list))
@@ -237,6 +241,13 @@ def do_evaluations(atoms_list, do_energy=True, do_forces=True, do_stress=True):
             result["stress"] = at.get_stress().tolist()
         results.append(result)
     return results
+
+def evaluate_file(file, do_energy=True, do_forces=True, do_stress=True, do_predictive_error=None):
+    al = read(file, index=":")
+    for a in al:
+        evaluate(a, do_energy, do_forces, do_stress, do_predictive_error)
+    write(model_test_root()+"_"+name_of_file(file), al)
+    return al
 
 def evaluate(atoms, do_energy=True, do_forces=True, do_stress=True, do_predictive_error=None):
     import model
