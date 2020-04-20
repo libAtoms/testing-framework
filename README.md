@@ -3,7 +3,7 @@ Testing Framework for atomistic models
 
 The purpose of this repository is to aid the testing of a large number
 of interatomic potentials for a variety of systems (materials or
-molecules). It uses the Atomic Simulation Environment (ASE) to glue
+molecules). It uses the [Atomic Simulation Environment (ASE)](https://gitlab.com/ase/ase) to glue
 things together. Although the relevant tests might differ between
 different systems, there are a lot of commonalities, e.g. calculating
 response of various crystal phases to deformation, or the evaluation
