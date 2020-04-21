@@ -115,4 +115,6 @@ for model in models:
         else:
             cmd="python "+cmd_args
         print(cmd)
+        # TODO: convert this to using subprocess.run()
         os.system(cmd)
+        
