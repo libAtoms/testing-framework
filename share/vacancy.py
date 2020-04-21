@@ -47,7 +47,7 @@ def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, r
     Ef = vac_pe - Ebulk
     print("got vacancy",label,"cell energy",vac_pe,"n_atoms",len(vac))
     print("got bulk energy", Ebulk," (scaled to (N-1)/N if single component)")
-    return ( label, unrelaxed_filename, Ef0, relaxed_filename, Ef, bulk_supercell.get_atomic_numbers()[vac_i] )
+    return ( label, unrelaxed_filename, Ef0, relaxed_filename, Ef, int(bulk_supercell.get_atomic_numbers()[vac_i]) )
 
 def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
     print("doing do_all_vacancies")
@@ -80,8 +80,8 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
                 dv_scaled = np.dot(dv, bulk_supersupercell.get_reciprocal_cell().T)
                 dv -= np.dot(np.round(dv_scaled), bulk_supersupercell.get_cell())
                 i_closest = np.argmin(np.linalg.norm(dv, axis=1))
-                print("found closest in new cell", i_closest, "distance in orig cell lattice coords", np.dot((bulk_supersupercell.get_positions()[i_closest]-p), )
-                    bulk_supercell.get_reciprocal_cell().T)
+                print("found closest in new cell", i_closest, "distance in orig cell lattice coords", np.dot((bulk_supersupercell.get_positions()[i_closest]-p), \
+                                                                                                             bulk_supercell.get_reciprocal_cell().T))
                 vacancy_list.append(i_closest)
             bulk_supercell = bulk_supersupercell
         else:
