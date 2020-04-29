@@ -1,5 +1,4 @@
 import ase.io
-from itertools import izip
 from utilities import robust_minim_cell_pos
 
 def do_RSS(initial_configs_file, index=':', tol=0.01):
@@ -13,7 +12,7 @@ def do_RSS(initial_configs_file, index=':', tol=0.01):
 
     energies = []
     volumes = []
-    for (i_config, at) in izip(range(len(ats))[slice(*range_slice_args)], ats):
+    for (i_config, at) in zip(range(len(ats))[slice(*range_slice_args)], ats):
         robust_minim_cell_pos(at, tol, "RSS_%04d" % i_config)
         print("RSS completed minimization")
         if hasattr(model, "fix_cell_dependence"):
