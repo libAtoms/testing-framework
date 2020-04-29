@@ -29,15 +29,21 @@ Any interatomic potential that can be instantiated as an ASE
  calculator can be tested. The potential models (each in its own
  directory) are kept in a directory structure separate from the
  testing-framework structure above. Examples are given under the
- `example_run_dir` directory, the first level subdirectories specify
- the system, and under each are `models` and `run_dir` subdirectories,
+ `example_run_dir` directory. Here the first level subdirectories specify
+ the test-system, and under each are `models` and `run_dir` subdirectories,
  the former contains the different potentials, the latter is where
- the tests are actually run and the test results appear.
+ the tests are actually run and the test results appear. The test-system
+ is indicated to the test scripts using the `-s` option. The `models` directory
+ can be kept elsewhere and its location specified via an option. The test-system
+ label is used to generate unique file names and directories when the
+ tests are run. 
 
 Running tests
 -------------
 
-The following is an example of how tests are run:
+The following is an example of how tests are run. Here the test-system
+is called `CSiGe`, the model is `Tersoff` and the test is `bulk_Si_diamond`.
+
 
 ```
 cd testing-framework/example_run_dir/CSiGe/run_dir
@@ -55,7 +61,9 @@ This will produce three things:
   aid debugging
 
 Running the same test again will first check to see if the `.json`
-file exists, and if it does, the corresponding test is skipped.
+file exists, and if it does, the corresponding test is skipped. Some tests
+are conditional on others (such as bulk tests) having been run already, if they exit with such 
+an error, just rerun them again once the prerequisite tests have run. 
 
 The `run-all.py` script will find all tests and all models under a
 given system and run all those without `.json` files present in the
