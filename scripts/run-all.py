@@ -41,7 +41,7 @@ tests = None
 omittests = None
 if args.models is not None:
     print("Models asked for: ", args.models)
-    models = [ os.path.join(args.models_path, d, 'model.py') for d in args.models ]
+    models = list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d, 'model.py')) for d in args.models ]))
 else:
     models = glob.glob(os.path.join(args.models_path, '*', 'model.py'))
 print("Models path: ", args.models_path)
