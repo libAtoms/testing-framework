@@ -117,7 +117,7 @@ def do_interstitial(test_dir, nn_cutoff=0.0, tol=1.0e-2):
 
         (label, unrelaxed_filename, Ef0, relaxed_filename, Ef, interstitial_i) = do_one_interstitial(bulk_supercell, bulk_supercell_pe, interstitial_Z, interstitial_pos, relax_radial, relax_symm_break, nn_cutoff, tol)
 
-    properties["defects"][label] = { 'Ef0' : Ef0, 'Ef' : Ef, 'unrelaxed_filename' : unrelaxed_filename, 'relaxed_filename' : relaxed_filename, 'atom_ind' : interstitial_i, 'Z' : interstitial_Z }
+    properties["defects"][label] = { 'Ef0' : Ef0, 'Ef' : Ef, 'unrelaxed_filename' : unrelaxed_filename, 'relaxed_filename' : relaxed_filename, 'atom_ind' : int(interstitial_i), 'Z' : int(interstitial_Z) }
     if len(set(bulk_supercell.get_atomic_numbers())) != 1:
         properties["defects"][label]['dmu'] = [-1, interstitial_Z]
 
