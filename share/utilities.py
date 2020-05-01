@@ -157,10 +157,9 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         check_symmetry(atoms, refine_symmetry_tol, verbose=True)
     if keep_symmetry:
         print("relax_config trying to maintain symmetry")
-        atoms.set_calculator(model.calculator)
         atoms.set_constraint(FixSymmetry(atoms))
-    else:
-        atoms.set_calculator(model.calculator)
+
+    atoms.set_calculator(model.calculator)
 
     # if needed, fix cell dependence before running
     if fix_cell_dependence and hasattr(model, "fix_cell_dependence"):
@@ -180,7 +179,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
                 write(traj_file, traj)
         else:
             # precon="Exp" specified to resolve an error with the lbfgs not optimising
-            opt = PreconLBFGS(atoms_cell, precon="Exp", use_armijo=False, **kwargs)
+            opt = PreconLBFGS(atoms_cell, use_armijo=False, **kwargs)
             if traj_file is not None:
                 traj = open(traj_file, "w")
                 def write_trajectory():
@@ -218,7 +217,10 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         write(run_root+'-'+config_label+'-relaxed.xyz', atoms, format='extxyz')
 
     if keep_symmetry:
-        atoms.set_calculator(model.calculator)
+        for (i_c, c) in enumerate(atoms.constraints):
+            if isinstance(c, FixSymmetry):
+                del atoms.constraints[i_c]
+                break
 
     # undo fix cell dependence
     if fix_cell_dependence and hasattr(model, "fix_cell_dependence"):
