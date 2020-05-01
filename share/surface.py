@@ -9,9 +9,17 @@ def do_symmetric_surface(test_dir):
     surf = ase.io.read(test_dir+"/surface.xyz", format="extxyz")
 
     bulk = rescale_to_relaxed_bulk(surf)
+    bulk_Zs = bulk.get_atomic_numbers()
     evaluate(bulk)
+    bulk_cell = bulk.get_cell()
+    bulk_E = bulk.get_potential_energy()
 
-    print("got relaxed bulk cell ", bulk.get_cell())
+    try:
+        model.reset_config()
+    except AttributeError:
+        pass
+
+    print("got relaxed bulk cell ", bulk_cell)
     print("got rescaled surf cell ", surf.get_cell())
 
     # relax surface system
@@ -22,7 +30,6 @@ def do_symmetric_surface(test_dir):
 
     # check stoichiometry and number of bulk cell energies to subtract
     surf_Zs = surf.get_atomic_numbers()
-    bulk_Zs = bulk.get_atomic_numbers()
     Z0 = bulk_Zs[0]
     n_bulk_cells = float(sum(surf_Zs == Z0))/float(sum(bulk_Zs == Z0))
     if len(set(bulk_Zs)) == 1:
@@ -36,7 +43,7 @@ def do_symmetric_surface(test_dir):
     area = np.linalg.norm(np.cross(surf.get_cell()[0,:],surf.get_cell()[1,:]))
 
     print("got surface cell potential energy", surf.get_potential_energy())
-    print("got bulk potential energy",bulk.get_potential_energy()*n_bulk_cells)
+    print("got bulk potential energy",bulk_E*n_bulk_cells)
     print("got area",area)
 
-    return { "bulk_struct_test" : surf.info["bulk_struct_test"],  "Ef" : (surf.get_potential_energy() - bulk.get_potential_energy()*n_bulk_cells)/(2.0*area), "dmu" : n_dmu, 'filename' : run_root+"-relaxed.xyz" }
+    return { "bulk_struct_test" : surf.info["bulk_struct_test"],  "Ef" : (surf.get_potential_energy() - bulk_E*n_bulk_cells)/(2.0*area), "dmu" : n_dmu, 'filename' : run_root+"-relaxed.xyz" }
