@@ -79,8 +79,6 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
 
    results_dict = {}
 
-   tol = 1e-2 # max force tol for relaxation
-
    print("relax bulk")
    # relax the initial unit cell and atomic positions
    (orig_cell, new_cell) = (None, None)

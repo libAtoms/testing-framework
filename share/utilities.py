@@ -179,7 +179,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
                 write(traj_file, traj)
         else:
             # precon="Exp" specified to resolve an error with the lbfgs not optimising
-            opt = PreconLBFGS(atoms_cell, precon="Exp", use_armijo=False, **kwargs)
+            opt = PreconLBFGS(atoms_cell, use_armijo=False, **kwargs)
             if traj_file is not None:
                 traj = open(traj_file, "w")
                 def write_trajectory():
