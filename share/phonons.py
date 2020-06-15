@@ -1,13 +1,15 @@
+import sys
 from utilities import *
 import numpy as np
-import os
 import phonopy
 from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
 import ase.units
 
-def do_phonons(bulk_struct_tests, n_supercell, n_dos_mesh=0, dx=0.01):
+def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
+    if band_paths is not None and len(band_paths) != len(bulk_struct_tests):
+        raise RuntimeError("got {} bulk structs but different {} band paths".format(len(bulk_struct_tests), len(band_paths)))
     properties = {}
-    for bulk_struct_test in bulk_struct_tests:
+    for bulk_i, bulk_struct_test in enumerate(bulk_struct_tests):
         at0 = get_relaxed_bulk(bulk_struct_test)
 
         # magnetic moments could change the symmetry, ignored here for now
@@ -23,27 +25,28 @@ def do_phonons(bulk_struct_tests, n_supercell, n_dos_mesh=0, dx=0.01):
 
         ####################################################################################################
         # if args.SETUP:
+        sys.stderr.write("SETUP\n")
 
         displ_supercells = phonons.get_supercells_with_displacements()
 
-        at0 *= n_supercell
-        # reorder at0 to match order from phonopy
+        at0_sc = at0 * n_supercell
+        # reorder at0_sc to match order from phonopy
         at = ase.Atoms(pbc=True, cell=displ_supercells[0].get_cell(), positions=displ_supercells[0].get_positions(), numbers=displ_supercells[0].get_atomic_numbers())
         matched_pos = np.zeros(at.positions.shape)
         mapping = [-1]*len(at)
-        at0_scaled_pos = at0.get_scaled_positions()
+        at0_sc_scaled_pos = at0_sc.get_scaled_positions()
         at_scaled_pos = at.get_scaled_positions()
-        for at0_i in range(len(at)):
-            scaled_dists = at0_scaled_pos[at0_i] - at_scaled_pos
+        for at0_sc_i in range(len(at)):
+            scaled_dists = at0_sc_scaled_pos[at0_sc_i] - at_scaled_pos
             scaled_dists -= np.round(scaled_dists)
             closest_i = np.argmin(np.linalg.norm(scaled_dists, axis=1))
-            matched_pos[at0_i] = at.positions[closest_i]
-            mapping[closest_i] = at0_i
+            matched_pos[at0_sc_i] = at.positions[closest_i]
+            mapping[closest_i] = at0_sc_i
         if -1 in mapping:
             raise RuntimeError("Failed to map orig and displaced atom positions")
-        at0 = at0[mapping]
+        at0_sc = at0_sc[mapping]
 
-        # ase.io.write("UNDISPL.{}".format(file_label), at0)
+        # ase.io.write("UNDISPL.{}".format(file_label), at0_sc)
 
         # create displaced cells
         sys.stderr.write("Creating {} displacements\n".format(len(displ_supercells)))
@@ -56,25 +59,27 @@ def do_phonons(bulk_struct_tests, n_supercell, n_dos_mesh=0, dx=0.01):
         ####################################################################################################
         all_forces = []
         # if args.CALCULATE:
+        sys.stderr.write("CALCULATE\n")
 
         sys.stderr.write("Calculating for {} displacements\n".format(len(at_sets)))
 
-        evaluate(at0)
-        f0 = at0.get_forces()
+        evaluate(at0_sc)
+        f0 = at0_sc.get_forces()
         # np.savetxt("FORCES.UNDISPL.{}".format(file_label), f0)
-        p0 = at0.get_positions()
-        c0 = at0.get_cell()
 
         for (displ_i, at) in enumerate(at_sets):
-            at0.set_positions(at.positions)
-            at0.set_cell(at.get_cell())
-            evaluate(at0)
-            f = at0.get_forces()
+            at0_sc.set_positions(at.positions)
+            at0_sc.set_cell(at.get_cell())
+            sys.stderr.write("start evaluate displacement {}\n". format(displ_i))
+            evaluate(at0_sc)
+            f = at0_sc.get_forces()
             all_forces.append(f)
             # np.savetxt("FORCES.DISPL_{}.{}".format(displ_i, file_label), all_forces[-1])
 
         ####################################################################################################
         # if args.PROCESS:
+        sys.stderr.write("PROCESS\n")
+
         Nat = all_forces[0].shape[0]
         for f in all_forces:
             f -= f0
@@ -84,28 +89,13 @@ def do_phonons(bulk_struct_tests, n_supercell, n_dos_mesh=0, dx=0.01):
         phonons.symmetrize_force_constants()
 
         # CsG says a bug in phonopy requires writing and then re-reading the force constants
-        write_FORCE_CONSTANTS(phonons.get_force_constants(), filename="FORCE_CONSTANTS")
-
-        ####################################################################################################
-        # if args.ANALYZE:
-        # CsG says an apparent bug in phonopy requires that phonons be written and then read back in, so don't just use the ones calculated in prev stage directly
-        fc = parse_FORCE_CONSTANTS(filename="FORCE_CONSTANTS")
-        phonons.set_force_constants(fc)
-
-        # do something with force constants
-        properties[bulk_struct_test] = {}
-        if n_dos_mesh > 0:
-            phonons.set_mesh( [n_dos_mesh]*3 )
-
-            phonons.set_total_DOS()
-            frequencies = phonons.get_total_dos_dict()['frequency_points']
-            PHdos = phonons.get_total_dos_dict()['total_dos']
-
-            #contains by columns the frequencies in cm^{-1} and the vDOS
-            #the vDOS ins in units of "number of states/(unit cell x frequency[cm^{-1}])" 
-            # i.e. if you integrate the vDOS throughout frequency, it will be 3N, where N is the number of atoms in the unit cell
-            # np.savetxt( "DOS.{}{}.data".format(file_label,calculator_str), np.transpose([frequencies/THz_per_invcm,PHdos*THz_per_invcm]))
-            properties[bulk_struct_test]['DOS'] = [list(frequencies/THz_per_invcm), list(PHdos*THz_per_invcm)]
+        fcs = phonons.get_force_constants()
+        # phonopy_atoms = phonopy.structure.atoms.PhonopyAtoms( symbols=at0.get_chemical_symbols(), 
+                                      # scaled_positions=at0.get_scaled_positions(),
+                                      # masses=at0.get_masses(), cell=at0.get_cell() )
+        # phonons = phonopy.Phonopy( phonopy_atoms, np.diag([n_supercell]*3), factor=phonopy.units.VaspToTHz )
+        properties[bulk_struct_test] = { 'FC' : fcs.tolist(), 'symb' : at0.get_chemical_symbols(), 'scaled_pos' : at0.get_scaled_positions().tolist(), 'm' : at0.get_masses().tolist(), 'c' : at0.get_cell().tolist(), 'n_cell' : np.diag([n_supercell]*3).tolist(), 'unit_factor' : phonopy.units.VaspToTHz, 'band_path' : band_paths[bulk_i] }
+        ## write_FORCE_CONSTANTS(phonons.get_force_constants(), filename="FORCE_CONSTANTS")
 
         ####################################################################################################
 
