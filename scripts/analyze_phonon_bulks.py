@@ -113,15 +113,16 @@ for model_name in models:
     fig_DOS = pyplot.figure()
     ax_DOS = fig_DOS.add_subplot(1,1,1)
     fig_BP = pyplot.figure()
-    ax_BP = fig_BP.add_subplot(1,1,1)
     for (bulk_i, bulk_struct_test) in enumerate(data[ref_model_name]["phonon_bulks"]):
-    
+        ax_BP = fig_BP.add_subplot(len(data[ref_model_name]["phonon_bulks"]),1,bulk_i+1)
+
         ref_model_data = data[ref_model_name]["phonon_bulks"][bulk_struct_test]
         try:
             model_data = data[model_name]["phonon_bulks"][bulk_struct_test]
         except:
             continue
 
+        print("analyze model-bulk", model_name, bulk_struct_test)
         analyze_phonons(model_data)
 
         if 'DOS' in ref_model_data:
@@ -134,26 +135,28 @@ for model_name in models:
                            label=bulk_struct_test if i == 0 else None)
                 ax_BP.plot(model_data['BAND_PATH']['positions'], model_data['BAND_PATH']['frequencies'][:,i], ":", color='C{}'.format(bulk_i), label=None)
 
+            if bulk_i == len(data[ref_model_name]["phonon_bulks"])-1:
+                ax_BP.set_xlabel("BZ point")
+            ax_BP.set_ylabel("freq. (cm$^{-1}$)")
+            ax_BP.set_xticks([p for p,l in zip(ref_model_data['BAND_PATH']['positions'], ref_model_data['BAND_PATH']['labels']) if l != '.'])
+            ax_BP.set_xticklabels([l for l in ref_model_data['BAND_PATH']['labels'] if l != '.'])
+            ax_BP.set_xlim(ref_model_data['BAND_PATH']['positions'][0],ref_model_data['BAND_PATH']['positions'][-1])
+            ylim = ax_BP.get_ylim()
+            for p, l in zip(ref_model_data['BAND_PATH']['positions'][1:-1], ref_model_data['BAND_PATH']['labels'][1:-1]):
+                if l != '.':
+                    ax_BP.plot([p,p],ylim, '-', color='black', label=None)
+            ax_BP.set_ylim(ylim)
+            ax_BP.legend(loc='upper right')
+            ax_BP.axhline(color='black', linewidth=0.5)
+
     ax_DOS.set_xlabel("freq (cm$^{-1}$)")
     ax_DOS.set_ylabel("DOS (arb. units)")
     ylim = ax_DOS.get_ylim()
     ax_DOS.set_ylim(0.0, ylim[1])
     ax_DOS.legend()
 
-    ax_BP.set_xlabel("q-point")
-    ax_BP.set_ylabel("freq. (cm$^{-1}$)")
-    ax_BP.set_xticks([p for p,l in zip(ref_model_data['BAND_PATH']['positions'], ref_model_data['BAND_PATH']['labels']) if l != '.'])
-    ax_BP.set_xticklabels([l for l in ref_model_data['BAND_PATH']['labels'] if l != '.'])
-    ax_BP.set_xlim(ref_model_data['BAND_PATH']['positions'][0],ref_model_data['BAND_PATH']['positions'][-1])
-    ylim = ax_BP.get_ylim()
-    for p, l in zip(ref_model_data['BAND_PATH']['positions'][1:-1], ref_model_data['BAND_PATH']['labels'][1:-1]):
-        if l != '.':
-            ax_BP.plot([p,p],ylim, '-', color='black', label=None)
-    ax_BP.set_ylim(ylim)
-    ax_BP.legend(loc='upper right')
-
-    fig_DOS.savefig("phonon_bulks-"+model_name+".pdf")
-    fig_BP.savefig("phonon_BAND_PATH_bulks-"+model_name+".pdf")
+    fig_DOS.savefig("phonon_bulks_DOS-"+model_name+".pdf")
+    fig_BP.savefig("phonon_bulks_BAND_PATH-"+model_name+".pdf")
     pyplot.clf()
 
     print("")

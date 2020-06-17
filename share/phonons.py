@@ -99,4 +99,4 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
 
         ####################################################################################################
 
-        return properties
+    return properties
