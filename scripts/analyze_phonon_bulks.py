@@ -25,14 +25,10 @@ def analyze_phonons(m_data):
         scaled_positions = np.asarray(m_data['scaled_pos']),
         masses = np.asarray(m_data['m']), cell = np.asarray(m_data['c']))
     phonons = phonopy.Phonopy(phonopy_atoms, m_data['n_cell'], factor=m_data['unit_factor'])
+    phonons.generate_displacements(distance=m_data['dx'])
 
-    # CsG says an apparent bug in phonopy requires that phonons be written and then read back in, so don't just use the ones calculated in prev stage directly
-    fc = np.asarray(m_data['FC'])
-    # from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
-    # write_FORCE_CONSTANTS(np.asarray(m_data['FC']), filename="FORCE_CONSTANTS")
-    # fc = parse_FORCE_CONSTANTS(filename="FORCE_CONSTANTS")
-
-    phonons.set_force_constants(fc)
+    phonons.produce_force_constants(forces=np.asarray(m_data['all_forces']), calculate_full_force_constants=True )
+    phonons.symmetrize_force_constants()
 
     # DOS
     n_dos_mesh = 16
@@ -102,21 +98,34 @@ def analyze_phonons(m_data):
             'frequencies' : bs['frequencies'][0]/THz_per_invcm,
             'labels' : q_pt_labels }
 
-for (bulk_i, bulk_struct_test) in enumerate(data[ref_model_name]["phonon_bulks"]):
-    print("analyze ref model", ref_model_name, bulk_struct_test)
-    analyze_phonons(data[ref_model_name]["phonon_bulks"][bulk_struct_test])
+if ref_model_name in data and "phonon_bulks" in data[ref_model_name]:
+    for (bulk_i, bulk_struct_test) in enumerate(data[ref_model_name]["phonon_bulks"]):
+        print("analyze ref model", ref_model_name, bulk_struct_test)
+        analyze_phonons(data[ref_model_name]["phonon_bulks"][bulk_struct_test])
+
+bulk_struct_tests = []
+for model_name in models:
+    if model_name in data and "phonon_bulks" in data[model_name]:
+        for bulk_struct_test in data[model_name]["phonon_bulks"]:
+            if bulk_struct_test not in bulk_struct_tests:
+                bulk_struct_tests.append(bulk_struct_test)
 
 for model_name in models:
-    if model_name == ref_model_name:
+    if model_name == ref_model_name and len(models) > 1:
         continue
     print("analyze model", model_name)
     fig_DOS = pyplot.figure()
     ax_DOS = fig_DOS.add_subplot(1,1,1)
     fig_BP = pyplot.figure()
-    for (bulk_i, bulk_struct_test) in enumerate(data[ref_model_name]["phonon_bulks"]):
-        ax_BP = fig_BP.add_subplot(len(data[ref_model_name]["phonon_bulks"]),1,bulk_i+1)
+    for (bulk_i, bulk_struct_test) in enumerate(bulk_struct_tests):
+        if "phonon_bulks" not in data[model_name]:
+            continue
+        ax_BP = fig_BP.add_subplot(len(data[model_name]["phonon_bulks"]),1,bulk_i+1)
 
-        ref_model_data = data[ref_model_name]["phonon_bulks"][bulk_struct_test]
+        try:
+            ref_model_data = data[ref_model_name]["phonon_bulks"][bulk_struct_test]
+        except:
+            ref_model_data = None
         try:
             model_data = data[model_name]["phonon_bulks"][bulk_struct_test]
         except:
@@ -125,24 +134,28 @@ for model_name in models:
         print("analyze model-bulk", model_name, bulk_struct_test)
         analyze_phonons(model_data)
 
-        if 'DOS' in ref_model_data:
-            ax_DOS.plot(ref_model_data['DOS']['freq'], ref_model_data['DOS']['val'], "-", color='C{}'.format(bulk_i), label=bulk_struct_test)
-            ax_DOS.plot(model_data['DOS']['freq'], model_data['DOS']['val'], ":", color='C{}'.format(bulk_i), label=None)
+        if ref_model_data is not None and 'DOS' in ref_model_data:
+            ax_DOS.plot(ref_model_data['DOS']['freq'], ref_model_data['DOS']['val'], "-", color='C{}'.format(bulk_i), label=None)
+        if 'DOS' in model_data:
+            ax_DOS.plot(model_data['DOS']['freq'], model_data['DOS']['val'], ":", color='C{}'.format(bulk_i), label=bulk_struct_test)
 
-        if 'BAND_PATH' in ref_model_data:
+        if ref_model_data is not None and 'BAND_PATH' in ref_model_data:
             for i in range(ref_model_data['BAND_PATH']['frequencies'].shape[1]):
                 ax_BP.plot(ref_model_data['BAND_PATH']['positions'], ref_model_data['BAND_PATH']['frequencies'][:,i], "-", color='C{}'.format(bulk_i), 
+                           label=None)
+        if  'BAND_PATH' in model_data:
+            for i in range(model_data['BAND_PATH']['frequencies'].shape[1]):
+                ax_BP.plot(model_data['BAND_PATH']['positions'], model_data['BAND_PATH']['frequencies'][:,i], ":", color='C{}'.format(bulk_i), 
                            label=bulk_struct_test if i == 0 else None)
-                ax_BP.plot(model_data['BAND_PATH']['positions'], model_data['BAND_PATH']['frequencies'][:,i], ":", color='C{}'.format(bulk_i), label=None)
 
-            if bulk_i == len(data[ref_model_name]["phonon_bulks"])-1:
+            if bulk_i == len(bulk_struct_tests)-1:
                 ax_BP.set_xlabel("BZ point")
             ax_BP.set_ylabel("freq. (cm$^{-1}$)")
-            ax_BP.set_xticks([p for p,l in zip(ref_model_data['BAND_PATH']['positions'], ref_model_data['BAND_PATH']['labels']) if l != '.'])
-            ax_BP.set_xticklabels([l for l in ref_model_data['BAND_PATH']['labels'] if l != '.'])
-            ax_BP.set_xlim(ref_model_data['BAND_PATH']['positions'][0],ref_model_data['BAND_PATH']['positions'][-1])
+            ax_BP.set_xticks([p for p,l in zip(model_data['BAND_PATH']['positions'], model_data['BAND_PATH']['labels']) if l != '.'])
+            ax_BP.set_xticklabels([l for l in model_data['BAND_PATH']['labels'] if l != '.'])
+            ax_BP.set_xlim(model_data['BAND_PATH']['positions'][0],model_data['BAND_PATH']['positions'][-1])
             ylim = ax_BP.get_ylim()
-            for p, l in zip(ref_model_data['BAND_PATH']['positions'][1:-1], ref_model_data['BAND_PATH']['labels'][1:-1]):
+            for p, l in zip(model_data['BAND_PATH']['positions'][1:-1], model_data['BAND_PATH']['labels'][1:-1]):
                 if l != '.':
                     ax_BP.plot([p,p],ylim, '-', color='black', label=None)
             ax_BP.set_ylim(ylim)

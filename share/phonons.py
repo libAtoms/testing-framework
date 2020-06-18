@@ -2,7 +2,6 @@ import sys
 from utilities import *
 import numpy as np
 import phonopy
-from phonopy.file_IO import parse_FORCE_CONSTANTS, write_FORCE_CONSTANTS
 import ase.units
 
 def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
@@ -84,18 +83,9 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
         for f in all_forces:
             f -= f0
             f -= np.outer(np.ones(Nat), np.sum(f, axis=0)/Nat)
+        all_forces = np.asarray(all_forces)
 
-        phonons.produce_force_constants(forces=all_forces, calculate_full_force_constants=True )
-        phonons.symmetrize_force_constants()
-
-        # CsG says a bug in phonopy requires writing and then re-reading the force constants
-        fcs = phonons.get_force_constants()
-        # phonopy_atoms = phonopy.structure.atoms.PhonopyAtoms( symbols=at0.get_chemical_symbols(), 
-                                      # scaled_positions=at0.get_scaled_positions(),
-                                      # masses=at0.get_masses(), cell=at0.get_cell() )
-        # phonons = phonopy.Phonopy( phonopy_atoms, np.diag([n_supercell]*3), factor=phonopy.units.VaspToTHz )
-        properties[bulk_struct_test] = { 'FC' : fcs.tolist(), 'symb' : at0.get_chemical_symbols(), 'scaled_pos' : at0.get_scaled_positions().tolist(), 'm' : at0.get_masses().tolist(), 'c' : at0.get_cell().tolist(), 'n_cell' : np.diag([n_supercell]*3).tolist(), 'unit_factor' : phonopy.units.VaspToTHz, 'band_path' : band_paths[bulk_i] }
-        ## write_FORCE_CONSTANTS(phonons.get_force_constants(), filename="FORCE_CONSTANTS")
+        properties[bulk_struct_test] = { 'dx' : dx, 'all_forces' : all_forces.tolist(), 'symb' : at0.get_chemical_symbols(), 'scaled_pos' : at0.get_scaled_positions().tolist(), 'm' : at0.get_masses().tolist(), 'c' : at0.get_cell().tolist(), 'n_cell' : np.diag([n_supercell]*3).tolist(), 'unit_factor' : phonopy.units.VaspToTHz, 'band_path' : band_paths[bulk_i] }
 
         ####################################################################################################
 
