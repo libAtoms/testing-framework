@@ -38,9 +38,9 @@ def calc_E_vs_V(bulk, dV=0.025, n_steps=(-10,10), tol=1e-2, method='lbfgs'): # h
       try:
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
-          ase.io.write(run_root+"-E_vs_V_%02d-unrelaxed.xyz" % i,  scaled_bulk, format='extxyz')
+          ase.io.write(run_root+"-E_vs_V_%03d-unrelaxed.xyz" % i,  scaled_bulk, format='extxyz')
           scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file="E_vs_V_traj_%02d.extxyz" % i, constant_volume=True, method=method,
-              refine_symmetry_tol=1.0e-1, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
+              refine_symmetry_tol=1.0e-1, keep_symmetry=True, config_label="E_vs_V_%03d" % i, from_base_model=True, save_config=True)
       except Exception as e:
           print("WARNING: failed config in calc_E_vs_V", str(e))
           sys.exit(1) #### NB
