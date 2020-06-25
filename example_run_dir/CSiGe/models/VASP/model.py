@@ -14,14 +14,17 @@ os.environ["VASP_PP_PATH"]=mydir
 
 # VASP KSPACING units
 kspacing_value=0.15
-# VASP ENCUT units
-encut_value=238.0
 
-# System-specific things below are XC functional, elec. temperature, SCF algo details chosen for 
-# this material, some runtime-parallelization things like NCORE and KPAR.
-# They should probably be rearranged more sensibly, some possibly externally controlled (e.g. NCORE
-# maybe via env variable set by job that runs test)
-#####################################################################################################
+# keywords related to this model (except k-points, which are handled separately)
+vasp_keywords = { 'encut' : 238.0, 'xc' : 'PBE', 'ismear' : 0, 'sigma' : 0.05, 
+    'nelm' : 150, 'algo' : 'normal', 'amix' : 0.03, 'bmix' : 0.01 }
+# keywords related to accuracy
+vasp_keywords.update( { 'ediff' : 1.0e-8, 'prec' : 'Accurate', 'addgrid' : True, 'lreal' : False } )
+# keywords that should always be there
+vasp_keywords.update( { 'ignore_constraints' : True, 'isif' : 3, 'isym' : 0 } )
+# keywords related to parallelism.  Setting ncore sensibly is important for efficiency
+vasp_keywords.update( { 'lscalapack' : False, 'lplane' : False, 'kpar' : 8, 
+    'ncore' : os.environ["VASP_NCORE"] } )
 
 # wipe restart files (when going to new atoms object) so VASP isn't confused
 # see vasp2_set_atoms() below
@@ -38,14 +41,9 @@ def wipe_restart(directory):
         pass
 
 # default calculator to kspacing_value, gamma-centered
-default_calculator = Vasp2(encut=encut_value,kspacing=kspacing_value,kgamma=True,
-    xc='PBE', prec='Accurate',ismear=0,sigma=0.05,ediff=1.0e-8,nelm=150,
-    ignore_constraints=True, ncore=16,lscalapack=False,lplane=False,
-    addgrid=True,lreal=False,
-    algo='normal', amix=0.03, bmix=0.01,
-    isym=0,isif=3, kpar=8)
-
+default_calculator = Vasp2(kspacing=kspacing_value,kgamma=True, **vasp_keywords)
 calculator = default_calculator
+
 # wipe KPOINTS in case running in old dir and first run might be KSPACING based
 try:
     os.unlink(os.path.join(calculator.directory,"KPOINTS"))
@@ -79,12 +77,7 @@ def fix_cell_dependence(at=None):
         bz_cell = at.get_reciprocal_cell()
         n_kpts = np.floor(np.linalg.norm(bz_cell,axis=1)*2.0*np.pi/kspacing_value).astype(int)+1
         print("fix_cell_dependence() got n_kpts", n_kpts,"from recip cell",bz_cell)
-        calculator = Vasp2(encut=encut_value,kpts=n_kpts,gamma=True,
-            xc='PBE', prec='Accurate',ismear=0,sigma=0.05,ediff=1.0e-8,nelm=150,
-            ignore_constraints=True, ncore=16,lscalapack=False,lplane=False,
-            addgrid=True,lreal=False,
-            algo='normal', amix=0.03, bmix=0.01,
-            isym=0,isif=3, kpar=8)
+        calculator = Vasp2(kpts=n_kpts, gamma=True, **vasp_keywords)
 
 # want checkpointing, but broken now because of force_consistent
 # no_checkpoint = False
