@@ -11,14 +11,14 @@ from torchani.nn import Sequential
 # a subclass of this, or a compatible class implementing the calculator interface.
 
 species_order = ['H', 'C', 'N', 'O']
-const_file = '../ANI_300K/rHCNO-5.2R_16-3.5A_a4-8.params')
+const_file = '../ANI_common/rHCNO-5.2R_16-3.5A_a4-8.params')
 consts = torchani.neurochem.Constants(const_file)
 aev_computer = AEVComputer(**consts)
-energy_shifter = load_sae('../ANI_300K/sae_linfit.dat')
+energy_shifter = load_sae('../ANI_common/sae_linfit.dat')
 
 
 
-nn = load_model(consts.species, '../ANI_300K/ANI_original')
+nn = load_model(consts.species, '../ANI_common')
 nn.load_state_dict(torch.load('model600EF_pre_1_best.pt'))
 model_trained = Sequential(aev_computer, nn, energy_shifter).to(device)
 
