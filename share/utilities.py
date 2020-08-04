@@ -9,6 +9,13 @@ import numpy as np
 import os.path
 import sys
 import time
+from ase import Atoms
+
+try:
+    from phonopy import Phonopy
+    from phonopy.structure.atoms import PhonopyAtoms
+except:
+    pass
 
 from ase.spacegroup.symmetrize import FixSymmetry, check_symmetry, refine_symmetry
 
@@ -126,7 +133,7 @@ def sd2_converged(minim_ind, atoms, fmax, smax=None):
 
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
-    refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False, 
+    refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False,
     fix_cell_dependence=False, applied_P=0.0, **kwargs):
 
     # get from base model if requested
@@ -319,7 +326,7 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
             print("robust_minim relax_configs LBFGS failed, trying again")
         i_iter += 1
 
-    # Undo fixed cell dependence. Hopefully no one is using robust_minim as part of a 
+    # Undo fixed cell dependence. Hopefully no one is using robust_minim as part of a
     # more complex process that is doing its own fix_cell_depdence()
     if hasattr(model, "fix_cell_dependence"):
         model.fix_cell_dependence()
@@ -355,3 +362,60 @@ def rescale_to_relaxed_bulk(supercell):
     supercell.set_cell(supercell.get_cell()*cell_ratio, scale_atoms=True)
 
     return bulk
+
+def phonons(model,bulk,supercell,dx,mesh=None,points=None,n_points=50):
+
+    import model
+
+    unitcell = PhonopyAtoms(symbols=bulk.get_chemical_symbols(),
+                            cell=bulk.get_cell(),
+                            scaled_positions=bulk.get_scaled_positions())
+    phonon = Phonopy(unitcell,supercell)
+    phonon.generate_displacements(distance=dx)
+
+    sets_of_forces = []
+
+    for s in phonon.get_supercells_with_displacements():
+        at = Atoms(cell=s.get_cell(),
+                       symbols=s.get_chemical_symbols(),
+                       scaled_positions=s.get_scaled_positions(),
+                       pbc=3*[True])
+        at.set_calculator(model.calculator)
+        sets_of_forces.append(at.get_forces())
+
+    phonon.set_forces(sets_of_forces=sets_of_forces)
+    phonon.produce_force_constants()
+
+    properties = {}
+
+    if mesh is not None:
+        phonon.set_mesh(mesh,is_gamma_center=True)
+        qpoints, weights, frequencies, eigvecs = phonon.get_mesh()
+
+        properties["frequencies"] = frequencies.tolist()
+        properties["weights"] = weights.tolist()
+
+    if points is not None:
+        bands = []
+        for i in range(len(points)-1):
+            band = []
+            for r in np.linspace(0,1,n_points):
+                band.append(points[i]+(points[i+1]-points[i])*r)
+            bands.append(band)
+
+        phonon.set_band_structure(bands,is_eigenvectors=True,is_band_connection=False)
+        band_q_points, band_distances, band_frequencies, band_eigvecs = phonon.get_band_structure()
+
+        band_distance_max = np.max(band_distances)
+        band_distances = [(_b / band_distance_max).tolist() for _b in band_distances]
+
+        band_frequencies = [ _b.tolist() for _b in band_frequencies ]
+
+        properties["band_q_points"] = band_q_points
+        properties["band_distances"] = band_distances
+        properties["band_frequencies"] = band_frequencies
+        properties["band_eigvecs"] = band_eigvecs
+
+    properties["phonopy"] = phonon
+
+    return properties
