@@ -1,0 +1,30 @@
+Model SW_LAMMPS, Test point_defect_Si_diamond_interstitial_hex
+Test run at 2020-08-05 01:06
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/SW_LAMMPS/model.py
+============================================================
+from ase.calculators.lammpsrun import LAMMPS
+import os
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/miniconda3/bin/lmp_serial"
+
+parameters = {'pair_style': 'sw',
+              'pair_coeff': ['* * Si.sw Si']}
+
+files = ['/Users/Cas/gits/testing-framework/run_dir/Si/models/SW_LAMMPS/Si.sw']
+
+calculator = LAMMPS(parameters=parameters, files=files)
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_hex/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+Using checkpoint file Si-model-SW_LAMMPS-test-point_defect_Si_diamond_interstitial_hex.db
+doing do_interstitial
+got bulk_supercell  64
+Failed to read relaxed bulk '../Si-model-SW_LAMMPS-test-bulk_Si_diamond-relaxed.xyz', perhaps bulk test hasn't been run yet

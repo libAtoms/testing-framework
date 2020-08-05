@@ -1,0 +1,28 @@
+Model SW_LAMMPS, Test surface_Si_diamond_111
+Test run at 2020-08-05 01:06
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/SW_LAMMPS/model.py
+============================================================
+from ase.calculators.lammpsrun import LAMMPS
+import os
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/miniconda3/bin/lmp_serial"
+
+parameters = {'pair_style': 'sw',
+              'pair_coeff': ['* * Si.sw Si']}
+
+files = ['/Users/Cas/gits/testing-framework/run_dir/Si/models/SW_LAMMPS/Si.sw']
+
+calculator = LAMMPS(parameters=parameters, files=files)
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_111/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+Using checkpoint file Si-model-SW_LAMMPS-test-surface_Si_diamond_111.db
+Failed to read relaxed bulk '../Si-model-SW_LAMMPS-test-bulk_Si_diamond-relaxed.xyz', perhaps bulk test hasn't been run yet

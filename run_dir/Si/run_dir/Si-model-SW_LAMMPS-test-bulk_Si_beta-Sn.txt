@@ -1,0 +1,102 @@
+Model SW_LAMMPS, Test bulk_Si_beta-Sn
+Test run at 2020-08-05 01:06
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/SW_LAMMPS/model.py
+============================================================
+from ase.calculators.lammpsrun import LAMMPS
+import os
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/miniconda3/bin/lmp_serial"
+
+parameters = {'pair_style': 'sw',
+              'pair_coeff': ['* * Si.sw Si']}
+
+files = ['/Users/Cas/gits/testing-framework/run_dir/Si/models/SW_LAMMPS/Si.sw']
+
+calculator = LAMMPS(parameters=parameters, files=files)
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_beta-Sn/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'tetragonal')
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+Using checkpoint file Si-model-SW_LAMMPS-test-bulk_Si_beta-Sn.db
+relax bulk
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.01 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+Traceback (most recent call last):
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/checkpoint.py", line 139, in load
+    dbentry = db.get(checkpoint_id=self._mangled_checkpoint_id())
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/core.py", line 426, in get
+    raise KeyError('no match')
+KeyError: 'no match'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/checkpoint.py", line 269, in calculate
+    results = self.checkpoint.load(atoms)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/checkpoint.py", line 141, in load
+    raise NoCheckpoint
+ase.calculators.checkpoint.NoCheckpoint
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/Cas/gits/testing-framework/scripts/run-model-test.py", line 129, in <module>
+    import test  # import and run the current test
+  File "/Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_beta-Sn/test.py", line 3, in <module>
+    properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'tetragonal')
+  File "/Users/Cas/gits/testing-framework/scripts/../share/lattice.py", line 89, in do_lattice
+    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method, 
+  File "/Users/Cas/gits/testing-framework/scripts/../share/utilities.py", line 207, in relax_config
+    opt.run(tol, max_steps)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 375, in run
+    return Optimizer.run(self, fmax, steps)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 275, in run
+    return Dynamics.run(self)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 162, in run
+    for converged in Dynamics.irun(self):
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 128, in irun
+    self.atoms.get_forces()
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/constraints.py", line 2632, in get_forces
+    forces = UnitCellFilter.get_forces(self, **kwargs)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/constraints.py", line 2452, in get_forces
+    stress = self.atoms.get_stress(**kwargs)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/atoms.py", line 826, in get_stress
+    stress = self._calc.get_stress(self)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/calculator.py", line 702, in get_stress
+    return self.get_property('stress', atoms)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/calculator.py", line 738, in get_property
+    self.calculate(atoms, [name], system_changes)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/checkpoint.py", line 301, in calculate
+    self.checkpoint.save(atoms, *results)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/checkpoint.py", line 220, in save
+    self._flush(*args, **kwargs)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/checkpoint.py", line 195, in _flush
+    db.write(atoms, checkpoint_id=self._mangled_checkpoint_id(),
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/parallel.py", line 233, in new_func
+    return func(*args, **kwargs)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/core.py", line 203, in new_method
+    return method(self, *args, **kwargs)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/core.py", line 343, in write
+    id = self._write(atoms, kvp, data, id)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/sqlite.py", line 266, in _write
+    row = AtomsRow(atoms)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/row.py", line 79, in __init__
+    dct = atoms2dict(dct)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/row.py", line 52, in atoms2dict
+    dct['constraints'] = [c.todict() for c in atoms.constraints]
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/db/row.py", line 52, in <listcomp>
+    dct['constraints'] = [c.todict() for c in atoms.constraints]
+AttributeError: 'FixSymmetry' object has no attribute 'todict'
