@@ -1,0 +1,63 @@
+Model ACE_N7_18_rrqr_E-11, Test point_defect_Si_diamond_interstitial_tetr
+Test run at 2020-08-05 11:27
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_N7_18_rrqr_E-11/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_tetr/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_interstitial
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_tetr-relaxed_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  11:30:37   -10443.259690       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+got bulk primitive cell  Cell([[2.7455616706084904, 9.730417364888637e-17, 2.7455616706084913], [2.7455616706084904, 2.7455616706084913, 1.0402216408824086e-16], [1.2038499671949447e-16, 2.7455616706084913, 2.7455616706084913]])
+got rescaled bulk_supercell cell  Cell([10.982246682433962, 10.982246682433962, 10.982246682433962])
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_tetr-Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 215 , international (Hermann-Mauguin) P-43m , Hall  P -4 2 3
+PreconLBFGS:   0  11:30:40   -10602.714037       1.2110
+PreconLBFGS:   1  11:30:41   -10602.946390       0.5544
+PreconLBFGS:   2  11:30:41   -10603.024193       0.4434
+PreconLBFGS:   3  11:30:41   -10603.075266       0.0922
+PreconLBFGS:   4  11:30:42   -10603.079921       0.0701
+PreconLBFGS:   5  11:30:42   -10603.083717       0.0499
+PreconLBFGS:   6  11:30:43   -10603.088041       0.0351
+PreconLBFGS:   7  11:30:43   -10603.088480       0.0257
+PreconLBFGS:   8  11:30:43   -10603.088677       0.0186
+PreconLBFGS:   9  11:30:43   -10603.088843       0.0117
+PreconLBFGS:  10  11:30:44   -10603.088960       0.0105
+PreconLBFGS:  11  11:30:44   -10603.089014       0.0123
+PreconLBFGS:  12  11:30:44   -10603.089052       0.0092
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 215 , international (Hermann-Mauguin) P-43m , Hall  P -4 2 3
+got interstitial Z_14 cell energy -10603.089051878538
+got bulk energy -10606.4356229822
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.17593266126462, 'defects': {'Z_14': {'Ef0': 3.721586005640347, 'Ef': 3.346571103662427, 'unrelaxed_filename': 'Si-model-ACE_N7_18_rrqr_E-11-test-point_defect_Si_diamond_interstitial_tetr-Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-ACE_N7_18_rrqr_E-11-test-point_defect_Si_diamond_interstitial_tetr-Z_14-relaxed.xyz', 'atom_ind': 64, 'Z': 14}}}
+============================================================

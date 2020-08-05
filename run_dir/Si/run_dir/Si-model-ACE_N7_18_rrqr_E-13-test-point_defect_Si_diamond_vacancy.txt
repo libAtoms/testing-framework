@@ -1,0 +1,63 @@
+Model ACE_N7_18_rrqr_E-13, Test point_defect_Si_diamond_vacancy
+Test run at 2020-08-05 11:41
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_N7_18_rrqr_E-13/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_vacancy/test.py
+============================================================
+import os.path, vacancy
+
+properties = vacancy.do_all_vacancies(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_all_vacancies
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_vacancy-rescaled_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  11:44:50   -10443.258123       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+got bulk primitive cell  Cell([[2.7457296213638043, -2.70392512020021e-17, 2.7457296213638043], [2.7457296213638043, 2.7457296213638043, -4.0768726450317825e-17], [4.252875436614929e-17, 2.7457296213638043, 2.7457296213638043]])
+got rescaled bulk_supercell cell  Cell([10.982918485455217, 10.982918485455217, 10.982918485455217])
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 1 , international (Hermann-Mauguin) P1 , Hall  P 1
+PreconLBFGS:   0  11:44:53   -10275.780494       0.9093
+PreconLBFGS:   1  11:44:53   -10276.217237       0.5362
+PreconLBFGS:   2  11:44:53   -10276.296939       0.2735
+PreconLBFGS:   3  11:44:54   -10276.343625       0.1223
+PreconLBFGS:   4  11:44:54   -10276.348687       0.1139
+PreconLBFGS:   5  11:44:54   -10276.353152       0.1375
+PreconLBFGS:   6  11:44:54   -10276.358076       0.0749
+PreconLBFGS:   7  11:44:55   -10276.363009       0.0389
+PreconLBFGS:   8  11:44:55   -10276.363638       0.0444
+PreconLBFGS:   9  11:44:56   -10276.365212       0.0192
+PreconLBFGS:  10  11:44:56   -10276.365394       0.0154
+PreconLBFGS:  11  11:44:56   -10276.365494       0.0097
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 1 , international (Hermann-Mauguin) P1 , Hall  P 1
+got vacancy ind_0_Z_14 cell energy -10276.365493521027 n_atoms 63
+got bulk energy -10280.082214419608  (scaled to (N-1)/N if single component)
+returning properties {'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.1759081653906, 'defects': {'ind_0_Z_14': {'Ef0': 3.8467164550002053, 'Ef': 3.7167208985811158, 'unrelaxed_filename': 'Si-model-ACE_N7_18_rrqr_E-13-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-ACE_N7_18_rrqr_E-13-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-relaxed.xyz', 'atom_ind': 0, 'Z': 14, 'vac_pos': [2.7076037640481854, 2.7076377806236023, 0.009424313305143112]}}}
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.1759081653906, 'defects': {'ind_0_Z_14': {'Ef0': 3.8467164550002053, 'Ef': 3.7167208985811158, 'unrelaxed_filename': 'Si-model-ACE_N7_18_rrqr_E-13-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-ACE_N7_18_rrqr_E-13-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-relaxed.xyz', 'atom_ind': 0, 'Z': 14, 'vac_pos': [2.7076037640481854, 2.7076377806236023, 0.009424313305143112]}}}
+============================================================

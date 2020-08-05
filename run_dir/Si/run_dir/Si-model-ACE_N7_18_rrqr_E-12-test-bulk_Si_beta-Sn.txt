@@ -1,0 +1,590 @@
+Model ACE_N7_18_rrqr_E-12, Test bulk_Si_beta-Sn
+Test run at 2020-08-05 12:52
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_N7_18_rrqr_E-12/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_beta-Sn/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'tetragonal')
+============================================================
+relax bulk
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.01 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  12:54:28     -325.706367       0.0000       0.0183
+PreconLBFGS:   1  12:54:28     -325.712843       0.0000       0.0026
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.01 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+final relaxed bulk
+2
+Lattice="4.809891402696417 1.965618177056026e-19 7.147630149410384e-17 1.9656181770478216e-19 4.809891402696417 -3.057938251632476e-16 2.4049457013482085 2.4049457013482085 1.3260532213759362" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.0025783880217887353 9.389864944633708e-17 2.6208723297163616e-16 9.389864944633708e-17 -0.002578388021789588 -7.117917181383439e-16 2.6208723297163616e-16 -7.117917181383439e-16 -0.0012190811449728375" pbc="T T T"
+Si      -0.00000000      -1.20247285      -0.33151331
+Si      -0.00000000       1.20247285       0.33151331
+calculating E vs. V
+2
+Lattice="4.809891402696417 1.965618177056026e-19 7.147630149410384e-17 1.9656181770478216e-19 4.809891402696417 -3.057938251632476e-16 2.4049457013482085 2.4049457013482085 1.3260532213759362" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 pbc="T T T"
+Si      -0.00000000      -1.20247285      -0.33151331
+Si      -0.00000000       1.20247285       0.33151331
+trying to relax i 0
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_000-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.712843       0.0000       0.0009
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.809891402696417 1.9656181770560923e-19 7.147630149410384e-17 1.9656181770478216e-19 4.809891402696417 -3.0579382516324765e-16 2.4049457013482085 2.4049457013482085 1.326053221375936" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.002578388019924992 -6.024475422290457e-17 -4.1235812691441006e-17 -6.024475422290457e-17 -0.0025783880199250447 -1.6376285645758438e-16 -4.1235812691441006e-17 -1.6376285645758438e-16 -0.0012190811411500724" pbc="T T T"
+Si      -0.00000000      -1.20247285      -0.33151331
+Si      -0.00000000       1.20247285       0.33151331
+2
+Lattice="4.7694702361692105 1.9490995962791651e-19 7.087563190646568e-17 1.949099596270964e-19 4.7694702361692105 -3.032240076569759e-16 2.3847351180846053 2.3847351180846053 1.3149093901336908" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.002578388019924992 -6.024475422290457e-17 -4.1235812691441006e-17 -6.024475422290457e-17 -0.0025783880199250447 -1.6376285645758438e-16 -4.1235812691441006e-17 -1.6376285645758438e-16 -0.0012190811411500724" pbc="T T T"
+Si      -0.00000000      -1.19236756      -0.32872735
+Si      -0.00000000       1.19236756       0.32872735
+trying to relax i -1
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-01-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.704781       0.0000       0.0014
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.76947023616921 1.9490995962792968e-19 7.087563190646568e-17 1.9490995962709638e-19 4.76947023616921 -3.032240076569758e-16 2.384735118084605 2.384735118084605 1.3149093901336908" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.020259637178530646 -1.8271550911059173e-16 -2.0454376643452929e-16 -1.8271550911059173e-16 -0.020259637178530972 2.1164128724982348e-16 -2.0454376643452929e-16 2.1164128724982348e-16 -0.01821490527964013" pbc="T T T"
+Si      -0.00000000      -1.19236756      -0.32872735
+Si      -0.00000000       1.19236756       0.32872735
+2
+Lattice="4.72835206736873 1.9322961774004047e-19 7.026460467445355e-17 1.9322961773921437e-19 4.72835206736873 -3.006098775096386e-16 2.364176033684365 2.364176033684365 1.3035734002682253" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.020259637178530646 -1.8271550911059173e-16 -2.0454376643452929e-16 -1.8271550911059173e-16 -0.020259637178530972 2.1164128724982348e-16 -2.0454376643452929e-16 2.1164128724982348e-16 -0.01821490527964013" pbc="T T T"
+Si      -0.00000000      -1.18208802      -0.32589335
+Si      -0.00000000       1.18208802       0.32589335
+trying to relax i -2
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-02-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.681937       0.0000       0.0023
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.728352067368729 1.9322961774004705e-19 7.026460467445355e-17 1.9322961773921437e-19 4.728352067368729 -3.006098775096385e-16 2.3641760336843647 2.3641760336843647 1.303573400268225" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.04160495716015624 -5.266513403290032e-16 1.5615704415727355e-16 -5.266513403290032e-16 -0.04160495716015499 -3.801082366553274e-16 1.5615704415727355e-16 -3.801082366553274e-16 -0.038177843584390116" pbc="T T T"
+Si      -0.00000000      -1.18208802      -0.32589335
+Si      -0.00000000       1.18208802       0.32589335
+2
+Lattice="4.686506049181092 1.9151953143870274e-19 6.964276140152007e-17 1.9151953143787743e-19 4.686506049181092 -2.9794947358403736e-16 2.343253024590546 2.343253024590546 1.2920367474472558" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.04160495716015624 -5.266513403290032e-16 1.5615704415727355e-16 -5.266513403290032e-16 -0.04160495716015499 -3.801082366553274e-16 1.5615704415727355e-16 -3.801082366553274e-16 -0.038177843584390116" pbc="T T T"
+Si      -0.00000000      -1.17162651      -0.32300919
+Si      -0.00000000       1.17162651       0.32300919
+trying to relax i -3
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-03-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.642073       0.0000       0.0036
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.686506049181092 1.9151953143870274e-19 6.964276140152007e-17 1.9151953143787748e-19 4.686506049181092 -2.9794947358403736e-16 2.343253024590546 2.343253024590546 1.2920367474472558" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.0656990427020807 -3.4466991325427143e-16 6.117337104694348e-16 -3.4466991325427143e-16 -0.06569904270207955 1.1552361930069032e-15 6.117337104694348e-16 1.1552361930069032e-15 -0.06032327136114292" pbc="T T T"
+Si      -0.00000000      -1.17162651      -0.32300919
+Si      -0.00000000       1.17162651       0.32300919
+2
+Lattice="4.643899090409272 1.8977834841357193e-19 6.900961034342878e-17 1.8977834841275418e-19 4.643899090409272 -2.9524069207306534e-16 2.321949545204636 2.321949545204636 1.2802903086605653" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.0656990427020807 -3.4466991325427143e-16 6.117337104694348e-16 -3.4466991325427143e-16 -0.06569904270207955 1.1552361930069032e-15 6.117337104694348e-16 1.1552361930069032e-15 -0.06032327136114292" pbc="T T T"
+Si      -0.00000000      -1.16097477      -0.32007258
+Si      -0.00000000       1.16097477       0.32007258
+trying to relax i -4
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-04-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.583123       0.0000       0.0055
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.643899090409272 1.8977834841357193e-19 6.900961034342878e-17 1.897783484127542e-19 4.643899090409272 -2.9524069207306524e-16 2.321949545204636 2.321949545204636 1.2802903086605653" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.09325120021876608 -8.2830651962249365e-16 1.9271848085623147e-18 -8.2830651962249365e-16 -0.09325120021876589 -4.703471922602105e-16 1.9271848085623147e-18 -4.703471922602105e-16 -0.08499943649113459" pbc="T T T"
+Si      -0.00000000      -1.16097477      -0.32007258
+Si      -0.00000000       1.16097477       0.32007258
+2
+Lattice="4.6004956249834015 1.8800461521576003e-19 6.8364622978656e-17 1.8800461521494996e-19 4.6004956249834015 -2.92481271827012e-16 2.3002478124917007 2.3002478124917007 1.2683242785929032" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.09325120021876608 -8.2830651962249365e-16 1.9271848085623147e-18 -8.2830651962249365e-16 -0.09325120021876589 -4.703471922602105e-16 1.9271848085623147e-18 -4.703471922602105e-16 -0.08499943649113459" pbc="T T T"
+Si      -0.00000000      -1.15012391      -0.31708107
+Si      -0.00000000       1.15012391       0.31708107
+trying to relax i -5
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-05-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.501867       0.0000       0.0085
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.6004956249834015 1.8800461521577325e-19 6.8364622978656e-17 1.8800461521495e-19 4.6004956249834015 -2.9248127182701186e-16 2.3002478124917007 2.3002478124917007 1.2683242785929032" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.12624462262591185 -7.627383545886667e-17 6.831814065987508e-16 -7.627383545886667e-17 -0.12624462262591157 -9.859084078936595e-16 6.831814065987508e-16 -9.859084078936595e-16 -0.11352349469585482" pbc="T T T"
+Si      -0.00000000      -1.15012391      -0.31708107
+Si      -0.00000000       1.15012391       0.31708107
+2
+Lattice="4.556257350087897 1.8619676655608258e-19 6.770723011688836e-17 1.8619676655526726e-19 4.556257350087897 -2.8966877770472543e-16 2.2781286750439484 2.2781286750439484 1.2561280974274798" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.12624462262591185 -7.627383545886667e-17 6.831814065987508e-16 -7.627383545886667e-17 -0.12624462262591157 -9.859084078936595e-16 6.831814065987508e-16 -9.859084078936595e-16 -0.11352349469585482" pbc="T T T"
+Si      -0.00000000      -1.13906434      -0.31403202
+Si      -0.00000000       1.13906434       0.31403202
+trying to relax i -6
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-06-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:29     -325.394899       0.0000       0.0128
+PreconLBFGS:   1  12:54:30     -325.397450       0.0000       0.0000
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.579971194016269 -1.0275834962660782e-17 -2.3483282339870367e-16 -1.0275834962661339e-17 4.57997119401627 3.2771074939330243e-16 2.2899855970081346 2.289985597008135 1.2431539941897443" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.15561082569776732 -8.706327044790734e-17 -3.201498499560265e-16 -8.706327044790734e-17 -0.15561082569776494 6.96902688672947e-16 -3.201498499560265e-16 6.96902688672947e-16 -0.1556720523063887" pbc="T T T"
+Si      -0.00000000      -1.14499280      -0.31078850
+Si      -0.00000000       1.14499280       0.31078850
+2
+Lattice="4.534621965942418 -1.01740873394487e-17 -2.32507593213534e-16 -1.017408733944925e-17 4.534621965942419 3.2446587537839466e-16 2.267310982971209 2.2673109829712095 1.2308447303046166" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.15561082569776732 -8.706327044790734e-17 -3.201498499560265e-16 -8.706327044790734e-17 -0.15561082569776494 6.96902688672947e-16 -3.201498499560265e-16 6.96902688672947e-16 -0.1556720523063887" pbc="T T T"
+Si      -0.00000000      -1.13365549      -0.30771118
+Si      -0.00000000       1.13365549       0.30771118
+trying to relax i -7
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-07-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:30     -325.263310       0.0000       0.0058
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.534621965942419 -1.01740873394487e-17 -2.3250759321353405e-16 -1.0174087339449221e-17 4.534621965942419 3.2446587537839466e-16 2.2673109829712095 2.2673109829712095 1.2308447303046164" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.19773652844774087 -6.671894574989245e-16 -4.725346856949521e-16 -6.671894574989245e-16 -0.19773652844774042 1.0836337325419111e-15 -4.725346856949521e-16 1.0836337325419111e-15 -0.18897824453887782" pbc="T T T"
+Si      -0.00000000      -1.13365549      -0.30771118
+Si      -0.00000000       1.13365549       0.30771118
+2
+Lattice="4.4883470843627515 -1.0070262877266365e-17 -2.301349011957346e-16 -1.007026287726688e-17 4.4883470843627515 3.2115476806392686e-16 2.2441735421813758 2.2441735421813758 1.2182842137796261" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="-0.19773652844774087 -6.671894574989245e-16 -4.725346856949521e-16 -6.671894574989245e-16 -0.19773652844774042 1.0836337325419111e-15 -4.725346856949521e-16 1.0836337325419111e-15 -0.18897824453887782" pbc="T T T"
+Si      -0.00000000      -1.12208677      -0.30457105
+Si      -0.00000000       1.12208677       0.30457105
+trying to relax i -8
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-08-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:30     -325.098120       0.0000       0.0218
+PreconLBFGS:   1  12:54:30     -325.101999       0.0000       0.0059
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.50550093281697 -2.4798363754159087e-17 -3.931514607764351e-16 -2.4798363754159096e-17 4.50550093281697 5.604769573790408e-16 2.252750466408485 2.252750466408485 1.20902509698731" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.23113172765573856 -3.1703323982559843e-15 -2.1390227778595786e-16 -3.1703323982559843e-15 -0.23113172765573778 -1.4094015885570017e-15 -2.1390227778595786e-16 -1.4094015885570017e-15 -0.2223560554816226" pbc="T T T"
+Si      -0.00000000      -1.12637523      -0.30225627
+Si      -0.00000000       1.12637523       0.30225627
+2
+Lattice="4.4580710848508796 -2.4537308959097223e-17 -3.890127169851617e-16 -2.4537308959097232e-17 4.4580710848508796 5.545767617574268e-16 2.2290355424254398 2.2290355424254398 1.1962975718147777" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.23113172765573856 -3.1703323982559843e-15 -2.1390227778595786e-16 -3.1703323982559843e-15 -0.23113172765573778 -1.4094015885570017e-15 -2.1390227778595786e-16 -1.4094015885570017e-15 -0.2223560554816226" pbc="T T T"
+Si      -0.00000000      -1.11451777      -0.29907439
+Si      -0.00000000       1.11451777       0.29907439
+trying to relax i -9
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-09-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:30     -324.915158       0.0000       0.0336
+PreconLBFGS:   1  12:54:30     -324.921510       0.0000       0.0026
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.483553923266186 3.792301680716221e-17 -5.203001925653423e-16 3.792301680716235e-17 4.483553923266187 9.372509492263097e-16 2.241776961633093 2.2417769616330934 1.1827376033505188" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.24032501577123105 -8.576182138345744e-16 -9.92583896970534e-16 -8.576182138345744e-16 -0.24032501577122348 4.0407883773421903e-16 -9.92583896970534e-16 4.0407883773421903e-16 -0.24422011166859486" pbc="T T T"
+Si      -0.00000000      -1.12088848      -0.29568440
+Si      -0.00000000       1.12088848       0.29568440
+2
+Lattice="4.4348157813871625 3.751077745301129e-17 -5.146443077384995e-16 3.751077745301143e-17 4.434815781387163 9.270626319848023e-16 2.2174078906935812 2.2174078906935817 1.169880741560896" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.24032501577123105 -8.576182138345744e-16 -9.92583896970534e-16 -8.576182138345744e-16 -0.24032501577122348 4.0407883773421903e-16 -9.92583896970534e-16 4.0407883773421903e-16 -0.24422011166859486" pbc="T T T"
+Si      -0.00000000      -1.10870394      -0.29247019
+Si      -0.00000000       1.10870395       0.29247019
+trying to relax i -10
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_-10-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:30     -324.729710       0.0000       0.0233
+PreconLBFGS:   1  12:54:30     -324.731601       0.0000       0.0000
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.445277718676612 5.256844831411077e-17 -6.347329486639126e-16 5.2568448314110906e-17 4.445277718676614 1.0927567839234883e-15 2.222638859338306 2.2226388593383066 1.164380605344491" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="-0.25644905384744543 -2.652834258070845e-15 4.6906619912775405e-15 -2.652834258070845e-15 -0.2564490538474362 9.071353651835293e-15 4.6906619912775405e-15 9.071353651835293e-15 -0.2564567223745158" pbc="T T T"
+Si      -0.00000000      -1.11131943      -0.29109515
+Si      -0.00000000       1.11131943       0.29109515
+2
+Lattice="4.849644374056879 1.9818636920907953e-19 7.206704151884827e-17 1.981863692082523e-19 4.849644374056879 -3.0832116147007275e-16 2.4248221870284397 2.4248221870284397 1.3370128359115687" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 pbc="T T T"
+Si      -0.00000000      -1.21241109      -0.33425321
+Si      -0.00000000       1.21241109       0.33425321
+trying to relax i 1
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_01-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:31     -325.708203       0.0000       0.0001
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.849644374056879 1.9818636920907953e-19 7.206704151884827e-17 1.981863692082523e-19 4.849644374056879 -3.0832116147007275e-16 2.4248221870284397 2.4248221870284397 1.3370128359115687" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.01402109467028355 5.660894520829477e-16 1.2921199773420101e-16 5.660894520829477e-16 0.014021094670283825 6.013119231070864e-17 1.2921199773420101e-16 6.013119231070864e-17 0.014205341998760971" pbc="T T T"
+Si      -0.00000000      -1.21241109      -0.33425321
+Si      -0.00000000       1.21241109       0.33425321
+2
+Lattice="4.888756098375723 1.997847154048798e-19 7.26482524372072e-17 1.997847154040459e-19 4.888756098375723 -3.108077298324031e-16 2.4443780491878613 2.4443780491878613 1.3477956631491015" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.01402109467028355 5.660894520829477e-16 1.2921199773420101e-16 5.660894520829477e-16 0.014021094670283825 6.013119231070864e-17 1.2921199773420101e-16 6.013119231070864e-17 0.014205341998760971" pbc="T T T"
+Si      -0.00000000      -1.22218902      -0.33694892
+Si      -0.00000000       1.22218903       0.33694892
+trying to relax i 2
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_02-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:31     -325.692165       0.0000       0.0005
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.888756098375723 1.99784715404893e-19 7.264825243720722e-17 1.9978471540404588e-19 4.888756098375723 -3.108077298324031e-16 2.4443780491878613 2.4443780491878613 1.347795663149102" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.027514988058948836 1.3618442708540155e-17 -3.6174891029194994e-16 1.3618442708540155e-17 0.027514988058948694 -4.616773217360964e-16 -3.6174891029194994e-16 -4.616773217360964e-16 0.02675953946177021" pbc="T T T"
+Si      -0.00000000      -1.22218902      -0.33694892
+Si      -0.00000000       1.22218903       0.33694892
+2
+Lattice="4.92725182585957 2.0135788817213744e-19 7.322030947415568e-17 2.0135788817128366e-19 4.92725182585957 -3.1325513555826387e-16 2.463625912929785 2.463625912929785 1.3584086643928617" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.027514988058948836 1.3618442708540155e-17 -3.6174891029194994e-16 1.3618442708540155e-17 0.027514988058948694 -4.616773217360964e-16 -3.6174891029194994e-16 -4.616773217360964e-16 0.02675953946177021" pbc="T T T"
+Si      -0.00000000      -1.23181296      -0.33960217
+Si      -0.00000000       1.23181296       0.33960217
+trying to relax i 3
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_03-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:31     -325.666748       0.0000       0.0025
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.92725182585957 2.013578881721374e-19 7.322030947415566e-17 2.013578881712836e-19 4.92725182585957 -3.1325513555826387e-16 2.463625912929785 2.463625912929785 1.3584086643928617" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.0398442793782161 -4.431264752011963e-17 1.4092450108054164e-16 -4.431264752011963e-17 0.03984427937821516 1.7889128452896593e-16 1.4092450108054164e-16 1.7889128452896593e-16 0.03613820589028482" pbc="T T T"
+Si      -0.00000000      -1.23181296      -0.33960217
+Si      -0.00000000       1.23181296       0.33960217
+2
+Lattice="4.965155252508043 2.0290685587546614e-19 7.378356475872761e-17 2.0290685587460578e-19 4.965155252508043 -3.156648851453613e-16 2.4825776262540216 2.4825776262540216 1.3688583724632388" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.0398442793782161 -4.431264752011963e-17 1.4092450108054164e-16 -4.431264752011963e-17 0.03984427937821516 1.7889128452896593e-16 1.4092450108054164e-16 1.7889128452896593e-16 0.03613820589028482" pbc="T T T"
+Si      -0.00000000      -1.24128881      -0.34221459
+Si      -0.00000000       1.24128881       0.34221459
+trying to relax i 4
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_04-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:31     -325.633631       0.0000       0.0054
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.965155252508043 2.0290685587547271e-19 7.378356475872758e-17 2.0290685587460578e-19 4.965155252508043 -3.1566488514536127e-16 2.4825776262540216 2.4825776262540216 1.3688583724632384" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.04995124341449726 2.789355717030973e-16 7.595844432399541e-17 2.789355717030973e-16 0.04995124341449721 -2.9007442001973256e-16 7.595844432399541e-17 -2.9007442001973256e-16 0.04186637901882777" pbc="T T T"
+Si      -0.00000000      -1.24128881      -0.34221459
+Si      -0.00000000       1.24128881       0.34221459
+2
+Lattice="5.0024886486926246 2.0443252861957074e-19 7.4338349234733e-17 2.044325286186973e-19 5.0024886486926246 -3.1803839445561683e-16 2.5012443243463123 2.5012443243463123 1.3791509271449751" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.04995124341449726 2.789355717030973e-16 7.595844432399541e-17 2.789355717030973e-16 0.04995124341449721 -2.9007442001973256e-16 7.595844432399541e-17 -2.9007442001973256e-16 0.04186637901882777" pbc="T T T"
+Si      -0.00000000      -1.25062216      -0.34478773
+Si      -0.00000000       1.25062216       0.34478773
+trying to relax i 5
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_05-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:31     -325.595011       0.0000       0.0084
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="5.002488648692625 2.0443252861958395e-19 7.433834923473302e-17 2.0443252861869735e-19 5.002488648692625 -3.180383944556169e-16 2.5012443243463127 2.5012443243463127 1.3791509271449756" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.057358750730801725 -1.6401340569688685e-16 -9.089075705702542e-17 -1.6401340569688685e-16 0.05735875073080208 -2.0766975887826807e-16 -9.089075705702542e-17 -2.0766975887826807e-16 0.04476848341088213" pbc="T T T"
+Si      -0.00000000      -1.25062216      -0.34478773
+Si      -0.00000000       1.25062216       0.34478773
+2
+Lattice="5.039272974495156 2.0593576296262306e-19 7.488497437471957e-17 2.0593576296172993e-19 5.039272974495156 -3.203769960479317e-16 2.519636487247578 2.519636487247578 1.389292106985178" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.057358750730801725 -1.6401340569688685e-16 -9.089075705702542e-17 -1.6401340569688685e-16 0.05735875073080208 -2.0766975887826807e-16 -9.089075705702542e-17 -2.0766975887826807e-16 0.04476848341088213" pbc="T T T"
+Si      -0.00000000      -1.25981824      -0.34732303
+Si      -0.00000000       1.25981824       0.34732303
+trying to relax i 6
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_06-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:31     -325.552819       0.0000       0.0109
+PreconLBFGS:   1  12:54:31     -325.560988       0.0000       0.0002
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="4.970774930495051 -6.022281523250918e-17 2.0785518942705382e-15 -6.022281523251002e-17 4.970774930495051 -4.154231338416585e-15 2.4853874652475256 2.4853874652475243 1.427845241684013" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="0.051561480361919224 -2.0384443190379515e-17 6.534846025719935e-16 -2.0384443190379515e-17 0.05156148036191983 -8.521700083958925e-16 6.534846025719935e-16 -8.521700083958925e-16 0.05124993250033293" pbc="T T T"
+Si      -0.00000000      -1.24269373      -0.35696131
+Si      -0.00000000       1.24269373       0.35696131
+2
+Lattice="5.006537130798586 -6.065608779288505e-17 2.0935060191753227e-15 -6.065608779288588e-17 5.006537130798586 -4.18411892240681e-15 2.503268565399293 2.5032685653992917 1.4381178628043718" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="0.051561480361919224 -2.0384443190379515e-17 6.534846025719935e-16 -2.0384443190379515e-17 0.05156148036191983 -8.521700083958925e-16 6.534846025719935e-16 -8.521700083958925e-16 0.05124993250033293" pbc="T T T"
+Si      -0.00000000      -1.25163428      -0.35952947
+Si      -0.00000000       1.25163428       0.35952947
+trying to relax i 7
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_07-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:32     -325.521774       0.0000       0.0032
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="5.006537130798584 -6.06560877928849e-17 2.0935060191753223e-15 -6.065608779288251e-17 5.006537130798584 -4.184118922406807e-15 2.5032685653992917 2.503268565399294 1.4381178628043718" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.052019026555427256 -2.202689420571171e-16 8.269784178524798e-17 -2.202689420571171e-16 0.05201902655542616 -5.000053517992161e-16 8.269784178524798e-17 -5.000053517992161e-16 0.04729302826461636" pbc="T T T"
+Si      -0.00000000      -1.25163428      -0.35952947
+Si      -0.00000000       1.25163428       0.35952947
+2
+Lattice="5.0417955962029675 -6.108325741474877e-17 2.108249505066375e-15 -6.108325741474636e-17 5.0417955962029675 -4.2135855194616804e-15 2.5208977981014833 2.5208977981014855 1.448245787073861" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.052019026555427256 -2.202689420571171e-16 8.269784178524798e-17 -2.202689420571171e-16 0.05201902655542616 -5.000053517992161e-16 8.269784178524798e-17 -5.000053517992161e-16 0.04729302826461636" pbc="T T T"
+Si      -0.00000000      -1.26044890      -0.36206145
+Si      -0.00000000       1.26044890       0.36206145
+trying to relax i 8
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_08-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:32     -325.484061       0.0000       0.0066
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="5.041795596202966 -6.108325741474885e-17 2.1082495050663743e-15 -6.1083257414743e-17 5.041795596202966 -4.213585519461679e-15 2.5208977981014824 2.5208977981014846 1.4482457870738605" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.05095738059428546 2.685842681206843e-16 -3.11528631109293e-16 2.685842681206843e-16 0.05095738059428703 -1.4859415976984362e-16 -3.11528631109293e-16 -1.4859415976984362e-16 0.04108711818054236" pbc="T T T"
+Si      -0.00000000      -1.26044890      -0.36206145
+Si      -0.00000000       1.26044890       0.36206145
+2
+Lattice="5.076567699119819 -6.150453457142729e-17 2.122789616295751e-15 -6.15045345714214e-17 5.076567699119819 -4.242645648246357e-15 2.538283849559909 2.538283849559911 1.4582340046832687" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.05095738059428546 2.685842681206843e-16 -3.11528631109293e-16 2.685842681206843e-16 0.05095738059428703 -1.4859415976984362e-16 -3.11528631109293e-16 -1.4859415976984362e-16 0.04108711818054236" pbc="T T T"
+Si      -0.00000000      -1.26914192      -0.36455850
+Si      -0.00000000       1.26914193       0.36455850
+trying to relax i 9
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_09-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:32     -325.448941       0.0000       0.0102
+PreconLBFGS:   1  12:54:32     -325.456413       0.0000       0.0008
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="5.0082932499664725 -1.4722348564288052e-17 2.0855770456708887e-15 -1.4722348564278743e-17 5.008293249966472 -4.2481699559249e-15 2.504146624983236 2.504146624983237 1.498263106046107" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="0.03602951618316088 -8.600315632933748e-17 1.7506688406598526e-16 -8.600315632933748e-17 0.03602951618316055 3.939474112787321e-16 1.7506688406598526e-16 3.939474112787321e-16 0.037197509074274715" pbc="T T T"
+Si      -0.00000000      -1.25207331      -0.37456578
+Si      -0.00000000       1.25207331       0.37456578
+2
+Lattice="5.042134095756842 -1.4821826910017804e-17 2.0996692099400152e-15 -1.4821826910008433e-17 5.0421340957568415 -4.276874677712247e-15 2.5210670478784207 2.521067047878422 1.5083868125054773" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=2 stress="0.03602951618316088 -8.600315632933748e-17 1.7506688406598526e-16 -8.600315632933748e-17 0.03602951618316055 3.939474112787321e-16 1.7506688406598526e-16 3.939474112787321e-16 0.037197509074274715" pbc="T T T"
+Si      -0.00000000      -1.26053352      -0.37709670
+Si      -0.00000000       1.26053353       0.37709670
+trying to relax i 10
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_beta-Sn-E_vs_V_10-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config symmetry after refinement
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  12:54:32     -325.430028       0.0000       0.0024
+symmetry at end of relaxation at desired tol
+ase.spacegroup.symmetrize: prec 0.1 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 141 , international (Hermann-Mauguin) I4_1/amd , Hall  I 4bw 2bw -1bw
+2
+Lattice="5.042134095756841 -1.4821826910017844e-17 2.099669209940015e-15 -1.482182691000507e-17 5.042134095756841 -4.276874677712246e-15 2.5210670478784203 2.521067047878422 1.5083868125054773" Properties=species:S:1:pos:R:3 cutoff=-1.0 nneightol=1.2 n_minim_iter=1 stress="0.03364917588351961 2.3273074641252985e-16 4.1520796163991054e-16 2.3273074641252985e-16 0.033649175883519365 -1.5336833010971055e-16 4.1520796163991054e-16 -1.5336833010971055e-16 0.02998388728540192" pbc="T T T"
+Si      -0.00000000      -1.26053352      -0.37709670
+Si      -0.00000000       1.26053353       0.37709670
+calculating elastic constants
+PreconLBFGS:   0  12:54:32     -325.699901       0.0837
+INFO:ase.utils.linesearcharmijo:a1 = 1.000, suff_dec = True
+PreconLBFGS:   1  12:54:32     -325.700098       0.0804
+INFO:ase.utils.linesearcharmijo:a1 = 0.083, suff_dec = True
+PreconLBFGS:   2  12:54:32     -325.700474       0.0741
+INFO:ase.utils.linesearcharmijo:a1 = 0.178, suff_dec = True
+PreconLBFGS:   3  12:54:32     -325.701162       0.0628
+INFO:ase.utils.linesearcharmijo:a1 = 0.454, suff_dec = True
+PreconLBFGS:   4  12:54:32     -325.702229       0.0493
+PreconLBFGS:   0  12:54:32     -325.709386       0.0388
+PreconLBFGS:   0  12:54:32     -325.712843       0.0000
+PreconLBFGS:   0  12:54:32     -325.710926       0.0343
+PreconLBFGS:   0  12:54:32     -325.703751       0.0662
+INFO:ase.utils.linesearcharmijo:a1 = 1.000, suff_dec = True
+PreconLBFGS:   1  12:54:32     -325.703873       0.0626
+INFO:ase.utils.linesearcharmijo:a1 = 0.114, suff_dec = True
+PreconLBFGS:   2  12:54:32     -325.704103       0.0565
+INFO:ase.utils.linesearcharmijo:a1 = 0.233, suff_dec = True
+PreconLBFGS:   3  12:54:32     -325.704513       0.0477
+PreconLBFGS:   0  12:54:32     -325.702137       0.0000
+PreconLBFGS:   0  12:54:32     -325.710041       0.0000
+PreconLBFGS:   0  12:54:32     -325.712843       0.0000
+PreconLBFGS:   0  12:54:32     -325.710951       0.0000
+PreconLBFGS:   0  12:54:33     -325.704827       0.0000
+Fitting C_11
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-4.65992354, -2.80402297, -0.4131033 ,  1.94586795,  3.81078206]) GPa
+Cij (gradient) / GPa    :     216.91302132379735
+Error in Cij / GPa      :     5.9461671891931465
+Correlation coefficient :     0.9988747197199749
+Setting C11 (1) to 1.353865 +/- 0.037113
+
+
+Fitting C_21
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.24970795, -0.48542417, -0.4131033 , -0.23981068,  0.17197493]) GPa
+Cij (gradient) / GPa    :     30.889792466452327
+Error in Cij / GPa      :     6.292108639544891
+Correlation coefficient :     0.943028919433957
+Setting C21 (7) to 0.192799 +/- 0.039272
+
+
+Fitting C_31
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.71632021, -0.92662714, -0.19531833,  0.64286847,  1.44998178]) GPa
+Cij (gradient) / GPa    :     79.0209959759149
+Error in Cij / GPa      :     0.9699787026941963
+Correlation coefficient :     0.9997740650302229
+Setting C31 (8) to 0.493210 +/- 0.006054
+
+
+Fitting C_61
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([ 1.49114132e-14,  1.58144990e-15,  1.50442221e-14, -5.37369483e-15,
+        1.32830044e-14]) GPa
+Cij (gradient) / GPa    :     -1.0211962375756379e-13
+Error in Cij / GPa      :     3.340971003521579e-13
+Correlation coefficient :     -0.17378670728002468      <----- WARNING
+Setting C61 (0) to -0.000000 +/- 0.000000
+
+
+Fitting C_44
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.02204766e+00, -4.98564363e-01, -1.14041605e-13,  4.91461862e-01,
+        9.52251759e-01]) GPa
+Cij (gradient) / GPa    :     49.386250568562104
+Error in Cij / GPa      :     0.6536037221716314
+Correlation coefficient :     0.99973737439249
+Setting C44 (4) to 0.308245 +/- 0.004079
+
+
+Fitting C_33
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-3.65458416, -1.81894572, -0.19531833,  1.18063883,  2.28451305]) GPa
+Cij (gradient) / GPa    :     148.77778965380236
+Error in Cij / GPa      :     8.357030517054355
+Correlation coefficient :     0.9953005268025212
+Setting C33 (3) to 0.928598 +/- 0.052160
+
+
+Fitting C_66
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.86633655e+00, -9.53684878e-01,  1.50442221e-14,  9.54573641e-01,
+        1.87877793e+00]) GPa
+Cij (gradient) / GPa    :     93.98487469804441
+Error in Cij / GPa      :     0.42898445903685556
+Correlation coefficient :     0.999968750858796
+Setting C66 (6) to 0.586607 +/- 0.002678
+
+
+[[b C11 b C12 b C13 b     b     b    ]
+ [b C12 b C11 b C13 b     b     b    ]
+ [b C13 b C13 b C33 b     b     b    ]
+ [b     b     b     b C44 b     b    ]
+ [b     b     b     b     b C44 b    ]
+ [b     b     b     b     b     b C66]]
+
+ = 
+
+[[216.91  30.89  79.02   0.     0.     0.  ]
+ [ 30.89 216.91  79.02   0.     0.     0.  ]
+ [ 79.02  79.02 148.78   0.     0.     0.  ]
+ [  0.     0.     0.    49.39   0.     0.  ]
+ [  0.     0.     0.     0.    49.39   0.  ]
+ [  0.     0.     0.     0.     0.    93.98]]
+C_11 = 216.91 +/- 5.95 GPa
+C_12 = 30.89 +/- 6.29 GPa
+C_13 = 79.02 +/- 0.97 GPa
+C_33 = 148.78 +/- 8.36 GPa
+C_44 = 49.39 +/- 0.65 GPa
+C_66 = 93.98 +/- 0.43 GPa
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'E_vs_V': [(11.504367980579078, -162.3658002893377, [-0.25644905384744543, -0.2564490538474362, -0.2564567223745158, 9.071353651835293e-15, 4.6906619912775405e-15, -2.652834258070845e-15]), (11.887846913265047, -162.46075519113205, [-0.24032501577123105, -0.24032501577122348, -0.24422011166859486, 4.0407883773421903e-16, -9.92583896970534e-16, -8.576182138345744e-16]), (12.271325845951038, -162.55099967860008, [-0.23113172765573856, -0.23113172765573778, -0.2223560554816226, -1.4094015885570017e-15, -2.1390227778595786e-16, -3.1703323982559843e-15]), (12.654804778636995, -162.63165507353042, [-0.19773652844774087, -0.19773652844774042, -0.18897824453887782, 1.0836337325419111e-15, -4.725346856949521e-16, -6.671894574989245e-16]), (13.038283711322963, -162.69872502408785, [-0.15561082569776732, -0.15561082569776494, -0.1556720523063887, 6.96902688672947e-16, -3.201498499560265e-16, -8.706327044790734e-17]), (13.42176264400894, -162.75093361641473, [-0.12624462262591185, -0.12624462262591157, -0.11352349469585482, -9.859084078936595e-16, 6.831814065987508e-16, -7.627383545886667e-17]), (13.805241576694897, -162.79156157456208, [-0.09325120021876608, -0.09325120021876589, -0.08499943649113459, -4.703471922602105e-16, 1.9271848085623147e-18, -8.2830651962249365e-16]), (14.188720509380886, -162.82103644998537, [-0.0656990427020807, -0.06569904270207955, -0.06032327136114292, 1.1552361930069032e-15, 6.117337104694348e-16, -3.4466991325427143e-16]), (14.572199442066836, -162.8409684455533, [-0.04160495716015624, -0.04160495716015499, -0.038177843584390116, -3.801082366553274e-16, 1.5615704415727355e-16, -5.266513403290032e-16]), (14.955678374752805, -162.85239033119285, [-0.020259637178530646, -0.020259637178530972, -0.01821490527964013, 2.1164128724982348e-16, -2.0454376643452929e-16, -1.8271550911059173e-16]), (15.339157307438782, -162.85642139457573, [-0.002578388019924992, -0.0025783880199250447, -0.0012190811411500724, -1.6376285645758438e-16, -4.1235812691441006e-17, -6.024475422290457e-17]), (15.722636240124755, -162.8541012529927, [0.01402109467028355, 0.014021094670283825, 0.014205341998760971, 6.013119231070864e-17, 1.2921199773420101e-16, 5.660894520829477e-16]), (16.106115172810725, -162.846082455046, [0.027514988058948836, 0.027514988058948694, 0.02675953946177021, -4.616773217360964e-16, -3.6174891029194994e-16, 1.3618442708540155e-17]), (16.489594105496693, -162.8333742054595, [0.0398442793782161, 0.03984427937821516, 0.03613820589028482, 1.7889128452896593e-16, 1.4092450108054164e-16, -4.431264752011963e-17]), (16.873073038182635, -162.8168155551117, [0.04995124341449726, 0.04995124341449721, 0.04186637901882777, -2.9007442001973256e-16, 7.595844432399541e-17, 2.789355717030973e-16]), (17.256551970868646, -162.7975056281241, [0.057358750730801725, 0.05735875073080208, 0.04476848341088213, -2.0766975887826807e-16, -9.089075705702542e-17, -1.6401340569688685e-16]), (17.640030903554564, -162.78049411184074, [0.051561480361919224, 0.05156148036191983, 0.05124993250033293, -8.521700083958925e-16, 6.534846025719935e-16, -2.0384443190379515e-17]), (18.02350983624056, -162.76088694557043, [0.052019026555427256, 0.05201902655542616, 0.04729302826461636, -5.000053517992161e-16, 8.269784178524798e-17, -2.202689420571171e-16]), (18.40698876892651, -162.74203037477454, [0.05095738059428546, 0.05095738059428703, 0.04108711818054236, -1.4859415976984362e-16, -3.11528631109293e-16, 2.685842681206843e-16]), (18.790467701612474, -162.72820655877098, [0.03602951618316088, 0.03602951618316055, 0.037197509074274715, 3.939474112787321e-16, 1.7506688406598526e-16, -8.600315632933748e-17]), (19.173946634298467, -162.71501393013932, [0.03364917588351961, 0.033649175883519365, 0.02998388728540192, -1.5336833010971055e-16, 4.1520796163991054e-16, 2.3273074641252985e-16])], 'c11': 216.91302132379735, 'c33': 148.77778965380236, 'c12': 30.889792466452327, 'c13': 79.0209959759149, 'c44': 49.386250568562104, 'c66': 93.98487469804441, 'B': 106.5246737770525}
+============================================================
