@@ -40,32 +40,32 @@ def intersect_half_plane(polygon, L, V):
 
 def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc_energies):
     if debug:
-        print "mu_range got compositions ", mcc_compositions
-        print "mu_range got energies ", mcc_energies
-        print "got ref_bulk_model ", cur_min_EV, cur_composition
+        print("mu_range got compositions ", mcc_compositions)
+        print("mu_range got energies ", mcc_energies)
+        print("got ref_bulk_model ", cur_min_EV, cur_composition)
 
     n_types = len(cur_composition)
     Leq = []
-    print "getting Veq from cur_min_EV, cur_composition"
+    print("getting Veq from cur_min_EV, cur_composition")
     Veq = cur_min_EV * sum( [x[1] for x in cur_composition ] )
-    print "mu_range: equality constraint:",
+    print("mu_range: equality constraint:")
     cur_elements = []
     i_of_element = {}
     for (i, element) in enumerate(cur_composition):
         if i > 0:
-            print "+",
-        print "{}*mu_{}".format(element[1], element[0]),
+            print("+"),
+        print("{}*mu_{}".format(element[1], element[0])),
         cur_elements.append(element[0])
         Leq.append(element[1])
         i_of_element[element[0]] = i
-    print " = mu_{} = {}".format(cur_bulk_struct, Veq)
+    print(" = mu_{} = {}".format(cur_bulk_struct, Veq))
 
     if debug:
-        print "constraint i_of_element, L, V ", i_of_element, Leq, "=", Veq
+        print("constraint i_of_element, L, V ", i_of_element, Leq, "=", Veq)
 
     Lne = []
     Vne = []
-    print "inequalities:"
+    print("inequalities:")
     for struct in mcc_energies:
         # skip the current structure, since it is an equality constraint, not a stability limit inequality
         if struct == cur_bulk_struct:
@@ -86,35 +86,35 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         n_atoms = 0
         for (i, element) in enumerate(mcc_compositions[struct]):
             if i > 0:
-                print "+",
-            print "   {}*mu_{}".format(element[1], element[0]),
+                print("+"),
+            print("   {}*mu_{}".format(element[1], element[0])),
             n_atoms += element[1]
             Lne_cur[i_of_element[element[0]]] = element[1]
-        print " <= mu_{} = {}".format(struct, mcc_energies[struct]*n_atoms)
+        print(" <= mu_{} = {}".format(struct, mcc_energies[struct]*n_atoms))
         Lne.append(np.array(Lne_cur))
         Vne.append(mcc_energies[struct]*n_atoms)
 
     if debug:
         for (L, V) in zip(Lne, Vne):
-            print "inequality i_of_element, L, V ", i_of_element, L, "<=", V
+            print("inequality i_of_element, L, V ", i_of_element, L, "<=", V)
 
     full_mu_range = None
     stable_mu_range = None
     if n_types == 2: # binary
         if debug:
-            print "****************************************************************************************************"
-            print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
+            print("****************************************************************************************************")
+            print("types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ])
         Leq_3 = np.array([Leq[0], Leq[1], 0.0])
         stable_mu_range = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
         for (L, V) in zip(Lne, Vne):
             if np.all(L == Leq): # skip instance when inequality corresponds to same composition as base structure equilibrium equality
                 continue
             if debug:
-                print "inequality"
-                print "Leq",Leq
-                print "L from ne",L
-                print "Veq",Veq
-                print "V from ne",V
+                print("inequality")
+                print("Leq",Leq)
+                print("L from ne",L)
+                print("Veq",Veq)
+                print("V from ne",V)
             A_lin_sys = np.array( [Leq, L] )
             b_lin_sys = np.array( [Veq, V] )
             x = np.linalg.solve(A_lin_sys, b_lin_sys)
@@ -133,8 +133,8 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
 
     elif n_types == 3: # ternary
         if debug:
-            print "****************************************************************************************************"
-            print "types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ]
+            print("****************************************************************************************************")
+            print("types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ])
         # do monatomic limits first
         vertices = []
         for (L1, V1) in zip(Lne, Vne):
@@ -160,12 +160,12 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         for e in polygon:
             full_mu_range.append(e[0])
         if debug:
-            print "initial polygon ", polygon
+            print("initial polygon ", polygon)
         for (L, V) in zip(Lne, Vne):
             if sum(L != 0) > 1:
                 polygon = intersect_half_plane (polygon, L, V)
         if debug:
-            print "****************************************************************************************************"
+            print("****************************************************************************************************")
         stable_mu_range = []
         for e in polygon:
             stable_mu_range.append(e[0])

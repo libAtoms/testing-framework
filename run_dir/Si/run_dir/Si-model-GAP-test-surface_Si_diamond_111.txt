@@ -1,0 +1,66 @@
+Model GAP, Test surface_Si_diamond_111
+Test run at 2020-08-05 09:32
+
+model file: /root/gits/testing-framework/run_dir/Si/run_dir/../models/GAP/model.py
+============================================================
+from quippy.potential import Potential
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.xml"))[0]
+
+
+calculator = Potential(init_args='Potential xml_label="GAP_2017_6_17_60_4_3_56_165"',
+                        param_filename=pot_name)#, mpi_obj=mpi_glob)
+
+no_checkpoint = True
+
+name = 'GAP'
+============================================================
+test file: /root/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_111/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+got relaxed bulk cell  Cell([[2.7442490571771674, -1.2440987100805587e-16, 2.7442490571771656], [2.7442490571771674, 2.7442490571771656, 5.110276866334709e-17], [-2.1676193741014914e-17, 2.7442490571771656, 2.7442490571771656]])
+got rescaled surf cell  Cell([[0.0, -2.7442490571771656, 2.7442490571771656], [2.7442490571771656, -2.7442490571771656, 0.0], [22.066034927595453, 22.066034927595453, 22.066034927595453]])
+relax_config failed to read base run config from  Si-model-None-test-surface_Si_diamond_111-surface-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+/usr/local/lib/python3.7/site-packages/ase/optimize/precon/lbfgs.py:135: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  '`PreconLBFGS` by explicitly providing the ' +
+PreconLBFGS:   0  09:32:39    -2934.619082       0.5907
+PreconLBFGS:   1  09:32:39    -2934.682811       0.3090
+PreconLBFGS:   2  09:32:39    -2934.691328       0.2271
+PreconLBFGS:   3  09:32:40    -2934.698959       0.2658
+PreconLBFGS:   4  09:32:40    -2934.708219       0.1160
+PreconLBFGS:   5  09:32:41    -2934.710906       0.0999
+PreconLBFGS:   6  09:32:41    -2934.712875       0.1101
+PreconLBFGS:   7  09:32:41    -2934.714983       0.0707
+PreconLBFGS:   8  09:32:42    -2934.715771       0.0789
+PreconLBFGS:   9  09:32:42    -2934.716482       0.1026
+PreconLBFGS:  10  09:32:43    -2934.718164       0.0904
+PreconLBFGS:  11  09:32:43    -2934.719011       0.0828
+PreconLBFGS:  12  09:32:43    -2934.719933       0.1003
+PreconLBFGS:  13  09:32:44    -2934.722227       0.1166
+PreconLBFGS:  14  09:32:44    -2934.723484       0.1211
+PreconLBFGS:  15  09:32:45    -2934.725834       0.0775
+PreconLBFGS:  16  09:32:45    -2934.726187       0.0660
+PreconLBFGS:  17  09:32:45    -2934.726361       0.0361
+PreconLBFGS:  18  09:32:45    -2934.726430       0.0057
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+/usr/local/lib/python3.7/site-packages/ase/io/extxyz.py:999: UserWarning: write_xyz() overwriting array "forces" present in atoms.arrays with stored results from calculator
+  'from calculator'.format(key))
+got surface cell potential energy -2934.7264300459533
+got bulk potential energy -2937.174580994539
+got area 13.043906428567546
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'Ef': 0.09384270586394851, 'dmu': None, 'filename': 'Si-model-GAP-test-surface_Si_diamond_111-relaxed.xyz'}
+============================================================

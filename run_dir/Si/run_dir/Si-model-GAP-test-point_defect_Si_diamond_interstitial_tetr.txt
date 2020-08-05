@@ -1,0 +1,64 @@
+Model GAP, Test point_defect_Si_diamond_interstitial_tetr
+Test run at 2020-08-05 09:32
+
+model file: /root/gits/testing-framework/run_dir/Si/run_dir/../models/GAP/model.py
+============================================================
+from quippy.potential import Potential
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.xml"))[0]
+
+
+calculator = Potential(init_args='Potential xml_label="GAP_2017_6_17_60_4_3_56_165"',
+                        param_filename=pot_name)#, mpi_obj=mpi_glob)
+
+no_checkpoint = True
+
+name = 'GAP'
+============================================================
+test file: /root/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_tetr/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_interstitial
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_tetr-relaxed_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/usr/local/lib/python3.7/site-packages/ase/optimize/precon/lbfgs.py:135: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  '`PreconLBFGS` by explicitly providing the ' +
+PreconLBFGS:   0  09:32:56   -10443.287399       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/usr/local/lib/python3.7/site-packages/ase/io/extxyz.py:999: UserWarning: write_xyz() overwriting array "forces" present in atoms.arrays with stored results from calculator
+  'from calculator'.format(key))
+got bulk primitive cell  Cell([[2.7442490571771674, -1.2440987100805587e-16, 2.7442490571771656], [2.7442490571771674, 2.7442490571771656, 5.110276866334709e-17], [-2.1676193741014914e-17, 2.7442490571771656, 2.7442490571771656]])
+got rescaled bulk_supercell cell  Cell([10.97699622870867, 10.97699622870867, 10.97699622870867])
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_tetr-Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 215 , international (Hermann-Mauguin) P-43m , Hall  P -4 2 3
+PreconLBFGS:   0  09:32:58   -10602.424238       1.1523
+PreconLBFGS:   1  09:32:59   -10602.722947       0.5475
+PreconLBFGS:   2  09:33:00   -10602.810933       0.4902
+PreconLBFGS:   3  09:33:01   -10602.860250       0.2808
+PreconLBFGS:   4  09:33:02   -10602.877868       0.1002
+PreconLBFGS:   5  09:33:03   -10602.883701       0.0607
+PreconLBFGS:   6  09:33:04   -10602.885945       0.0843
+PreconLBFGS:   7  09:33:06   -10602.887404       0.0351
+PreconLBFGS:   8  09:33:07   -10602.888443       0.0120
+PreconLBFGS:   9  09:33:08   -10602.888544       0.0074
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 215 , international (Hermann-Mauguin) P-43m , Hall  P -4 2 3
+got interstitial Z_14 cell energy -10602.888544419775
+got bulk energy -10606.463764702674
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.17636561081036, 'defects': {'Z_14': {'Ef0': 4.039526835271317, 'Ef': 3.575220282898954, 'unrelaxed_filename': 'Si-model-GAP-test-point_defect_Si_diamond_interstitial_tetr-Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-GAP-test-point_defect_Si_diamond_interstitial_tetr-Z_14-relaxed.xyz', 'atom_ind': 64, 'Z': 14}}}
+============================================================

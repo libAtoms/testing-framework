@@ -1,0 +1,74 @@
+Model GAP, Test point_defect_Si_diamond_interstitial_hex
+Test run at 2020-08-05 09:40
+
+model file: /root/gits/testing-framework/run_dir/Si/run_dir/../models/GAP/model.py
+============================================================
+from quippy.potential import Potential
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.xml"))[0]
+
+
+calculator = Potential(init_args='Potential xml_label="GAP_2017_6_17_60_4_3_56_165"',
+                        param_filename=pot_name)#, mpi_obj=mpi_glob)
+
+no_checkpoint = True
+
+name = 'GAP'
+============================================================
+test file: /root/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_hex/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_interstitial
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_hex-relaxed_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/usr/local/lib/python3.7/site-packages/ase/optimize/precon/lbfgs.py:135: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  '`PreconLBFGS` by explicitly providing the ' +
+PreconLBFGS:   0  09:40:57   -10443.287399       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/usr/local/lib/python3.7/site-packages/ase/io/extxyz.py:999: UserWarning: write_xyz() overwriting array "forces" present in atoms.arrays with stored results from calculator
+  'from calculator'.format(key))
+got bulk primitive cell  Cell([[2.7442490571771674, -1.2440987100805587e-16, 2.7442490571771656], [2.7442490571771674, 2.7442490571771656, 5.110276866334709e-17], [-2.1676193741014914e-17, 2.7442490571771656, 2.7442490571771656]])
+got rescaled bulk_supercell cell  Cell([10.97699622870867, 10.97699622870867, 10.97699622870867])
+setting constraint FixedPlane with normal [ 7.53090285 -7.53090285  7.53090285]
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_hex-Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 166 , international (Hermann-Mauguin) R-3m , Hall  -R 3 2"
+PreconLBFGS:   0  09:40:58   -10602.180676       1.7314
+PreconLBFGS:   1  09:41:00   -10602.691063       0.6592
+PreconLBFGS:   2  09:41:00   -10602.832223       0.4329
+PreconLBFGS:   3  09:41:01   -10602.876544       0.3403
+PreconLBFGS:   4  09:41:02   -10602.911210       0.2278
+PreconLBFGS:   5  09:41:03   -10602.935004       0.1602
+PreconLBFGS:   6  09:41:04   -10602.944689       0.0895
+PreconLBFGS:   7  09:41:05   -10602.951121       0.1275
+PreconLBFGS:   8  09:41:07   -10602.961033       0.1198
+PreconLBFGS:   9  09:41:09   -10602.966346       0.0994
+PreconLBFGS:  10  09:41:11   -10602.974575       0.0797
+PreconLBFGS:  11  09:41:13   -10602.979526       0.0555
+PreconLBFGS:  12  09:41:14   -10602.981628       0.0406
+PreconLBFGS:  13  09:41:15   -10602.982622       0.0402
+PreconLBFGS:  14  09:41:17   -10602.983865       0.0379
+PreconLBFGS:  15  09:41:20   -10602.984841       0.0214
+PreconLBFGS:  16  09:41:22   -10602.985277       0.0116
+PreconLBFGS:  17  09:41:25   -10602.985373       0.0121
+PreconLBFGS:  18  09:41:28   -10602.985671       0.0098
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 166 , international (Hermann-Mauguin) R-3m , Hall  -R 3 2"
+got interstitial Z_14 cell energy -10602.985670985494
+got bulk energy -10606.463764702674
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.17636561081036, 'defects': {'Z_14': {'Ef0': 4.283088936184868, 'Ef': 3.478093717179945, 'unrelaxed_filename': 'Si-model-GAP-test-point_defect_Si_diamond_interstitial_hex-Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-GAP-test-point_defect_Si_diamond_interstitial_hex-Z_14-relaxed.xyz', 'atom_ind': 64, 'Z': 14}}}
+============================================================

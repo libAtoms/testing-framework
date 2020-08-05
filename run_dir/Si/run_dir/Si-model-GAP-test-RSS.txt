@@ -1,0 +1,407 @@
+Model GAP, Test RSS
+Test run at 2020-08-05 09:34
+
+model file: /root/gits/testing-framework/run_dir/Si/run_dir/../models/GAP/model.py
+============================================================
+from quippy.potential import Potential
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.xml"))[0]
+
+
+calculator = Potential(init_args='Potential xml_label="GAP_2017_6_17_60_4_3_56_165"',
+                        param_filename=pot_name)#, mpi_obj=mpi_glob)
+
+no_checkpoint = True
+
+name = 'GAP'
+============================================================
+test file: /root/gits/testing-framework/scripts/../tests/Si/RSS/test.py
+============================================================
+import os.path
+from RSS import do_RSS
+
+properties = do_RSS(os.path.join(os.path.abspath(os.path.dirname(__file__)),'random_structs.extxyz'),':10:2')
+============================================================
+got index  :10:2 range_slice_args [None, 10, 2]
+using i_config range(0, 5, 2)
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config trying to maintain symmetry
+ SD2: i 0 E -2224.663536886716 f 29.944038485561865 s 192.41750102077052  alpha 0.0001 False
+ SD2: i 1 E -2231.3569390044427 f 25.939278262832584 s 160.5905619491461  alpha 0.0006630922902317562 False
+ SD2: i 2 E -2254.024756826204 f 11.619390128024863 s 67.43452455315118  alpha 0.0011455319243913692 False
+ SD2: i 3 E -2261.3738141233034 f 6.134030995268354 s 25.62395887212204  alpha 0.0014852270951599396 False
+ SD2: i 4 E -2262.6566791377304 f 5.366371657515245 s 6.258777661077239  alpha 0.001961580629499023 False
+ SD2: i 5 E -2263.134855299818 f 4.998976272960799 s 2.462723870389526  alpha 0.002707010449383767 False
+ SD2: i 6 E -2263.638647631672 f 4.610104026483446 s 2.274672920278225  alpha 0.0092162177322889 False
+ SD2: i 7 E -2265.056225162742 f 3.4873941035924205 s 3.250096942917404  alpha 0.018551885293177868 False
+ SD2: i 8 E -2266.9522800990644 f 2.6642054885068966 s 5.276542452102374  alpha 0.015758612489883066 False
+ SD2: i 9 E -2266.8248946749386 f 2.9571075786644445 s 21.93343303303565  alpha 0.0028931559651486187 False
+ SD2: i 10 E -2267.7145714282988 f 2.0964152552282482 s 8.834897330697695  alpha 0.0022152068982988823 False
+ SD2: i 11 E -2267.800041302845 f 2.1294761750974835 s 7.301204766878449  alpha 0.001222809956844965 False
+ SD2: i 12 E -2267.8849534490114 f 2.025146828069189 s 0.6510579747953925  alpha 0.0013041810325579199 False
+ SD2: i 13 E -2267.917705679394 f 2.006742709014369 s 0.7330550897285393  alpha 0.0027693920013483297 False
+ SD2: i 14 E -2267.9842767838513 f 1.9751218473173926 s 0.49543076298203714  alpha 0.01684556432790787 False
+ SD2: i 15 E -2268.3468635703252 f 1.8060574196628505 s 0.4786027301504918  alpha 0.036254962888940784 False
+ SD2: i 16 E -2268.81535961008 f 1.7339852277978276 s 9.707200524569888  alpha 0.0023090183583910225 False
+ SD2: i 17 E -2268.95038133812 f 1.5379555721422629 s 4.027520934863672  alpha 0.001632867500219286 False
+ SD2: i 18 E -2268.991478604237 f 1.5928984207285386 s 0.7013473755602276  alpha 0.0015048981091794486 False
+ SD2: i 19 E -2269.011686173325 f 1.5920060368959725 s 0.5704915651819913  alpha 0.002138301915315833 False
+ SD2: i 20 E -2269.0395508412894 f 1.5930802797532757 s 0.41836121025957923  alpha 0.006487783756097959 False
+ SD2: i 21 E -2269.1223082486 f 1.5813111445465002 s 0.18800221657051935  alpha 0.014279089120130697 False
+ SD2: i 22 E -2269.2971623551675 f 1.507264270724686 s 0.4772642918997408  alpha 0.04009930549879137 False
+ SD2: i 23 E -2269.716641016848 f 1.3055682854163286 s 2.289188103849795  alpha 0.00989591740816433 False
+ SD2: i 24 E -2269.7684605121053 f 1.1518104197828214 s 5.88129667485067  alpha 0.0030168501935008683 False
+ SD2: i 25 E -2269.833369695829 f 1.222191774688959 s 3.290405660069825  alpha 0.0020204173691970155 False
+ SD2: i 26 E -2269.861164188148 f 1.1793567264877012 s 0.9124919846249442  alpha 0.0016726185137821744 False
+ SD2: i 27 E -2269.8758570488026 f 1.1845355199937861 s 0.27212298471296154  alpha 0.0016789000715251381 False
+ SD2: i 28 E -2269.8898589850055 f 1.1781188594465 s 0.2412803570813898  alpha 0.006211919891059528 False
+ SD2: i 29 E -2269.9409625416256 f 1.1566769551480407 s 0.11725661067741511  alpha 0.017173885284024224 False
+ SD2: i 30 E -2270.078038921156 f 1.0939348449047028 s 0.3832349397720694  alpha 0.034324861308989284 False
+ SD2: i 31 E -2270.325895157291 f 1.0199961197355247 s 2.289305134932589  alpha 0.005022120916749994 False
+ SD2: i 32 E -2270.361022031875 f 0.9345839621862138 s 2.2582530753855834  alpha 0.002239249104357545 False
+ SD2: i 33 E -2270.3841053526553 f 0.9768825884399053 s 0.5663482645332585  True
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config trying to maintain symmetry
+/usr/local/lib/python3.7/site-packages/ase/optimize/precon/lbfgs.py:135: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  '`PreconLBFGS` by explicitly providing the ' +
+PreconLBFGS:   0  09:34:58    -2270.384105       0.8727       0.0014
+/usr/local/lib/python3.7/site-packages/ase/io/extxyz.py:999: UserWarning: write_xyz() overwriting array "forces" present in atoms.arrays with stored results from calculator
+  'from calculator'.format(key))
+PreconLBFGS:   1  09:34:59    -2270.442262       0.7895       0.0082
+PreconLBFGS:   2  09:35:01    -2270.945342       0.5113       0.0138
+PreconLBFGS:   3  09:35:02    -2271.045343       0.4612       0.0062
+PreconLBFGS:   4  09:35:03    -2271.056117       0.4752       0.0051
+PreconLBFGS:   5  09:35:05    -2271.121970       0.2030       0.0077
+PreconLBFGS:   6  09:35:06    -2271.143055       0.2542       0.0093
+PreconLBFGS:   7  09:35:07    -2271.173024       0.2620       0.0025
+PreconLBFGS:   8  09:35:08    -2271.185679       0.2660       0.0019
+PreconLBFGS:   9  09:35:09    -2271.209220       0.3009       0.0062
+PreconLBFGS:  10  09:35:10    -2271.275122       0.4118       0.0051
+PreconLBFGS:  11  09:35:12    -2271.332798       0.5487       0.0041
+PreconLBFGS:  12  09:35:13    -2271.389758       0.4273       0.0066
+PreconLBFGS:  13  09:35:15    -2271.563573       0.3927       0.0053
+PreconLBFGS:  14  09:35:17    -2271.667440       0.4861       0.0092
+PreconLBFGS:  15  09:35:18    -2271.777497       0.5984       0.0048
+PreconLBFGS:  16  09:35:20    -2271.878929       0.8606       0.0064
+PreconLBFGS:  17  09:35:21    -2272.047317       0.7367       0.0119
+PreconLBFGS:  18  09:35:23    -2272.462683       0.6869       0.0106
+PreconLBFGS:  19  09:35:24    -2272.602568       0.6238       0.0083
+PreconLBFGS:  20  09:35:25    -2272.714467       0.3805       0.0034
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:35:25    -2272.714467       0.3753       0.0034
+PreconLBFGS:   1  09:35:27    -2272.736520       0.4687       0.0050
+PreconLBFGS:   2  09:35:28    -2272.748347       0.4346       0.0019
+PreconLBFGS:   3  09:35:29    -2272.770997       0.2943       0.0033
+PreconLBFGS:   4  09:35:30    -2272.911938       0.4237       0.0053
+PreconLBFGS:   5  09:35:32    -2273.000009       0.5472       0.0084
+PreconLBFGS:   6  09:35:32    -2273.045899       0.6707       0.0030
+PreconLBFGS:   7  09:35:34    -2273.174921       0.8337       0.0071
+PreconLBFGS:   8  09:35:36    -2273.867272       1.1002       0.0315
+PreconLBFGS:   9  09:35:37    -2273.953734       1.1669       0.0336
+PreconLBFGS:  10  09:35:38    -2274.257374       0.9729       0.0236
+PreconLBFGS:  11  09:35:39    -2274.435508       0.6904       0.0055
+PreconLBFGS:  12  09:35:40    -2274.497517       0.4897       0.0054
+PreconLBFGS:  13  09:35:40    -2274.548298       0.5828       0.0144
+PreconLBFGS:  14  09:35:42    -2274.616264       0.2802       0.0103
+PreconLBFGS:  15  09:35:42    -2274.641909       0.1838       0.0027
+PreconLBFGS:  16  09:35:43    -2274.655384       0.2238       0.0030
+PreconLBFGS:  17  09:35:45    -2274.673734       0.3190       0.0059
+PreconLBFGS:  18  09:35:46    -2274.721521       0.2296       0.0075
+PreconLBFGS:  19  09:35:47    -2274.770471       0.2552       0.0115
+PreconLBFGS:  20  09:35:48    -2274.797860       0.2218       0.0061
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:35:48    -2274.797860       0.2230       0.0061
+PreconLBFGS:   1  09:35:50    -2274.800676       0.2077       0.0011
+PreconLBFGS:   2  09:35:51    -2274.804181       0.1500       0.0017
+PreconLBFGS:   3  09:35:52    -2274.806183       0.1323       0.0014
+PreconLBFGS:   4  09:35:53    -2274.811563       0.1288       0.0016
+PreconLBFGS:   5  09:35:53    -2274.821170       0.1449       0.0030
+PreconLBFGS:   6  09:35:55    -2274.863739       0.4109       0.0029
+PreconLBFGS:   7  09:35:56    -2274.866687       0.4767       0.0021
+PreconLBFGS:   8  09:35:58    -2274.910168       0.4012       0.0084
+PreconLBFGS:   9  09:35:59    -2274.985445       0.3247       0.0076
+PreconLBFGS:  10  09:36:00    -2275.036401       0.3309       0.0040
+PreconLBFGS:  11  09:36:01    -2275.091039       0.4649       0.0126
+PreconLBFGS:  12  09:36:03    -2275.139491       0.2987       0.0063
+PreconLBFGS:  13  09:36:04    -2275.187996       0.3575       0.0105
+PreconLBFGS:  14  09:36:05    -2275.227334       0.2508       0.0072
+PreconLBFGS:  15  09:36:06    -2275.247646       0.2157       0.0010
+PreconLBFGS:  16  09:36:07    -2275.259646       0.2158       0.0064
+PreconLBFGS:  17  09:36:08    -2275.282691       0.1165       0.0027
+PreconLBFGS:  18  09:36:09    -2275.285048       0.1175       0.0005
+PreconLBFGS:  19  09:36:11    -2275.287566       0.0990       0.0024
+PreconLBFGS:  20  09:36:12    -2275.298872       0.0725       0.0029
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:36:12    -2275.298872       0.0710       0.0029
+PreconLBFGS:   1  09:36:14    -2275.300101       0.0861       0.0022
+PreconLBFGS:   2  09:36:15    -2275.300936       0.0861       0.0002
+PreconLBFGS:   3  09:36:16    -2275.303827       0.0878       0.0014
+PreconLBFGS:   4  09:36:17    -2275.312121       0.0843       0.0016
+PreconLBFGS:   5  09:36:18    -2275.313911       0.0754       0.0009
+PreconLBFGS:   6  09:36:19    -2275.315187       0.0798       0.0003
+PreconLBFGS:   7  09:36:20    -2275.318397       0.0424       0.0014
+PreconLBFGS:   8  09:36:21    -2275.320417       0.0450       0.0006
+PreconLBFGS:   9  09:36:22    -2275.321109       0.0544       0.0001
+PreconLBFGS:  10  09:36:23    -2275.322203       0.0520       0.0011
+PreconLBFGS:  11  09:36:24    -2275.325245       0.0655       0.0002
+PreconLBFGS:  12  09:36:26    -2275.326332       0.0489       0.0006
+PreconLBFGS:  13  09:36:27    -2275.327887       0.0218       0.0002
+PreconLBFGS:  14  09:36:28    -2275.327994       0.0195       0.0002
+PreconLBFGS:  15  09:36:29    -2275.328258       0.0106       0.0002
+PreconLBFGS:  16  09:36:30    -2275.328301       0.0088       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+robust_minim relax_configs LBFGS finished in  17 iters, max 20
+RSS completed minimization
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+ SD2: i 0 E -1270.056606130737 f 28.398612703683696 s 88.86413081056477  alpha 0.0001 False
+ SD2: i 1 E -1272.1867053826104 f 26.30473246926811 s 81.05760558394579  alpha 0.0012002017552188162 False
+ SD2: i 2 E -1286.492922462926 f 14.594452707864772 s 25.28846495077006  alpha 0.0018713484809501511 False
+ SD2: i 3 E -1290.7579243785 f 9.707480320334197 s 10.016157861734037  alpha 0.0036647779192752615 False
+ SD2: i 4 E -1293.2774823763887 f 5.3109674692154405 s 4.100572051817361  alpha 0.005925287467807518 False
+ SD2: i 5 E -1294.4938798040096 f 3.7557413778913538 s 4.960170983776577  alpha 0.0062546414934441 False
+ SD2: i 6 E -1295.6431316488186 f 3.7002535456101637 s 7.670471713978218  alpha 0.01 False
+ SD2: i 7 E -1296.425322379567 f 4.448490682274657 s 15.641844897439682  alpha 0.0032414607959951767 False
+ SD2: i 8 E -1297.3782905576932 f 2.464536134038341 s 5.876976718765958  alpha 0.002483453829967407 False
+ SD2: i 9 E -1297.6029978202748 f 2.5684376248929883 s 1.7326953577835476  alpha 0.002423183861038428 False
+ SD2: i 10 E -1297.7328490662446 f 2.3762878890526298 s 2.162133257148906  alpha 0.011880975054282166 False
+ SD2: i 11 E -1298.2437359514547 f 1.7418343043075017 s 1.579773211511639  alpha 0.02494066424652578 False
+ SD2: i 12 E -1298.613803639328 f 0.9736595500094298 s 4.229678493803906  alpha 0.009507072165828016 False
+ SD2: i 13 E -1298.659840562461 f 1.247354614708422 s 5.714524792872595  alpha 0.003722834181187796 False
+ SD2: i 14 E -1298.8115210326616 f 0.8642014893701513 s 1.3038266240590357  alpha 0.0030605843437329864 False
+ SD2: i 15 E -1298.837484103477 f 0.8918603395646645 s 0.06221246590677259  True
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:36:34    -1298.837484       0.7885       0.0004
+PreconLBFGS:   1  09:36:35    -1299.205441       0.3702       0.0078
+PreconLBFGS:   2  09:36:36    -1299.232873       0.3275       0.0037
+PreconLBFGS:   3  09:36:36    -1299.245346       0.2729       0.0063
+PreconLBFGS:   4  09:36:37    -1299.258917       0.2471       0.0028
+PreconLBFGS:   5  09:36:37    -1299.277568       0.1630       0.0039
+PreconLBFGS:   6  09:36:38    -1299.286397       0.1465       0.0012
+PreconLBFGS:   7  09:36:39    -1299.297260       0.2236       0.0081
+PreconLBFGS:   8  09:36:39    -1299.327438       0.3291       0.0122
+PreconLBFGS:   9  09:36:40    -1299.377116       0.1540       0.0078
+PreconLBFGS:  10  09:36:41    -1299.447765       0.4749       0.0084
+PreconLBFGS:  11  09:36:42    -1299.475447       0.5524       0.0128
+PreconLBFGS:  12  09:36:42    -1299.518730       0.4432       0.0192
+PreconLBFGS:  13  09:36:43    -1299.586620       0.2180       0.0075
+PreconLBFGS:  14  09:36:44    -1299.610406       0.0862       0.0047
+PreconLBFGS:  15  09:36:44    -1299.634487       0.2673       0.0052
+PreconLBFGS:  16  09:36:46    -1299.710241       0.7870       0.0221
+PreconLBFGS:  17  09:36:47    -1299.737239       1.0668       0.0354
+PreconLBFGS:  18  09:36:48    -1299.797851       1.1838       0.0457
+PreconLBFGS:  19  09:36:49    -1299.952413       1.0107       0.0229
+PreconLBFGS:  20  09:36:49    -1300.097266       0.4118       0.0087
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:36:49    -1300.097266       0.4432       0.0087
+PreconLBFGS:   1  09:36:51    -1300.246653       0.6960       0.0382
+PreconLBFGS:   2  09:36:52    -1300.866229       0.8001       0.0167
+PreconLBFGS:   3  09:36:53    -1300.900772       0.5126       0.0266
+PreconLBFGS:   4  09:36:53    -1300.938359       0.1729       0.0221
+PreconLBFGS:   5  09:36:55    -1300.981802       0.4650       0.0094
+PreconLBFGS:   6  09:36:55    -1300.992207       0.5671       0.0135
+PreconLBFGS:   7  09:36:56    -1301.017197       0.5903       0.0103
+PreconLBFGS:   8  09:36:57    -1301.090855       0.2936       0.0078
+PreconLBFGS:   9  09:36:57    -1301.113649       0.3080       0.0050
+PreconLBFGS:  10  09:36:58    -1301.130783       0.2162       0.0040
+PreconLBFGS:  11  09:36:59    -1301.139393       0.1038       0.0050
+PreconLBFGS:  12  09:37:00    -1301.141784       0.0999       0.0016
+PreconLBFGS:  13  09:37:00    -1301.143424       0.1037       0.0015
+PreconLBFGS:  14  09:37:01    -1301.146402       0.1064       0.0069
+PreconLBFGS:  15  09:37:02    -1301.152821       0.0476       0.0009
+PreconLBFGS:  16  09:37:02    -1301.153064       0.0442       0.0003
+PreconLBFGS:  17  09:37:03    -1301.153539       0.0445       0.0012
+PreconLBFGS:  18  09:37:05    -1301.157408       0.0265       0.0007
+PreconLBFGS:  19  09:37:05    -1301.157700       0.0160       0.0002
+PreconLBFGS:  20  09:37:05    -1301.157739       0.0144       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:37:06    -1301.157750       0.0136       0.0000
+PreconLBFGS:   1  09:37:07    -1301.157813       0.0087       0.0004
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 58 , international (Hermann-Mauguin) Pnnm , Hall  -P 2 2n
+robust_minim relax_configs LBFGS finished in  2 iters, max 20
+RSS completed minimization
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+ SD2: i 0 E -3168.4764262459034 f 23.41387490844115 s 363.15737386674255  alpha 0.0001 False
+ SD2: i 1 E -3184.2743786162396 f 19.08841874725856 s 294.69373669402944  alpha 0.0005282108318778117 False
+ SD2: i 2 E -3223.579407142962 f 10.54517738597594 s 114.62060755448398  alpha 0.0007833260451636685 False
+ SD2: i 3 E -3231.90566912849 f 7.568741432823026 s 59.497817068970825  alpha 0.0014328034443186236 False
+ SD2: i 4 E -3236.384685384074 f 5.324618809333861 s 32.818069143642944  alpha 0.003127834219380454 False
+ SD2: i 5 E -3239.0633672276135 f 4.023609005262768 s 14.30517640944064  alpha 0.0026287285305823488 False
+ SD2: i 6 E -3239.54004720607 f 3.2557931732990193 s 10.514104139434272  alpha 0.0015988184968778795 False
+ SD2: i 7 E -3239.804212795125 f 2.8899753834161306 s 6.345901851644397  alpha 0.0013951511553550076 False
+ SD2: i 8 E -3239.968956241335 f 2.624866567015308 s 4.992146165249898  alpha 0.0016257783360530372 False
+ SD2: i 9 E -3240.152598953354 f 2.3314927209092002 s 4.798163941561215  alpha 0.0016270340035419665 False
+ SD2: i 10 E -3240.334672973913 f 2.3732635558358948 s 5.669136962838469  alpha 0.01 False
+ SD2: i 11 E -3241.4388680318875 f 2.5945778116758818 s 9.630946609718347  alpha 0.0016239431390967362 False
+ SD2: i 12 E -3241.7245231439165 f 2.2889908208606617 s 8.134704214968288  alpha 0.001501875088605879 False
+ SD2: i 13 E -3241.919150789373 f 2.314520675458143 s 7.1856114669283375  alpha 0.0022548908420388985 False
+ SD2: i 14 E -3242.133457534858 f 2.3089667678258134 s 2.958561962646585  alpha 0.002063496779728329 False
+ SD2: i 15 E -3242.27574167532 f 2.324753562344815 s 3.5062559809151828  alpha 0.0010846903117251257 False
+ SD2: i 16 E -3242.348725644099 f 2.2408345078856295 s 1.551149232194943  alpha 0.0008600384392929203 False
+ SD2: i 17 E -3242.4003297010113 f 2.2080819610909046 s 1.5432332630857473  alpha 0.0011886498901116241 False
+ SD2: i 18 E -3242.4677884285343 f 2.149090230226881 s 1.2776674772332974  alpha 0.013817229629410328 False
+ SD2: i 19 E -3243.1138012456604 f 1.5568408070616349 s 0.7889180524544256  alpha 0.019277857972350536 False
+ SD2: i 20 E -3243.3936486670686 f 0.9929731797058267 s 10.700158433670543  alpha 0.0022986143291421086 False
+ SD2: i 21 E -3243.5517531431456 f 1.4296559028419296 s 11.497093805049277  alpha 0.0010965342636681241 False
+ SD2: i 22 E -3243.6725600976097 f 1.1487228740941275 s 5.104532119564141  alpha 0.0007589595859248343 False
+ SD2: i 23 E -3243.706275667231 f 1.0404128806197517 s 0.6267727981139658  alpha 0.0007032876091500956 False
+ SD2: i 24 E -3243.7181064900274 f 1.0274844141647155 s 0.31285980597061946  alpha 0.0009475689330427672 False
+ SD2: i 25 E -3243.733565233014 f 1.0186963680522017 s 0.3081301258853111  alpha 0.01033737324155105 False
+ SD2: i 26 E -3243.89180266827 f 0.9299823867572194 s 0.6014441954007482  True
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:37:15    -3243.891803       0.8777       0.0008
+PreconLBFGS:   1  09:37:17    -3244.105831       0.8690       0.0140
+PreconLBFGS:   2  09:37:18    -3244.607991       0.7205       0.0082
+PreconLBFGS:   3  09:37:20    -3244.676125       0.6780       0.0022
+PreconLBFGS:   4  09:37:21    -3244.784192       0.5166       0.0036
+PreconLBFGS:   5  09:37:23    -3244.804931       0.5360       0.0029
+PreconLBFGS:   6  09:37:24    -3244.857397       0.3114       0.0018
+PreconLBFGS:   7  09:37:26    -3245.003648       0.7672       0.0080
+PreconLBFGS:   8  09:37:28    -3245.180021       1.4351       0.0157
+PreconLBFGS:   9  09:37:29    -3245.304378       1.4506       0.0178
+PreconLBFGS:  10  09:37:31    -3245.908297       1.7888       0.0057
+PreconLBFGS:  11  09:37:32    -3246.403103       1.0156       0.0072
+PreconLBFGS:  12  09:37:33    -3246.637979       0.7284       0.0050
+PreconLBFGS:  13  09:37:34    -3246.776084       0.7874       0.0020
+PreconLBFGS:  14  09:37:35    -3246.936377       0.9121       0.0018
+PreconLBFGS:  15  09:37:36    -3247.151467       1.3619       0.0044
+PreconLBFGS:  16  09:37:38    -3247.431472       0.8924       0.0017
+PreconLBFGS:  17  09:37:39    -3247.616049       1.2086       0.0033
+PreconLBFGS:  18  09:37:41    -3248.028911       1.7122       0.0079
+PreconLBFGS:  19  09:37:43    -3248.538861       1.2357       0.0063
+PreconLBFGS:  20  09:37:45    -3248.812527       0.7515       0.0043
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:37:45    -3248.812527       0.7695       0.0043
+PreconLBFGS:   1  09:37:47    -3248.850403       0.9582       0.0028
+PreconLBFGS:   2  09:37:49    -3248.870381       0.9323       0.0047
+PreconLBFGS:   3  09:37:50    -3249.068945       0.6497       0.0071
+PreconLBFGS:   4  09:37:51    -3249.139055       0.9123       0.0046
+PreconLBFGS:   5  09:37:53    -3249.277891       0.7741       0.0044
+PreconLBFGS:   6  09:37:54    -3249.404527       0.5668       0.0008
+PreconLBFGS:   7  09:37:56    -3249.452567       0.3650       0.0021
+PreconLBFGS:   8  09:37:57    -3249.494253       0.3766       0.0009
+PreconLBFGS:   9  09:37:59    -3249.534740       0.3064       0.0049
+PreconLBFGS:  10  09:38:00    -3249.576668       0.2760       0.0014
+PreconLBFGS:  11  09:38:02    -3249.608311       0.1803       0.0019
+PreconLBFGS:  12  09:38:03    -3249.620541       0.1518       0.0015
+PreconLBFGS:  13  09:38:04    -3249.627665       0.1619       0.0009
+PreconLBFGS:  14  09:38:04    -3249.630490       0.1386       0.0004
+PreconLBFGS:  15  09:38:06    -3249.634764       0.1333       0.0003
+PreconLBFGS:  16  09:38:07    -3249.638534       0.0839       0.0005
+PreconLBFGS:  17  09:38:08    -3249.642435       0.0724       0.0003
+PreconLBFGS:  18  09:38:10    -3249.646386       0.1587       0.0009
+PreconLBFGS:  19  09:38:11    -3249.664800       0.1845       0.0006
+PreconLBFGS:  20  09:38:13    -3249.685193       0.2706       0.0007
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:38:13    -3249.685193       0.2711       0.0007
+PreconLBFGS:   1  09:38:14    -3249.687709       0.2498       0.0017
+PreconLBFGS:   2  09:38:16    -3249.691654       0.2413       0.0021
+PreconLBFGS:   3  09:38:17    -3249.715300       0.2171       0.0027
+PreconLBFGS:   4  09:38:18    -3249.719474       0.2177       0.0001
+PreconLBFGS:   5  09:38:20    -3249.735738       0.1680       0.0004
+PreconLBFGS:   6  09:38:21    -3249.746851       0.2026       0.0012
+PreconLBFGS:   7  09:38:23    -3249.764404       0.1611       0.0008
+PreconLBFGS:   8  09:38:24    -3249.775255       0.1852       0.0004
+PreconLBFGS:   9  09:38:25    -3249.791463       0.3112       0.0003
+PreconLBFGS:  10  09:38:27    -3249.816548       0.1726       0.0001
+PreconLBFGS:  11  09:38:28    -3249.822013       0.1134       0.0003
+PreconLBFGS:  12  09:38:30    -3249.826590       0.1002       0.0004
+PreconLBFGS:  13  09:38:31    -3249.833755       0.1176       0.0015
+PreconLBFGS:  14  09:38:33    -3249.846598       0.1355       0.0021
+PreconLBFGS:  15  09:38:34    -3249.854631       0.1548       0.0015
+PreconLBFGS:  16  09:38:36    -3249.869332       0.1560       0.0012
+PreconLBFGS:  17  09:38:37    -3249.879069       0.1878       0.0006
+PreconLBFGS:  18  09:38:38    -3249.891186       0.3125       0.0013
+PreconLBFGS:  19  09:38:40    -3249.921218       0.1538       0.0009
+PreconLBFGS:  20  09:38:41    -3249.928313       0.1255       0.0004
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+robust_minim relax_configs LBFGS finished in  21 iters, max 20
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+relax_config trying to maintain symmetry
+PreconLBFGS:   0  09:38:41    -3249.928313       0.1249       0.0004
+PreconLBFGS:   1  09:38:43    -3249.928550       0.1218       0.0004
+PreconLBFGS:   2  09:38:44    -3249.929864       0.0661       0.0012
+PreconLBFGS:   3  09:38:46    -3249.931060       0.0577       0.0010
+PreconLBFGS:   4  09:38:47    -3249.931819       0.0608       0.0001
+PreconLBFGS:   5  09:38:49    -3249.932437       0.0342       0.0003
+PreconLBFGS:   6  09:38:50    -3249.932968       0.0210       0.0000
+PreconLBFGS:   7  09:38:51    -3249.933195       0.0238       0.0000
+PreconLBFGS:   8  09:38:53    -3249.933348       0.0191       0.0001
+PreconLBFGS:   9  09:38:54    -3249.933445       0.0214       0.0000
+PreconLBFGS:  10  09:38:56    -3249.933651       0.0178       0.0000
+PreconLBFGS:  11  09:38:57    -3249.933807       0.0348       0.0000
+PreconLBFGS:  12  09:38:58    -3249.934076       0.0212       0.0000
+PreconLBFGS:  13  09:39:00    -3249.934542       0.0296       0.0001
+PreconLBFGS:  14  09:39:02    -3249.934753       0.0320       0.0002
+PreconLBFGS:  15  09:39:03    -3249.935087       0.0239       0.0000
+PreconLBFGS:  16  09:39:05    -3249.935309       0.0176       0.0001
+PreconLBFGS:  17  09:39:06    -3249.935407       0.0191       0.0000
+PreconLBFGS:  18  09:39:08    -3249.935544       0.0099       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 18 , international (Hermann-Mauguin) P2_12_12 , Hall  P 2 2ab
+robust_minim relax_configs LBFGS finished in  19 iters, max 20
+RSS completed minimization
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'energies': [-162.5234500712684, -162.6447266267986, -162.4967772060158], 'volumes': [24.01452988725728, 16.83918277612726, 36.59722224578713]}
+============================================================
