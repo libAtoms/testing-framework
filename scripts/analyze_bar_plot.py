@@ -57,8 +57,9 @@ test_names = []
 for model in models:
     if model != ref_model_name:
         for obs in all_data[model].keys():
-            test_names.append(latex_dict[obs])
-            all_data[model][obs] = ((all_data[model][obs] - all_data[ref_model_name][obs])/all_data[ref_model_name][obs]) * 100
+            if obs != "surf_E_110": ####
+                test_names.append(latex_dict[obs])
+                all_data[model][obs] = ((all_data[model][obs] - all_data[ref_model_name][obs])/all_data[ref_model_name][obs]) * 100
 
 print(all_data)
 
@@ -66,7 +67,7 @@ fig = plt.figure(figsize=(12, 5))
 ax1 = fig.add_subplot(111, projection='3d')
 
 _x = np.arange(1 )
-_y = np.arange(len(all_data[ref_model_name].keys()))
+_y = np.arange(len(all_data[ref_model_name].keys())-1) ###
 
 _xx, _yy = np.meshgrid(_x, _y)
 y, x = _xx.ravel(), _yy.ravel()
@@ -77,25 +78,29 @@ depth = 0.3
 model_vals = []
 model_ticks = []
 
+models.remove(ref_model_name)
+
 for (i,model) in enumerate(models):
-    if model != ref_model_name:
-        plot_d = [(key, value) for (key,value) in all_data[model].items()]
-        top = [abs(d[1]) for d in plot_d]
-        bottom = np.zeros_like(top)
+    #if model != ref_model_name:
+    plot_d = [(key, value) for (key,value) in all_data[model].items() if key != "surf_E_110"] ####
+    top = [abs(d[1]) for d in plot_d]
+    bottom = np.zeros_like(top)
 
-        ax1.bar3d(x, y, bottom, width, depth, top, shade=True)
+    ax1.bar3d(x, y, bottom, width, depth, top, shade=True)
 
-        model_vals.append(i*width)
-        model_ticks.append(model)
+    model_vals.append(i*width)
+    model_ticks.append(model)
 
-        y = [_y + width for _y in y]
+    y = [_y + width for _y in y]
 
 ax1.set_ylim(0,((width+depth)/2.0)*(len(models)))
 
 ax1.set_zlabel("Percentage Error [%]")
 
-plt.xticks([i for i in range(len(all_data[ref_model_name].items()))], test_names, rotation=30, ha='right')
-plt.yticks(model_vals, model_ticks, rotation=-5, ha='left', va='center')
+print(test_names)
+
+plt.xticks([i for i in range(len(all_data[ref_model_name].items())-1)], test_names, rotation=30, ha='right')
+plt.yticks(model_vals, model_ticks, ha='left', va='center')
 
 plt.savefig("bar_plot.pdf")
 
