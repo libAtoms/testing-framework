@@ -1,0 +1,72 @@
+Model ACE_B14_N7_18_lap_1.10, Test surface_Si_diamond_110
+Test run at 2020-08-06 21:56
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B14_N7_18_lap_1.10/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_110/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+'supercell_a1_in_bulk_lattice_coords' is not in supercell.info (imported from surface.xyz). Assuming a cell_ratio of 1.0
+got relaxed bulk cell  Cell([[2.746407371642504, 2.7915431730930625e-17, 2.7464073716425044], [2.746407371642504, 2.7464073716425044, 4.226273852253106e-18], [1.6935231888471903e-16, 2.7464073716425044, 2.7464073716425044]])
+got rescaled surf cell  Cell([3.846660889654819, 5.44, 21.539982668964456])
+relax_config failed to read base run config from  Si-model-None-test-surface_Si_diamond_110-surface-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 11 , international (Hermann-Mauguin) P2_1/m , Hall  -P 2yb
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  22:00:54    -1950.624790       0.8353
+PreconLBFGS:   1  22:00:54    -1951.764720       1.3086
+PreconLBFGS:   2  22:00:54    -1951.874712       1.5636
+PreconLBFGS:   3  22:00:54    -1952.331161       1.4515
+PreconLBFGS:   4  22:00:54    -1952.728677       0.6471
+PreconLBFGS:   5  22:00:54    -1952.839885       0.7105
+PreconLBFGS:   6  22:00:54    -1952.909775       0.5394
+PreconLBFGS:   7  22:00:54    -1952.971951       0.4317
+PreconLBFGS:   8  22:00:54    -1953.015295       0.3701
+PreconLBFGS:   9  22:00:55    -1953.063313       0.7189
+PreconLBFGS:  10  22:00:55    -1953.143911       0.2903
+PreconLBFGS:  11  22:00:55    -1953.160173       0.2215
+PreconLBFGS:  12  22:00:55    -1953.172124       0.2784
+PreconLBFGS:  13  22:00:55    -1953.189883       0.2816
+PreconLBFGS:  14  22:00:55    -1953.198989       0.3261
+PreconLBFGS:  15  22:00:55    -1953.221712       0.1752
+PreconLBFGS:  16  22:00:55    -1953.227433       0.1810
+PreconLBFGS:  17  22:00:55    -1953.231851       0.1345
+PreconLBFGS:  18  22:00:55    -1953.239271       0.1452
+PreconLBFGS:  19  22:00:55    -1953.242628       0.0871
+PreconLBFGS:  20  22:00:55    -1953.244030       0.0914
+PreconLBFGS:  21  22:00:55    -1953.245467       0.0973
+PreconLBFGS:  22  22:00:55    -1953.253869       0.1022
+PreconLBFGS:  23  22:00:56    -1953.255196       0.0966
+PreconLBFGS:  24  22:00:56    -1953.259149       0.0629
+PreconLBFGS:  25  22:00:56    -1953.259843       0.0634
+PreconLBFGS:  26  22:00:56    -1953.260866       0.0685
+PreconLBFGS:  27  22:00:56    -1953.261625       0.0090
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 11 , international (Hermann-Mauguin) P2_1/m , Hall  -P 2yb
+got surface cell potential energy -1953.2616248134716
+got bulk potential energy -1958.1070353226114
+got area 20.92583523972222
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'Ef': 0.1157757970860362, 'dmu': None, 'filename': 'Si-model-ACE_B14_N7_18_lap_1.10-test-surface_Si_diamond_110-relaxed.xyz'}
+============================================================

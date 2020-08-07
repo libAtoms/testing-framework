@@ -1,0 +1,59 @@
+Model ACE_B14_N7_18_rid_1.10, Test point_defect_Si_diamond_interstitial_tetr
+Test run at 2020-08-06 22:04
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B14_N7_18_rid_1.10/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_tetr/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_interstitial
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_tetr-relaxed_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  22:07:06   -10443.258365       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+got bulk primitive cell  Cell([[2.745596171325553, -5.442457501690634e-17, 2.745596171325553], [2.745596171325553, 2.745596171325553, 1.2843070177392443e-16], [1.6769487201136215e-17, 2.745596171325553, 2.745596171325553]])
+got rescaled bulk_supercell cell  Cell([10.98238468530221, 10.98238468530221, 10.98238468530221])
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_tetr-Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 215 , international (Hermann-Mauguin) P-43m , Hall  P -4 2 3
+PreconLBFGS:   0  22:07:09   -10602.680126       1.1012
+PreconLBFGS:   1  22:07:09   -10602.947853       0.5179
+PreconLBFGS:   2  22:07:10   -10603.014293       0.5000
+PreconLBFGS:   3  22:07:10   -10603.057508       0.2741
+PreconLBFGS:   4  22:07:10   -10603.081378       0.0816
+PreconLBFGS:   5  22:07:11   -10603.086168       0.0390
+PreconLBFGS:   6  22:07:11   -10603.087041       0.0414
+PreconLBFGS:   7  22:07:12   -10603.088528       0.0145
+PreconLBFGS:   8  22:07:12   -10603.088609       0.0068
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 215 , international (Hermann-Mauguin) P-43m , Hall  P -4 2 3
+got interstitial Z_14 cell energy -10603.088609073704
+got bulk energy -10606.434276905366
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.17591195239024, 'defects': {'Z_14': {'Ef0': 3.754151323244514, 'Ef': 3.345667831661558, 'unrelaxed_filename': 'Si-model-ACE_B14_N7_18_rid_1.10-test-point_defect_Si_diamond_interstitial_tetr-Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-ACE_B14_N7_18_rid_1.10-test-point_defect_Si_diamond_interstitial_tetr-Z_14-relaxed.xyz', 'atom_ind': 64, 'Z': 14}}}
+============================================================

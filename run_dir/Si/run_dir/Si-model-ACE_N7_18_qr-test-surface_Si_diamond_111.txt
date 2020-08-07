@@ -1,0 +1,62 @@
+Model ACE_N7_18_qr, Test surface_Si_diamond_111
+Test run at 2020-08-05 21:48
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_N7_18_qr/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_111/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+got relaxed bulk cell  Cell([[2.745688671424546, 9.664691703397671e-17, 2.745688671424546], [2.745688671424546, 2.745688671424546, 1.7297060190769515e-16], [1.0770127163423169e-16, 2.745688671424546, 2.745688671424546]])
+got rescaled surf cell  Cell([[0.0, -2.745688671424546, 2.745688671424546], [2.745688671424546, -2.745688671424546, 0.0], [22.077610618286457, 22.077610618286457, 22.077610618286457]])
+relax_config failed to read base run config from  Si-model-None-test-surface_Si_diamond_111-surface-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  21:51:05    -2934.695068       0.5251
+PreconLBFGS:   1  21:51:05    -2934.743112       0.2918
+PreconLBFGS:   2  21:51:05    -2934.751519       0.2583
+PreconLBFGS:   3  21:51:05    -2934.763997       0.1102
+PreconLBFGS:   4  21:51:05    -2934.766785       0.1530
+PreconLBFGS:   5  21:51:05    -2934.768828       0.0901
+PreconLBFGS:   6  21:51:05    -2934.771080       0.0727
+PreconLBFGS:   7  21:51:05    -2934.772246       0.0572
+PreconLBFGS:   8  21:51:05    -2934.772835       0.0840
+PreconLBFGS:   9  21:51:05    -2934.773759       0.1075
+PreconLBFGS:  10  21:51:05    -2934.775406       0.1082
+PreconLBFGS:  11  21:51:05    -2934.776776       0.0565
+PreconLBFGS:  12  21:51:05    -2934.777471       0.0980
+PreconLBFGS:  13  21:51:05    -2934.778365       0.1397
+PreconLBFGS:  14  21:51:05    -2934.781292       0.1061
+PreconLBFGS:  15  21:51:05    -2934.782241       0.1036
+PreconLBFGS:  16  21:51:06    -2934.783882       0.0575
+PreconLBFGS:  17  21:51:06    -2934.784068       0.0161
+PreconLBFGS:  18  21:51:06    -2934.784098       0.0049
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+got surface cell potential energy -2934.784098220103
+got bulk potential energy -2937.1665954219893
+got area 13.057595506053246
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'Ef': 0.09123031881260332, 'dmu': None, 'filename': 'Si-model-ACE_N7_18_qr-test-surface_Si_diamond_111-relaxed.xyz'}
+============================================================

@@ -1,0 +1,65 @@
+Model ACE_B14_N7_18_lap_1.05, Test point_defect_Si_diamond_interstitial_hex
+Test run at 2020-08-06 20:55
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B14_N7_18_lap_1.05/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_hex/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_interstitial
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_hex-relaxed_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  21:00:02   -10443.249307       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+got bulk primitive cell  Cell([[2.7460601131242823, 3.7555326768023174e-17, 2.7460601131242823], [2.7460601131242823, 2.7460601131242823, 1.9441465390501103e-16], [6.309905381366963e-17, 2.7460601131242823, 2.7460601131242823]])
+got rescaled bulk_supercell cell  Cell([10.98424045249713, 10.98424045249713, 10.98424045249713])
+setting constraint FixedPlane with normal [ 7.5408461 -7.5408461  7.5408461]
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_hex-Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 166 , international (Hermann-Mauguin) R-3m , Hall  -R 3 2"
+PreconLBFGS:   0  21:00:05   -10602.306527       1.9832
+PreconLBFGS:   1  21:00:06   -10602.861485       0.5768
+PreconLBFGS:   2  21:00:06   -10602.971165       0.4333
+PreconLBFGS:   3  21:00:07   -10603.025800       0.3392
+PreconLBFGS:   4  21:00:07   -10603.069559       0.0623
+PreconLBFGS:   5  21:00:08   -10603.076323       0.0356
+PreconLBFGS:   6  21:00:08   -10603.077398       0.0493
+PreconLBFGS:   7  21:00:08   -10603.078733       0.0754
+PreconLBFGS:   8  21:00:09   -10603.080804       0.0653
+PreconLBFGS:   9  21:00:10   -10603.082943       0.0342
+PreconLBFGS:  10  21:00:10   -10603.083563       0.0220
+PreconLBFGS:  11  21:00:11   -10603.084069       0.0222
+PreconLBFGS:  12  21:00:11   -10603.084449       0.0103
+PreconLBFGS:  13  21:00:11   -10603.084498       0.0077
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 166 , international (Hermann-Mauguin) R-3m , Hall  -R 3 2"
+got interstitial Z_14 cell energy -10603.084498043743
+got bulk energy -10606.425077239242
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.17577041906526, 'defects': {'Z_14': {'Ef0': 4.118550686205708, 'Ef': 3.340579195499231, 'unrelaxed_filename': 'Si-model-ACE_B14_N7_18_lap_1.05-test-point_defect_Si_diamond_interstitial_hex-Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-ACE_B14_N7_18_lap_1.05-test-point_defect_Si_diamond_interstitial_hex-Z_14-relaxed.xyz', 'atom_ind': 64, 'Z': 14}}}
+============================================================

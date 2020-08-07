@@ -1,0 +1,70 @@
+Model ACE_B14_N7_18_rid_1.10, Test surface_Si_diamond_110
+Test run at 2020-08-06 21:56
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B14_N7_18_rid_1.10/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_110/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+'supercell_a1_in_bulk_lattice_coords' is not in supercell.info (imported from surface.xyz). Assuming a cell_ratio of 1.0
+got relaxed bulk cell  Cell([[2.745596171325553, -5.442457501690634e-17, 2.745596171325553], [2.745596171325553, 2.745596171325553, 1.2843070177392443e-16], [1.6769487201136215e-17, 2.745596171325553, 2.745596171325553]])
+got rescaled surf cell  Cell([3.846660889654819, 5.44, 21.539982668964456])
+relax_config failed to read base run config from  Si-model-None-test-surface_Si_diamond_110-surface-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 11 , international (Hermann-Mauguin) P2_1/m , Hall  -P 2yb
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  22:00:44    -1950.557672       1.0610
+PreconLBFGS:   1  22:00:45    -1951.705432       1.6062
+PreconLBFGS:   2  22:00:45    -1951.876863       1.8075
+PreconLBFGS:   3  22:00:45    -1952.591181       1.1579
+PreconLBFGS:   4  22:00:45    -1952.837163       0.5609
+PreconLBFGS:   5  22:00:45    -1952.895834       0.5422
+PreconLBFGS:   6  22:00:45    -1952.949765       0.4891
+PreconLBFGS:   7  22:00:45    -1953.008102       0.4089
+PreconLBFGS:   8  22:00:46    -1953.047737       0.6466
+PreconLBFGS:   9  22:00:46    -1953.116444       0.2281
+PreconLBFGS:  10  22:00:46    -1953.130301       0.2405
+PreconLBFGS:  11  22:00:46    -1953.142458       0.2815
+PreconLBFGS:  12  22:00:46    -1953.154207       0.2602
+PreconLBFGS:  13  22:00:46    -1953.166975       0.1953
+PreconLBFGS:  14  22:00:46    -1953.178855       0.1132
+PreconLBFGS:  15  22:00:46    -1953.183547       0.1118
+PreconLBFGS:  16  22:00:46    -1953.186569       0.1139
+PreconLBFGS:  17  22:00:46    -1953.190752       0.1122
+PreconLBFGS:  18  22:00:46    -1953.192374       0.0665
+PreconLBFGS:  19  22:00:46    -1953.193259       0.0663
+PreconLBFGS:  20  22:00:46    -1953.193945       0.0697
+PreconLBFGS:  21  22:00:46    -1953.195113       0.0866
+PreconLBFGS:  22  22:00:46    -1953.197062       0.0665
+PreconLBFGS:  23  22:00:46    -1953.200947       0.0758
+PreconLBFGS:  24  22:00:47    -1953.201827       0.0824
+PreconLBFGS:  25  22:00:47    -1953.202974       0.0085
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 11 , international (Hermann-Mauguin) P2_1/m , Hall  -P 2yb
+got surface cell potential energy -1953.2029742877653
+got bulk potential energy -1958.1109434286786
+got area 20.92583523972222
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'Ef': 0.11727056733192764, 'dmu': None, 'filename': 'Si-model-ACE_B14_N7_18_rid_1.10-test-surface_Si_diamond_110-relaxed.xyz'}
+============================================================
