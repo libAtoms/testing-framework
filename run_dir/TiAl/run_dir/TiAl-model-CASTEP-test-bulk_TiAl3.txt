@@ -1,0 +1,61 @@
+Model CASTEP, Test bulk_TiAl3
+Test run at 2019-09-19 21:45
+
+model file: ../../models/CASTEP/model.py
+============================================================
+import os
+from distutils import spawn
+
+#from matscipy.socketcalc import CastepClient, SocketCalculator
+from ase.calculators.castep import Castep
+
+model_abs_dir = os.path.abspath(os.path.dirname(__file__))
+
+mpirun = "aprun"
+mpirun_args = "-n 48"
+castep = "castep.mpi"
+
+os.environ['CASTEP_COMMAND'] = '{0} {1} {2}'.format(mpirun, mpirun_args, castep)
+
+print os.environ['CASTEP_COMMAND']
+
+name = 'CASTEP'
+Castep.name = name
+Castep.todict = lambda self: {}
+
+no_checkpoint = True
+
+def start(test_name):
+        global calculator
+	calculator = Castep(directory="./_CASTEP",
+                        cut_off_energy=600, #700
+                        max_scf_cycles=250,
+                        calculate_stress=True,
+                        finite_basis_corr='automatic',
+                        smearing_width='0.1', #0.1
+                        #elec_energy_tol='0.0000001',
+                        #elec_method='edft',
+                        #nextra_bands='13',
+                        mixing_scheme='Pulay',
+                        kpoints_mp_spacing='0.04', #0.015
+                        #perc_extra_bands=150,
+                        write_checkpoint='none')
+
+============================================================
+test file: /fs3/e89/e89/casv2/ship-testing-framework/scripts/../tests/TiAl/bulk_TiAl3/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'tetragonal')
+============================================================
+aprun -n 48 castep.mpi
+relax bulk
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl3-bulk-relaxed.xyz
+castep call stdout:
+Application 37169793 resources: utime ~4727s, stime ~75s, Rss ~480836, inblocks ~138668, outblocks ~310931
+PreconLBFGS:   0  21:47:29    -1924.648514       0.0011       0.0337
+castep call stdout:
+Application 37169798 resources: utime ~4712s, stime ~77s, Rss ~482376, inblocks ~138133, outblocks ~310932
+/work/e89/e89/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/precon.py:514: UserWarning: mu (0.341) < 1.0, capping at mu=1.0
+  warnings.warn('mu (%.3f) < 1.0, capping at mu=1.0' % self.mu)
+estimate_mu(): mu=1.0, mu_c=114.796569689018

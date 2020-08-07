@@ -1,0 +1,412 @@
+Model CASTEP, Test bulk_TiAl
+Test run at 2020-06-30 00:28
+
+model file: ../../models/CASTEP/model.py
+============================================================
+import os
+from distutils import spawn
+
+#from matscipy.socketcalc import CastepClient, SocketCalculator
+from ase.calculators.castep import Castep
+
+model_abs_dir = os.path.abspath(os.path.dirname(__file__))
+
+mpirun = "mpirun"
+mpirun_args = "-n 32"
+castep = "castep.mpi"
+
+os.environ['CASTEP_COMMAND'] = '{0} {1} {2}'.format(mpirun, mpirun_args, castep)
+
+print os.environ['CASTEP_COMMAND']
+
+name = 'CASTEP'
+Castep.name = name
+Castep.todict = lambda self: {}
+
+no_checkpoint = True
+
+def start(test_name):
+        global calculator
+	calculator = Castep()
+
+	calculator._directory="./_CASTEP"
+
+	calculator.param.cut_off_energy=700
+	calculator.param.elec_energy_tol=1E-7
+	calculator.param.elec_force_tol=1E-3
+	calculator.param.spin_polarised=False
+	calculator.param.mixing_scheme='Pulay'
+	calculator.param.write_checkpoint='none'
+	calculator.param.fine_grid_scale=2
+	calculator.param.smearing_width=0.1
+	calculator.param.finite_basis_corr='automatic'
+	calculator.param.calculate_stress=True
+
+	calculator.cell.kpoints_mp_spacing=0.02
+
+	return calculator
+============================================================
+test file: /home/casv2/gits/ship-testing-framework/scripts/../tests/TiAl/bulk_TiAl/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'cubic')
+============================================================
+mpirun -n 32 castep.mpi
+relax bulk
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-bulk-relaxed.xyz
+PreconLBFGS:   0  00:29:27    -1704.258655       0.0000       0.0422
+/home/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/precon.py:514: UserWarning: mu (0.419) < 1.0, capping at mu=1.0
+  warnings.warn('mu (%.3f) < 1.0, capping at mu=1.0' % self.mu)
+estimate_mu(): mu=1.0, mu_c=62.178290911803586
+PreconLBFGS:   1  00:34:19    -1704.297747       0.0000       0.0069
+symmetry.check: prec 0.01 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+final relaxed bulk
+2
+Lattice="2.7626784862682765 0.0 0.0 0.0 2.7626784862682765 0.0 0.0 0.0 3.981744226832742" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=2
+Ti       1.38133924       1.38133924       1.99087211        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+calculating E vs. V
+2
+Lattice="2.7626784862682765 0.0 0.0 0.0 2.7626784862682765 0.0 0.0 0.0 3.981744226832742" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=2
+Ti       1.38133924       1.38133924       1.99087211        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 0
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_00-relaxed.xyz
+PreconLBFGS:   0  00:34:20    -1704.297747       0.0000       0.0016
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.7626784862682765 0.0 0.0 0.0 2.7626784862682765 0.0 0.0 0.0 3.981744226832742" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.38133924       1.38133924       1.99087211        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.739461603015574 0.0 0.0 0.0 2.739461603015574 0.0 0.0 0.0 3.948282609306134" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.36973080       1.36973080       1.97414130        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -1
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-1-relaxed.xyz
+PreconLBFGS:   0  00:35:35    -1704.285494       0.0000       0.0016
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.739461603015574 0.0 0.0 0.0 2.739461603015574 0.0 0.0 0.0 3.948282609306134" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.36973080       1.36973080       1.97414130        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.7158443795006826 0.0 0.0 0.0 2.7158443795006826 0.0 0.0 0.0 3.914243996470205" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.35792219       1.35792219       1.95712200        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -2
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-2-relaxed.xyz
+PreconLBFGS:   0  00:36:49    -1704.255831       0.0000       0.0015
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.7158443795006826 0.0 0.0 0.0 2.7158443795006826 0.0 0.0 0.0 3.914243996470205" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.35792219       1.35792219       1.95712200        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.6918090979310874 0.0 0.0 0.0 2.6918090979310874 0.0 0.0 0.0 3.8796028523393487" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.34590455       1.34590455       1.93980143        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -3
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-3-relaxed.xyz
+PreconLBFGS:   0  00:38:03    -1704.206384       0.0000       0.0014
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.6918090979310874 0.0 0.0 0.0 2.6918090979310874 0.0 0.0 0.0 3.8796028523393487" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.34590455       1.34590455       1.93980143        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.667336751570371 0.0 0.0 0.0 2.667336751570371 0.0 0.0 0.0 3.8443317832217634" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.33366838       1.33366838       1.92216589        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -4
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-4-relaxed.xyz
+PreconLBFGS:   0  00:39:16    -1704.133998       0.0000       0.0010
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.667336751570371 0.0 0.0 0.0 2.667336751570371 0.0 0.0 0.0 3.8443317832217634" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.33366838       1.33366838       1.92216589        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.642406912178504 0.0 0.0 0.0 2.642406912178504 0.0 0.0 0.0 3.808401346666145" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.32120346       1.32120346       1.90420067        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -5
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-5-relaxed.xyz
+PreconLBFGS:   0  00:40:25    -1704.037036       0.0000       0.0006
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.642406912178504 0.0 0.0 0.0 2.642406912178504 0.0 0.0 0.0 3.808401346666145" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.32120346       1.32120346       1.90420067        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.616997579598787 0.0 0.0 0.0 2.616997579598787 0.0 0.0 0.0 3.771779834677024" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.30849879       1.30849879       1.88588992        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -6
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-6-relaxed.xyz
+PreconLBFGS:   0  00:41:39    -1703.910923       0.0000       0.0008
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.616997579598787 0.0 0.0 0.0 2.616997579598787 0.0 0.0 0.0 3.771779834677024" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.30849879       1.30849879       1.88588992        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.591085010484598 0.0 0.0 0.0 2.591085010484598 0.0 0.0 0.0 3.73443302686509" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.29554251       1.29554251       1.86721651        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -7
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-7-relaxed.xyz
+PreconLBFGS:   0  00:42:52    -1703.753741       0.0000       0.0018
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.591085010484598 0.0 0.0 0.0 2.591085010484598 0.0 0.0 0.0 3.73443302686509" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.29554251       1.29554251       1.86721651        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.5646435225450173 0.0 0.0 0.0 2.5646435225450173 0.0 0.0 0.0 3.6963239083138006" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.28232176       1.28232176       1.84816195        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -8
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-8-relaxed.xyz
+PreconLBFGS:   0  00:44:04    -1703.560070       0.0000       0.0030
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.5646435225450173 0.0 0.0 0.0 2.5646435225450173 0.0 0.0 0.0 3.6963239083138006" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.28232176       1.28232176       1.84816195        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.5376452699255307 0.0 0.0 0.0 2.5376452699255307 0.0 0.0 0.0 3.657412345844069" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.26882263       1.26882263       1.82870617        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -9
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-9-relaxed.xyz
+PreconLBFGS:   0  00:45:15    -1703.325348       0.0000       0.0043
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.5376452699255307 0.0 0.0 0.0 2.5376452699255307 0.0 0.0 0.0 3.657412345844069" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.26882263       1.26882263       1.82870617        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.5100599843862046 0.0 0.0 0.0 2.5100599843862046 0.0 0.0 0.0 3.6176547149841314" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.25502999       1.25502999       1.80882736        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i -10
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_-10-relaxed.xyz
+PreconLBFGS:   0  00:46:26    -1703.043966       0.0000       0.0054
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.5100599843862046 0.0 0.0 0.0 2.5100599843862046 0.0 0.0 0.0 3.6176547149841314" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.25502999       1.25502999       1.80882736        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.785511575323306 0.0 0.0 0.0 2.785511575323306 0.0 0.0 0.0 4.014652696268295" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=2
+Ti       1.39275579       1.39275579       2.00732635        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 1
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_01-relaxed.xyz
+PreconLBFGS:   0  00:47:35    -1704.294316       0.0000       0.0012
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.785511575323306 0.0 0.0 0.0 2.785511575323306 0.0 0.0 0.0 4.014652696268295" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.39275579       1.39275579       2.00732635        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.8079763484938507 0.0 0.0 0.0 2.8079763484938507 0.0 0.0 0.0 4.047030325921375" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.40398817       1.40398817       2.02351516        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 2
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_02-relaxed.xyz
+PreconLBFGS:   0  00:48:44    -1704.277151       0.0000       0.0013
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.8079763484938507 0.0 0.0 0.0 2.8079763484938507 0.0 0.0 0.0 4.047030325921375" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.40398817       1.40398817       2.02351516        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.8300873088521765 0.0 0.0 0.0 2.8300873088521765 0.0 0.0 0.0 4.078898018522628" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.41504365       1.41504365       2.03944901        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 3
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_03-relaxed.xyz
+PreconLBFGS:   0  00:49:53    -1704.247814       0.0000       0.0013
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.8300873088521765 0.0 0.0 0.0 2.8300873088521765 0.0 0.0 0.0 4.078898018522628" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.41504365       1.41504365       2.03944901        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.8518580667738376 0.0 0.0 0.0 2.8518580667738376 0.0 0.0 0.0 4.1102753901926254" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.42592903       1.42592903       2.05513770        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 4
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_04-relaxed.xyz
+PreconLBFGS:   0  00:51:03    -1704.207796       0.0000       0.0013
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.8518580667738376 0.0 0.0 0.0 2.8518580667738376 0.0 0.0 0.0 4.1102753901926254" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.42592903       1.42592903       2.05513770        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.873301413790082 0.0 0.0 0.0 2.873301413790082 0.0 0.0 0.0 4.141180876882549" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.43665071       1.43665071       2.07059044        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 5
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_05-relaxed.xyz
+PreconLBFGS:   0  00:52:14    -1704.158141       0.0000       0.0013
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.873301413790082 0.0 0.0 0.0 2.873301413790082 0.0 0.0 0.0 4.141180876882549" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.43665071       1.43665071       2.07059044        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.894429388835334 0.0 0.0 0.0 2.894429388835334 0.0 0.0 0.0 4.171631829854182" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.44721469       1.44721469       2.08581591        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 6
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_06-relaxed.xyz
+PreconLBFGS:   0  00:53:21    -1704.099377       0.0000       0.0014
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.894429388835334 0.0 0.0 0.0 2.894429388835334 0.0 0.0 0.0 4.171631829854182" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.44721469       1.44721469       2.08581591        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.915253337820215 0.0 0.0 0.0 2.915253337820215 0.0 0.0 0.0 4.20164460154026" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.45762667       1.45762667       2.10082230        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 7
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_07-relaxed.xyz
+PreconLBFGS:   0  00:54:33    -1704.034053       0.0000       0.0014
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.915253337820215 0.0 0.0 0.0 2.915253337820215 0.0 0.0 0.0 4.20164460154026" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.45762667       1.45762667       2.10082230        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.9357839673294284 0.0 0.0 0.0 2.9357839673294284 0.0 0.0 0.0 4.231234622937204" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.46789198       1.46789198       2.11561731        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 8
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_08-relaxed.xyz
+PreconLBFGS:   0  00:55:43    -1703.962112       0.0000       0.0014
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.9357839673294284 0.0 0.0 0.0 2.9357839673294284 0.0 0.0 0.0 4.231234622937204" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.46789198       1.46789198       2.11561731        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.9560313931335407 0.0 0.0 0.0 2.9560313931335407 0.0 0.0 0.0 4.260416473523316" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.47801570       1.47801570       2.13020824        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 9
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_09-relaxed.xyz
+PreconLBFGS:   0  00:56:47    -1703.883816       0.0000       0.0012
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.9560313931335407 0.0 0.0 0.0 2.9560313931335407 0.0 0.0 0.0 4.260416473523316" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.47801570       1.47801570       2.13020824        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+2
+Lattice="2.976005184110574 0.0 0.0 0.0 2.976005184110574 0.0 0.0 0.0 4.289203944561321" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.48800259       1.48800259       2.14460197        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+trying to relax i 10
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_TiAl-E_vs_V_10-relaxed.xyz
+PreconLBFGS:   0  00:57:55    -1703.801081       0.0000       0.0012
+symmetry.check: prec 0.0001 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+symmetry.check: prec 1e-06 got symmetry group number 123 , international (Hermann-Mauguin) P4/mmm , Hall -P 4 2
+2
+Lattice="2.976005184110574 0.0 0.0 0.0 2.976005184110574 0.0 0.0 0.0 4.289203944561321" Properties=species:S:1:pos:R:3:tags:I:1 spacegroup="P 1" unit_cell=conventional pbc="T T T" n_minim_iter=0
+Ti       1.48800259       1.48800259       2.14460197        0 
+Al       0.00000000       0.00000000       0.00000000        1 
+calculating elastic constants
+/home/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/lbfgs.py:137: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  'kwarg `precon`')
+PreconLBFGS:   0  00:59:10    -1704.276854       0.0000
+PreconLBFGS:   0  01:00:25    -1704.288727       0.0000
+PreconLBFGS:   0  01:01:41    -1704.293561       0.0000
+PreconLBFGS:   0  01:02:53    -1704.291786       0.0000
+PreconLBFGS:   0  01:04:06    -1704.283962       0.0000
+Fitting C_11
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-5.462096, -3.004933, -0.71826 ,  1.297129,  3.268239]) GPa
+Cij (gradient) / GPa    :     217.62731999999983
+Error in Cij / GPa      :     6.152448277891757
+Correlation coefficient :     0.9988033138682817
+Setting C11 (1) to 1.358323 +/- 0.038401
+
+
+Fitting C_21
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-2.229408, -1.444884, -0.71826 ,  0.03795 ,  0.649973]) GPa
+Cij (gradient) / GPa    :     72.41595999999994
+Error in Cij / GPa      :     1.7152129604609296
+Correlation coefficient :     0.9991595517022863
+Setting C21 (7) to 0.451985 +/- 0.010706
+
+
+Fitting C_31
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-3.337658, -2.175211, -1.101693, -0.068474,  0.837104]) GPa
+Cij (gradient) / GPa    :     104.56260999999986
+Error in Cij / GPa      :     2.7288264565012597
+Correlation coefficient :     0.9989799408452504
+Updating C31 (7) with value 0.652628 +/- 0.017032
+
+
+Fitting C_44
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-2.733017, -1.327202, -0.      ,  1.246611,  2.413631]) GPa
+Cij (gradient) / GPa    :     128.67109000000002
+Error in Cij / GPa      :     2.723657998666225
+Correlation coefficient :     0.9993285759685177
+Setting C44 (4) to 0.803102 +/- 0.017000
+
+
+[[ C11  C12  C12               ]
+ [ C12  C11  C12               ]
+ [ C12  C12  C11               ]
+ [                C44          ]
+ [                     C44     ]
+ [                          C44]]
+
+ = 
+
+[[217.63  88.49  88.49   0.     0.     0.  ]
+ [ 88.49 217.63  88.49   0.     0.     0.  ]
+ [ 88.49  88.49 217.63   0.     0.     0.  ]
+ [  0.     0.     0.   128.67   0.     0.  ]
+ [  0.     0.     0.     0.   128.67   0.  ]
+ [  0.     0.     0.     0.     0.   128.67]]
+C_11 = 217.63 +/- 6.15 GPa
+C_12 = 88.49 +/- 2.28 GPa
+C_44 = 128.67 +/- 2.72 GPa
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'c44': 128.67109000000002, 'c12': 88.48928499999991, 'c11': 217.62731999999983, 'B': 131.53529666666654, 'E_vs_V': [(11.396337918466072, -851.5199830925), (11.776215849081602, -851.660601689), (12.156093779697143, -851.77790224), (12.535971710312678, -851.874700584), (12.915849640928212, -851.9532588545), (13.295727571543754, -852.016445825), (13.675605502159284, -852.0649026225), (14.055483432774814, -852.1011584385), (14.435361363390362, -852.125863079), (14.815239294005892, -852.1406748025), (15.195117224621429, -852.146780577), (15.57499515523696, -852.144952578), (15.954873085852501, -852.136334685), (16.33475101646805, -852.121627147), (16.71462894708356, -852.1015740185), (17.094506877699104, -852.0766987685), (17.474384808314653, -852.047185079), (17.854262738930167, -852.0144702575), (18.23414066954572, -851.9784453425), (18.61401860016125, -851.939203471), (18.993896530776784, -851.897787753)]}
+============================================================

@@ -1,0 +1,1006 @@
+Model CASTEP, Test bulk_Ti_omega
+Test run at 2019-11-09 23:35
+
+model file: ../../models/CASTEP/model.py
+============================================================
+import os
+from distutils import spawn
+
+#from matscipy.socketcalc import CastepClient, SocketCalculator
+from ase.calculators.castep import Castep
+
+model_abs_dir = os.path.abspath(os.path.dirname(__file__))
+
+mpirun = "aprun"
+mpirun_args = "-n 48"
+castep = "castep.mpi"
+
+os.environ['CASTEP_COMMAND'] = '{0} {1} {2}'.format(mpirun, mpirun_args, castep)
+
+print os.environ['CASTEP_COMMAND']
+
+name = 'CASTEP'
+Castep.name = name
+Castep.todict = lambda self: {}
+
+no_checkpoint = True
+
+def start(test_name):
+        global calculator
+	calculator = Castep(directory="./_CASTEP",
+                        cut_off_energy=600, #700
+                        max_scf_cycles=250,
+                        calculate_stress=True,
+                        finite_basis_corr='automatic',
+                        smearing_width='0.1', #0.1
+                        #elec_energy_tol='0.0000001',
+                        #elec_method='edft',
+                        #nextra_bands='13',
+                        mixing_scheme='Pulay',
+                        kpoints_mp_spacing='0.04', #0.015
+                        #perc_extra_bands=150,
+                        write_checkpoint='none')
+
+============================================================
+test file: /fs3/e89/e89/casv2/ship-testing-framework/scripts/../tests/TiAl/bulk_Ti_omega/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'tetragonal')
+============================================================
+aprun -n 48 castep.mpi
+relax bulk
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-bulk-relaxed.xyz
+castep call stdout:
+Application 37773210 resources: utime ~1144s, stime ~32s, Rss ~304496, inblocks ~136694, outblocks ~305209
+PreconLBFGS:   0  23:36:15    -4781.041309       0.0000       0.0080
+symmetry.check: prec 0.01 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+final relaxed bulk
+3
+Lattice="3.8711880192275294 -2.235042238811648 7.119494544513778e-09 3.871188033375526 2.235042263316697 -7.119494583459668e-09 -1.373859159961367e-17 -8.700022357191773e-09 2.7664150656399986" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=1
+Ti       1.29039859       0.00000000      -0.00000000 
+Ti       3.87118803       0.00000001       1.38320753 
+Ti       6.45197746       0.00000002       1.38320753 
+calculating E vs. V
+3
+Lattice="3.8711880192275294 -2.235042238811648 7.119494544513778e-09 3.871188033375526 2.235042263316697 -7.119494583459668e-09 -1.373859159961367e-17 -8.700022357191773e-09 2.7664150656399986" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=1
+Ti       1.29039859       0.00000000      -0.00000000 
+Ti       3.87118803       0.00000001       1.38320753 
+Ti       6.45197746       0.00000002       1.38320753 
+trying to relax i 0
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_00-relaxed.xyz
+PreconLBFGS:   0  23:36:15    -4781.041309       0.0000       0.0053
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.8711880192275294 -2.235042238811648 7.119494544513778e-09 3.871188033375526 2.235042263316697 -7.119494583459668e-09 -1.373859159961367e-17 -8.700022357191773e-09 2.7664150656399986" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.29039859       0.00000000      -0.00000000 
+Ti       3.87118803       0.00000001       1.38320753 
+Ti       6.45197746       0.00000002       1.38320753 
+3
+Lattice="3.8386554893879574 -2.2162594832426348 7.059664030583256e-09 3.8386555034170575 2.216259507541749 -7.0596640692018536e-09 -1.3623135791487536e-17 -8.6269094689687e-09 2.743166781076044" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.27955439       0.00000000      -0.00000000 
+Ti       3.83865550       0.00000001       1.37158339 
+Ti       6.39775660       0.00000002       1.37158339 
+trying to relax i -1
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-1-relaxed.xyz
+castep call stdout:
+Application 37773215 resources: utime ~1077s, stime ~31s, Rss ~304364, inblocks ~136734, outblocks ~305208
+PreconLBFGS:   0  23:36:43    -4781.035416       0.0000       0.0066
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.8386554893879574 -2.2162594832426348 7.059664030583256e-09 3.8386555034170575 2.216259507541749 -7.0596640692018536e-09 -1.3623135791487536e-17 -8.6269094689687e-09 2.743166781076044" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.27955439       0.00000000      -0.00000000 
+Ti       3.83865550       0.00000001       1.37158339 
+Ti       6.39775660       0.00000002       1.37158339 
+3
+Lattice="3.805561984960027 -2.1971528472798885 6.998801829351162e-09 3.8055619988681806 2.1971528713695174 -6.998801867636825e-09 -1.3505689121453134e-17 -8.552535858859658e-09 2.7195176147814757" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.26852320       0.00000000      -0.00000000 
+Ti       3.80556199       0.00000001       1.35975881 
+Ti       6.34260078       0.00000002       1.35975881 
+trying to relax i -2
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-2-relaxed.xyz
+castep call stdout:
+Application 37773218 resources: utime ~1059s, stime ~31s, Rss ~304372, inblocks ~136700, outblocks ~305211
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  23:37:12    -4781.003107       0.0000       0.0080
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.805561984960027 -2.1971528472798885 6.998801829351162e-09 3.8055619988681806 2.1971528713695174 -6.998801867636825e-09 -1.3505689121453134e-17 -8.552535858859658e-09 2.7195176147814757" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.26852320       0.00000000      -0.00000000 
+Ti       3.80556199       0.00000001       1.35975881 
+Ti       6.34260078       0.00000002       1.35975881 
+3
+Lattice="3.771882678984522 -2.1777079970025994 6.936862281603889e-09 3.7718826927695885 2.1777080208790345 -6.936862319550723e-09 -1.3386163480265545e-17 -8.476845731305465e-09 2.6954498250001033" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.25729674       0.00000000      -0.00000000 
+Ti       3.77188269       0.00000001       1.34772491 
+Ti       6.28646863       0.00000002       1.34772491 
+trying to relax i -3
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-3-relaxed.xyz
+castep call stdout:
+Application 37773223 resources: utime ~1098s, stime ~31s, Rss ~304364, inblocks ~136692, outblocks ~305209
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  23:37:41    -4780.941360       0.0000       0.0095
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.771882678984522 -2.1777079970025994 6.936862281603889e-09 3.7718826927695885 2.1777080208790345 -6.936862319550723e-09 -1.3386163480265545e-17 -8.476845731305465e-09 2.6954498250001033" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.25729674       0.00000000      -0.00000000 
+Ti       3.77188269       0.00000001       1.34772491 
+Ti       6.28646863       0.00000002       1.34772491 
+3
+Lattice="3.737590938376673 -2.1579095557178465 6.873796406485744e-09 3.737590952036414 2.157909579377211 -6.873796444087587e-09 -1.3264464348859075e-17 -8.399779231700302e-09 2.6709443792885046" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.24586614       0.00000000      -0.00000000 
+Ti       3.73759095       0.00000001       1.33547219 
+Ti       6.22931575       0.00000002       1.33547219 
+trying to relax i -4
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-4-relaxed.xyz
+castep call stdout:
+Application 37773227 resources: utime ~1114s, stime ~32s, Rss ~304376, inblocks ~136700, outblocks ~305207
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  23:38:11    -4780.846448       0.0000       0.0112
+castep call stdout:
+Application 37773230 resources: utime ~1124s, stime ~33s, Rss ~304316, inblocks ~136705, outblocks ~305214
+/work/e89/e89/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/precon.py:514: UserWarning: mu (0.506) < 1.0, capping at mu=1.0
+  warnings.warn('mu (%.3f) < 1.0, capping at mu=1.0' % self.mu)
+mu_c (0.000) < 1.0, capping at mu_c=1.0
+estimate_mu(): mu=1.0, mu_c=1.0
+castep call stdout:
+Application 37773233 resources: utime ~1107s, stime ~32s, Rss ~304364, inblocks ~136682, outblocks ~305205
+castep call stdout:
+Application 37773236 resources: utime ~1032s, stime ~31s, Rss ~304364, inblocks ~136681, outblocks ~305113
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773241 resources: utime ~1117s, stime ~31s, Rss ~304364, inblocks ~136705, outblocks ~305210
+castep call stdout:
+Application 37773245 resources: utime ~1061s, stime ~31s, Rss ~304368, inblocks ~136692, outblocks ~305208
+PreconLBFGS:   1  23:40:41    -4780.849419       0.0000       0.0005
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.723337063672382 -2.1496863846183674 -2.1727351447595745e-07 3.7233370222847575 2.1496863129334267 -1.0206613198432053e-07 -1.1410269975880199e-07 7.150423745757388e-08 2.6914257556935275" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.24111483      -0.00000001      -0.00000005 
+Ti       3.72333699      -0.00000000       1.34571272 
+Ti       6.20555920      -0.00000002       1.34571261 
+3
+Lattice="3.6885374850498143 -2.12959468218152 -2.152428020746069e-07 3.688537444049013 2.1295946111665716 -1.0111218708920366e-07 -1.1303625699431392e-07 7.08359344566102e-08 2.6662707722498094" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.22951495      -0.00000001      -0.00000005 
+Ti       3.68853741      -0.00000000       1.33313523 
+Ti       6.14755993      -0.00000002       1.33313512 
+trying to relax i -5
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-5-relaxed.xyz
+castep call stdout:
+Application 37773248 resources: utime ~1073s, stime ~31s, Rss ~304368, inblocks ~136696, outblocks ~305126
+PreconLBFGS:   0  23:41:10    -4780.718469       0.0000       0.0020
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.6885374850498143 -2.12959468218152 -2.152428020746069e-07 3.688537444049013 2.1295946111665716 -1.0111218708920366e-07 -1.1303625699431392e-07 7.08359344566102e-08 2.6662707722498094" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.22951495      -0.00000001      -0.00000005 
+Ti       3.68853741      -0.00000000       1.33313523 
+Ti       6.14755993      -0.00000002       1.33313512 
+3
+Lattice="3.6530685815821373 -2.1091165418579565 -2.1317303154906934e-07 3.6530685409755987 2.109116471525886 -1.0013989429895587e-07 -1.1194930258381139e-07 7.015477751257272e-08 2.640631965263864" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.21769196      -0.00000001      -0.00000005 
+Ti       3.65306851      -0.00000000       1.32031583 
+Ti       6.08844511      -0.00000002       1.32031572 
+trying to relax i -6
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-6-relaxed.xyz
+castep call stdout:
+Application 37773250 resources: utime ~1067s, stime ~32s, Rss ~304368, inblocks ~136705, outblocks ~305125
+PreconLBFGS:   0  23:41:39    -4780.546303       0.0000       0.0036
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.6530685815821373 -2.1091165418579565 -2.1317303154906934e-07 3.6530685409755987 2.109116471525886 -1.0013989429895587e-07 -1.1194930258381139e-07 7.015477751257272e-08 2.640631965263864" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.21769196      -0.00000001      -0.00000005 
+Ti       3.65306851      -0.00000000       1.32031583 
+Ti       6.08844511      -0.00000002       1.32031572 
+3
+Lattice="3.616897209916737 -2.088232828175213 -2.1106226883520266e-07 3.61689716971227 2.0882327585395455 -9.914834507004633e-08 -1.1084082084003651e-07 6.94601301291908e-08 2.6144853769603595" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.20563481      -0.00000001      -0.00000005 
+Ti       3.61689713      -0.00000000       1.30724253 
+Ti       6.02815952      -0.00000002       1.30724243 
+trying to relax i -7
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-7-relaxed.xyz
+castep call stdout:
+Application 37773255 resources: utime ~1062s, stime ~31s, Rss ~304364, inblocks ~136687, outblocks ~305124
+PreconLBFGS:   0  23:42:08    -4780.327770       0.0001       0.0052
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.616897209916737 -2.088232828175213 -2.1106226883520266e-07 3.61689716971227 2.0882327585395455 -9.914834507004633e-08 -1.1084082084003651e-07 6.94601301291908e-08 2.6144853769603595" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.20563481      -0.00000001      -0.00000005 
+Ti       3.61689713      -0.00000000       1.30724253 
+Ti       6.02815952      -0.00000002       1.30724243 
+3
+Lattice="3.5799875201274274 -2.0669228430076845 -2.0890842192808677e-07 3.579987480333238 2.066922774082635 -9.813655666488369e-08 -1.0970971313203162e-07 6.875130383222989e-08 2.5878050931088548" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.19333155      -0.00000001      -0.00000005 
+Ti       3.57998745      -0.00000000       1.29390239 
+Ti       5.96664339      -0.00000002       1.29390229 
+trying to relax i -8
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-8-relaxed.xyz
+castep call stdout:
+Application 37773258 resources: utime ~1056s, stime ~32s, Rss ~304364, inblocks ~136689, outblocks ~305127
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  23:42:37    -4780.057969       0.0001       0.0066
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.5799875201274274 -2.0669228430076845 -2.0890842192808677e-07 3.579987480333238 2.066922774082635 -9.813655666488369e-08 -1.0970971313203162e-07 6.875130383222989e-08 2.5878050931088548" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.19333155      -0.00000001      -0.00000005 
+Ti       3.57998745      -0.00000000       1.29390239 
+Ti       5.96664339      -0.00000002       1.29390229 
+3
+Lattice="3.542300642168227 -2.0451641445492212 -2.0670922258518718e-07 3.542300602792955 2.0451640763497525 -9.710346355671721e-08 -1.0855478827642804e-07 6.802755214804275e-08 2.5605630163759394" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.18076924      -0.00000001      -0.00000005 
+Ti       3.54230057      -0.00000000       1.28028136 
+Ti       5.90383195      -0.00000002       1.28028126 
+trying to relax i -9
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_-9-relaxed.xyz
+castep call stdout:
+Application 37773261 resources: utime ~1162s, stime ~31s, Rss ~304396, inblocks ~136675, outblocks ~305131
+PreconLBFGS:   0  23:43:08    -4779.728832       0.0107       0.0064
+castep call stdout:
+Application 37773265 resources: utime ~1048s, stime ~31s, Rss ~304316, inblocks ~136653, outblocks ~305127
+/work/e89/e89/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/precon.py:514: UserWarning: mu (0.722) < 1.0, capping at mu=1.0
+  warnings.warn('mu (%.3f) < 1.0, capping at mu=1.0' % self.mu)
+mu_c (-0.000) < 1.0, capping at mu_c=1.0
+estimate_mu(): mu=1.0, mu_c=1.0
+castep call stdout:
+Application 37773270 resources: utime ~1146s, stime ~31s, Rss ~304396, inblocks ~136668, outblocks ~305132
+castep call stdout:
+Application 37773274 resources: utime ~1140s, stime ~32s, Rss ~304392, inblocks ~136723, outblocks ~305193
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773279 resources: utime ~1151s, stime ~32s, Rss ~304392, inblocks ~136672, outblocks ~305131
+castep call stdout:
+Application 37773282 resources: utime ~1132s, stime ~32s, Rss ~304384, inblocks ~136674, outblocks ~305132
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   1  23:45:39    -4779.729509       0.0112       0.0004
+castep call stdout:
+Application 37773286 resources: utime ~1095s, stime ~32s, Rss ~304388, inblocks ~136686, outblocks ~305132
+castep call stdout:
+Application 37773291 resources: utime ~1137s, stime ~31s, Rss ~304392, inblocks ~136677, outblocks ~305128
+castep call stdout:
+Application 37773300 resources: utime ~1157s, stime ~33s, Rss ~304392, inblocks ~136679, outblocks ~305128
+castep call stdout:
+Application 37773304 resources: utime ~1147s, stime ~31s, Rss ~304384, inblocks ~136684, outblocks ~305130
+castep call stdout:
+Application 37773311 resources: utime ~1139s, stime ~32s, Rss ~304392, inblocks ~136665, outblocks ~305127
+castep call stdout:
+Application 37773317 resources: utime ~1090s, stime ~31s, Rss ~304384, inblocks ~136696, outblocks ~305128
+castep call stdout:
+Application 37773320 resources: utime ~1142s, stime ~31s, Rss ~304388, inblocks ~136682, outblocks ~305130
+castep call stdout:
+Application 37773323 resources: utime ~1136s, stime ~32s, Rss ~304392, inblocks ~136668, outblocks ~305129
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773326 resources: utime ~1138s, stime ~33s, Rss ~304388, inblocks ~136685, outblocks ~305129
+castep call stdout:
+Application 37773331 resources: utime ~1154s, stime ~32s, Rss ~304388, inblocks ~136694, outblocks ~305132
+castep call stdout:
+Application 37773334 resources: utime ~1136s, stime ~31s, Rss ~304384, inblocks ~136673, outblocks ~305132
+castep call stdout:
+Application 37773338 resources: utime ~1140s, stime ~32s, Rss ~304388, inblocks ~136693, outblocks ~305132
+castep call stdout:
+Application 37773342 resources: utime ~1140s, stime ~31s, Rss ~304388, inblocks ~136691, outblocks ~305131
+castep call stdout:
+Application 37773345 resources: utime ~1142s, stime ~31s, Rss ~304384, inblocks ~136666, outblocks ~305128
+/work/e89/e89/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/lbfgs.py:349: UserWarning: Armijo linesearch failed, resetting Hessian and trying again
+  'Armijo linesearch failed, resetting Hessian and '
+PreconLBFGS:   2  23:53:27    -4779.729509       0.0112       0.0004
+castep call stdout:
+Application 37773348 resources: utime ~1036s, stime ~31s, Rss ~304348, inblocks ~136648, outblocks ~305065
+castep call stdout:
+Application 37773352 resources: utime ~1148s, stime ~33s, Rss ~304384, inblocks ~136659, outblocks ~305129
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773442 resources: utime ~1138s, stime ~31s, Rss ~304384, inblocks ~136673, outblocks ~305128
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773445 resources: utime ~1137s, stime ~31s, Rss ~304396, inblocks ~136670, outblocks ~305131
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   3  23:55:30    -4779.729511       0.0126       0.0001
+castep call stdout:
+Application 37773449 resources: utime ~1137s, stime ~32s, Rss ~304388, inblocks ~136694, outblocks ~305131
+castep call stdout:
+Application 37773452 resources: utime ~1155s, stime ~32s, Rss ~304392, inblocks ~136672, outblocks ~305129
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773455 resources: utime ~1141s, stime ~31s, Rss ~304384, inblocks ~136684, outblocks ~305131
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   4  23:57:03    -4779.729512       0.0133       0.0001
+castep call stdout:
+Application 37773458 resources: utime ~1082s, stime ~31s, Rss ~304396, inblocks ~136678, outblocks ~305130
+castep call stdout:
+Application 37773460 resources: utime ~1128s, stime ~32s, Rss ~304384, inblocks ~136671, outblocks ~305126
+castep call stdout:
+Application 37773465 resources: utime ~1141s, stime ~31s, Rss ~304388, inblocks ~136691, outblocks ~305131
+castep call stdout:
+Application 37773468 resources: utime ~1136s, stime ~32s, Rss ~304384, inblocks ~136669, outblocks ~305133
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773473 resources: utime ~1164s, stime ~31s, Rss ~304388, inblocks ~136674, outblocks ~305128
+castep call stdout:
+Application 37773479 resources: utime ~1147s, stime ~32s, Rss ~304392, inblocks ~136688, outblocks ~305128
+castep call stdout:
+Application 37773482 resources: utime ~1129s, stime ~31s, Rss ~304396, inblocks ~136675, outblocks ~305131
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773487 resources: utime ~1135s, stime ~31s, Rss ~304384, inblocks ~136677, outblocks ~305129
+PreconLBFGS:   5  00:01:08    -4779.729512       0.0133       0.0001
+castep call stdout:
+Application 37773491 resources: utime ~1138s, stime ~32s, Rss ~304384, inblocks ~136688, outblocks ~305130
+castep call stdout:
+Application 37773495 resources: utime ~1132s, stime ~31s, Rss ~304388, inblocks ~136685, outblocks ~305130
+castep call stdout:
+Application 37773502 resources: utime ~1137s, stime ~31s, Rss ~304392, inblocks ~136662, outblocks ~305127
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773505 resources: utime ~1153s, stime ~32s, Rss ~304380, inblocks ~136672, outblocks ~305131
+castep call stdout:
+Application 37773508 resources: utime ~1134s, stime ~32s, Rss ~304380, inblocks ~136665, outblocks ~305131
+castep call stdout:
+Application 37773510 resources: utime ~1140s, stime ~31s, Rss ~304384, inblocks ~136666, outblocks ~305127
+PreconLBFGS:   6  00:04:55    -4779.729512       0.0133       0.0001
+castep call stdout:
+Application 37773513 resources: utime ~1146s, stime ~31s, Rss ~304384, inblocks ~136683, outblocks ~305128
+castep call stdout:
+Application 37773517 resources: utime ~1150s, stime ~31s, Rss ~304392, inblocks ~136685, outblocks ~305130
+PreconLBFGS:   7  00:05:57    -4779.729512       0.0133       0.0001
+castep call stdout:
+Application 37773520 resources: utime ~1131s, stime ~31s, Rss ~304384, inblocks ~136673, outblocks ~305128
+castep call stdout:
+Application 37773524 resources: utime ~1149s, stime ~32s, Rss ~304396, inblocks ~136676, outblocks ~305130
+castep call stdout:
+Application 37773527 resources: utime ~1142s, stime ~32s, Rss ~304400, inblocks ~136692, outblocks ~305131
+PreconLBFGS:   8  00:07:29    -4779.729512       0.0133       0.0001
+castep call stdout:
+Application 37773530 resources: utime ~1205s, stime ~32s, Rss ~304392, inblocks ~136686, outblocks ~305129
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773536 resources: utime ~1174s, stime ~31s, Rss ~304396, inblocks ~136672, outblocks ~305132
+castep call stdout:
+Application 37773539 resources: utime ~1132s, stime ~31s, Rss ~304392, inblocks ~136679, outblocks ~305130
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773542 resources: utime ~1134s, stime ~32s, Rss ~304392, inblocks ~136675, outblocks ~305131
+castep call stdout:
+Application 37773546 resources: utime ~1132s, stime ~33s, Rss ~304388, inblocks ~136674, outblocks ~305132
+castep call stdout:
+Application 37773552 resources: utime ~1143s, stime ~32s, Rss ~304388, inblocks ~136680, outblocks ~305129
+PreconLBFGS:   9  00:10:37    -4779.729512       0.0132       0.0001
+castep call stdout:
+Application 37773556 resources: utime ~1145s, stime ~31s, Rss ~304392, inblocks ~136659, outblocks ~305129
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773559 resources: utime ~1157s, stime ~31s, Rss ~304384, inblocks ~136664, outblocks ~305132
+castep call stdout:
+Application 37773563 resources: utime ~1138s, stime ~31s, Rss ~304396, inblocks ~136675, outblocks ~305130
+PreconLBFGS:  10  00:12:07    -4779.729514       0.0132       0.0001
+castep call stdout:
+Application 37773565 resources: utime ~1130s, stime ~32s, Rss ~304396, inblocks ~136684, outblocks ~305129
+castep call stdout:
+Application 37773570 resources: utime ~1152s, stime ~32s, Rss ~304388, inblocks ~136684, outblocks ~305129
+castep call stdout:
+Application 37773574 resources: utime ~1132s, stime ~32s, Rss ~304388, inblocks ~136676, outblocks ~305129
+castep call stdout:
+Application 37773578 resources: utime ~1133s, stime ~31s, Rss ~304392, inblocks ~136664, outblocks ~305129
+castep call stdout:
+Application 37773580 resources: utime ~1133s, stime ~33s, Rss ~304384, inblocks ~136666, outblocks ~305129
+castep call stdout:
+Application 37773584 resources: utime ~1144s, stime ~31s, Rss ~304384, inblocks ~136681, outblocks ~305130
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773586 resources: utime ~1130s, stime ~32s, Rss ~304388, inblocks ~136662, outblocks ~305129
+castep call stdout:
+Application 37773589 resources: utime ~1174s, stime ~33s, Rss ~304384, inblocks ~136679, outblocks ~305128
+PreconLBFGS:  11  00:16:14    -4779.729514       0.0132       0.0001
+castep call stdout:
+Application 37773591 resources: utime ~1138s, stime ~31s, Rss ~304392, inblocks ~136674, outblocks ~305127
+castep call stdout:
+Application 37773595 resources: utime ~1136s, stime ~31s, Rss ~304388, inblocks ~136688, outblocks ~305131
+castep call stdout:
+Application 37773600 resources: utime ~1132s, stime ~32s, Rss ~304388, inblocks ~136666, outblocks ~305127
+castep call stdout:
+Application 37773603 resources: utime ~1144s, stime ~32s, Rss ~304384, inblocks ~136673, outblocks ~305129
+castep call stdout:
+Application 37773606 resources: utime ~1149s, stime ~32s, Rss ~304384, inblocks ~136670, outblocks ~305130
+castep call stdout:
+Application 37773610 resources: utime ~1130s, stime ~31s, Rss ~304392, inblocks ~136671, outblocks ~305127
+PreconLBFGS:  12  00:19:18    -4779.729514       0.0132       0.0001
+castep call stdout:
+Application 37773614 resources: utime ~1082s, stime ~31s, Rss ~304392, inblocks ~136672, outblocks ~305132
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773620 resources: utime ~1142s, stime ~32s, Rss ~304384, inblocks ~136687, outblocks ~305127
+castep call stdout:
+Application 37773625 resources: utime ~1138s, stime ~31s, Rss ~304388, inblocks ~136671, outblocks ~305130
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773628 resources: utime ~1151s, stime ~32s, Rss ~304384, inblocks ~136685, outblocks ~305128
+castep call stdout:
+Application 37773631 resources: utime ~1143s, stime ~31s, Rss ~304384, inblocks ~136674, outblocks ~305131
+PreconLBFGS:  13  00:21:51    -4779.729516       0.0132       0.0001
+castep call stdout:
+Application 37773633 resources: utime ~1139s, stime ~31s, Rss ~304384, inblocks ~136686, outblocks ~305128
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+castep call stdout:
+Application 37773636 resources: utime ~1137s, stime ~31s, Rss ~304388, inblocks ~136683, outblocks ~305131
+castep call stdout:
+Application 37773640 resources: utime ~1147s, stime ~31s, Rss ~304404, inblocks ~136673, outblocks ~305131
+castep call stdout:
+Application 37773642 resources: utime ~1124s, stime ~32s, Rss ~304384, inblocks ~136656, outblocks ~305128
+castep call stdout:
+Application 37773644 resources: utime ~1144s, stime ~31s, Rss ~304392, inblocks ~136677, outblocks ~305132
+castep call stdout:
+Application 37773648 resources: utime ~1145s, stime ~31s, Rss ~304384, inblocks ~136674, outblocks ~305131
+castep call stdout:
+Application 37773651 resources: utime ~1138s, stime ~32s, Rss ~304384, inblocks ~136667, outblocks ~305129
+castep call stdout:
+Application 37773656 resources: utime ~1143s, stime ~32s, Rss ~304400, inblocks ~136644, outblocks ~305131
+PreconLBFGS:  14  00:25:57    -4779.729516       0.0133       0.0001
+castep call stdout:
+Application 37773659 resources: utime ~1149s, stime ~32s, Rss ~304392, inblocks ~136666, outblocks ~305131
+castep call stdout:
+Application 37773665 resources: utime ~1146s, stime ~31s, Rss ~304392, inblocks ~136672, outblocks ~305127
+castep call stdout:
+Application 37773667 resources: utime ~1144s, stime ~31s, Rss ~304388, inblocks ~136681, outblocks ~305130
+castep call stdout:
+Application 37773672 resources: utime ~1136s, stime ~31s, Rss ~304392, inblocks ~136679, outblocks ~305129
+castep call stdout:
+Application 37773676 resources: utime ~1127s, stime ~31s, Rss ~304388, inblocks ~136674, outblocks ~305129
+castep call stdout:
+Application 37773680 resources: utime ~1143s, stime ~32s, Rss ~304392, inblocks ~136682, outblocks ~305130
+castep call stdout:
+Application 37773683 resources: utime ~1136s, stime ~31s, Rss ~304400, inblocks ~136679, outblocks ~305129
+castep call stdout:
+Application 37773687 resources: utime ~1148s, stime ~33s, Rss ~304392, inblocks ~136660, outblocks ~305126
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:  15  00:30:02    -4779.729516       0.0132       0.0001
+castep call stdout:
+Application 37773688 resources: utime ~1156s, stime ~32s, Rss ~304392, inblocks ~136656, outblocks ~305131
+castep call stdout:
+Application 37773691 resources: utime ~1139s, stime ~31s, Rss ~304384, inblocks ~136680, outblocks ~305131
+castep call stdout:
+Application 37773693 resources: utime ~1145s, stime ~31s, Rss ~304380, inblocks ~136676, outblocks ~305132
+castep call stdout:
+Application 37773697 resources: utime ~1139s, stime ~31s, Rss ~304384, inblocks ~136656, outblocks ~305130
+castep call stdout:
+Application 37773700 resources: utime ~1140s, stime ~31s, Rss ~304384, inblocks ~136681, outblocks ~305131
+castep call stdout:
+Application 37773704 resources: utime ~1134s, stime ~31s, Rss ~304396, inblocks ~136676, outblocks ~305131
+castep call stdout:
+Application 37773709 resources: utime ~1150s, stime ~31s, Rss ~304384, inblocks ~136677, outblocks ~305132
+castep call stdout:
+Application 37773713 resources: utime ~1133s, stime ~32s, Rss ~304404, inblocks ~136688, outblocks ~305130
+WARNING: failed config in calc_E_vs_V Armijo linesearch failed after reset of Hessian, aborting
+3
+Lattice="3.9031827595605533 -2.253514499964799 7.178336010782717e-09 3.9031827738254807 2.2535145246723776 -7.178336050050489e-09 -1.3852138828161566e-17 -8.771926629169085e-09 2.7892790369167484" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=1
+Ti       1.30106352       0.00000000      -0.00000000 
+Ti       3.90318277       0.00000001       1.39463952 
+Ti       6.50530201       0.00000002       1.39463952 
+trying to relax i 1
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_01-relaxed.xyz
+castep call stdout:
+Application 37773716 resources: utime ~1091s, stime ~31s, Rss ~304356, inblocks ~136716, outblocks ~305186
+PreconLBFGS:   0  00:34:40    -4781.023959       0.0000       0.0028
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.9031827595605533 -2.253514499964799 7.178336010782717e-09 3.9031827738254807 2.2535145246723776 -7.178336050050489e-09 -1.3852138828161566e-17 -8.771926629169085e-09 2.7892790369167484" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.30106352       0.00000000      -0.00000000 
+Ti       3.90318277       0.00000001       1.39463952 
+Ti       6.50530201       0.00000002       1.39463952 
+3
+Lattice="3.93466139928817 -2.271688788855473 7.2362283174070286e-09 3.934661413668142 2.271688813762315 -7.23622835699149e-09 -1.3963854449614485e-17 -8.842671028057491e-09 2.8117741941542183" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.31155643       0.00000000      -0.00000000 
+Ti       3.93466141       0.00000001       1.40588710 
+Ti       6.55776639       0.00000002       1.40588710 
+trying to relax i 2
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_02-relaxed.xyz
+castep call stdout:
+Application 37773718 resources: utime ~1083s, stime ~32s, Rss ~304360, inblocks ~136738, outblocks ~305192
+PreconLBFGS:   0  00:35:08    -4780.985552       0.0000       0.0021
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.93466139928817 -2.271688788855473 7.2362283174070286e-09 3.934661413668142 2.271688813762315 -7.23622835699149e-09 -1.3963854449614485e-17 -8.842671028057491e-09 2.8117741941542183" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.31155643       0.00000000      -0.00000000 
+Ti       3.93466141       0.00000001       1.40588710 
+Ti       6.55776639       0.00000002       1.40588710 
+3
+Lattice="3.9656442607605458 -2.2895768386546735 7.293208839182363e-09 3.965644275253751 2.2895768637576404 -7.293208879078525e-09 -1.4073810586656187e-17 -8.912301225857399e-09 2.8339150600403764" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.32188407       0.00000000      -0.00000000 
+Ti       3.96564427       0.00000001       1.41695753 
+Ti       6.60940447       0.00000002       1.41695753 
+trying to relax i 3
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_03-relaxed.xyz
+castep call stdout:
+Application 37773721 resources: utime ~1196s, stime ~34s, Rss ~304356, inblocks ~136798, outblocks ~305366
+PreconLBFGS:   0  00:35:40    -4780.928327       0.0000       0.0015
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.9656442607605458 -2.2895768386546735 7.293208839182363e-09 3.965644275253751 2.2895768637576404 -7.293208879078525e-09 -1.4073810586656187e-17 -8.912301225857399e-09 2.8339150600403764" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.32188407       0.00000000      -0.00000000 
+Ti       3.96564427       0.00000001       1.41695753 
+Ti       6.60940447       0.00000002       1.41695753 
+3
+Lattice="3.996150415441499 -2.3071896603303452 7.349312650401658e-09 3.9961504300461947 2.30718968562642 -7.349312690604726e-09 -1.4182074922657075e-17 -8.980860083354897e-09 2.855715263359091" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.33205281       0.00000000      -0.00000000 
+Ti       3.99615042       0.00000001       1.42785763 
+Ti       6.66024804       0.00000002       1.42785763 
+trying to relax i 4
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_04-relaxed.xyz
+castep call stdout:
+Application 37773724 resources: utime ~1228s, stime ~33s, Rss ~304360, inblocks ~136755, outblocks ~305368
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  00:36:12    -4780.854876       0.0000       0.0010
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="3.996150415441499 -2.3071896603303452 7.349312650401658e-09 3.9961504300461947 2.30718968562642 -7.349312690604726e-09 -1.4182074922657075e-17 -8.980860083354897e-09 2.855715263359091" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.33205281       0.00000000      -0.00000000 
+Ti       3.99615042       0.00000001       1.42785763 
+Ti       6.66024804       0.00000002       1.42785763 
+3
+Lattice="4.026197787393764 -2.3245376023949103 7.404572715174697e-09 4.026197802108274 2.324537627881188 -7.404572755680055e-09 -1.428871106893659e-17 -9.04838788269225e-09 2.8771876129424165" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.34206862       0.00000000      -0.00000000 
+Ti       4.02619779       0.00000001       1.43859381 
+Ti       6.71032697       0.00000002       1.43859381 
+trying to relax i 5
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_05-relaxed.xyz
+castep call stdout:
+Application 37773727 resources: utime ~1442s, stime ~36s, Rss ~304364, inblocks ~136775, outblocks ~305527
+PreconLBFGS:   0  00:36:51    -4780.766156       0.0000       0.0006
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="4.026197787393764 -2.3245376023949103 7.404572715174697e-09 4.026197802108274 2.324537627881188 -7.404572755680055e-09 -1.428871106893659e-17 -9.04838788269225e-09 2.8771876129424165" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.34206862       0.00000000      -0.00000000 
+Ti       4.02619779       0.00000001       1.43859381 
+Ti       6.71032697       0.00000002       1.43859381 
+3
+Lattice="4.055803246107924 -2.341630404500334 7.45902005814962e-09 4.055803260930633 2.341630430174017 -7.459020098952823e-09 -1.4393778894206992e-17 -9.114922535989589e-09 2.8983441640076832" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.35193712       0.00000000      -0.00000000 
+Ti       4.05580325       0.00000001       1.44917208 
+Ti       6.75966939       0.00000002       1.44917208 
+trying to relax i 6
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_06-relaxed.xyz
+castep call stdout:
+Application 37773731 resources: utime ~1549s, stime ~35s, Rss ~304364, inblocks ~136817, outblocks ~305530
+PreconLBFGS:   0  00:37:30    -4780.664368       0.0000       0.0002
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="4.055803246107924 -2.341630404500334 7.45902005814962e-09 4.055803260930633 2.341630430174017 -7.459020098952823e-09 -1.4393778894206992e-17 -9.114922535989589e-09 2.8983441640076832" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.35193712       0.00000000      -0.00000000 
+Ti       4.05580325       0.00000001       1.44917208 
+Ti       6.75966939       0.00000002       1.44917208 
+3
+Lattice="4.084982689978778 -2.3584772456334617 7.512683918034148e-09 4.084982704908128 2.3584772714918536 -7.51268395913091e-09 -1.4497334820825487e-17 -9.180499772947848e-09 2.9191962778110927" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.36166362       0.00000000      -0.00000000 
+Ti       4.08498270       0.00000001       1.45959814 
+Ti       6.80830177       0.00000002       1.45959814 
+trying to relax i 7
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_07-relaxed.xyz
+castep call stdout:
+Application 37773734 resources: utime ~1577s, stime ~35s, Rss ~304360, inblocks ~136818, outblocks ~305529
+PreconLBFGS:   0  00:38:10    -4780.550958       0.0000       0.0000
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="4.084982689978778 -2.3584772456334617 7.512683918034148e-09 4.084982704908128 2.3584772714918536 -7.51268395913091e-09 -1.4497334820825487e-17 -9.180499772947848e-09 2.9191962778110927" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.36166362       0.00000000      -0.00000000 
+Ti       4.08498270       0.00000001       1.45959814 
+Ti       6.80830177       0.00000002       1.45959814 
+3
+Lattice="4.113751121549193 -2.375086787558286 7.565591885976415e-09 4.113751136583683 2.3750868135987857 -7.5655919273626e-09 -1.4599432091829704e-17 -9.245153309950138e-09 2.93975467541822" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.37125312       0.00000000      -0.00000000 
+Ti       4.11375113       0.00000001       1.46987734 
+Ti       6.85624914       0.00000002       1.46987734 
+trying to relax i 8
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_08-relaxed.xyz
+castep call stdout:
+Application 37773740 resources: utime ~1638s, stime ~35s, Rss ~304360, inblocks ~136766, outblocks ~305528
+PreconLBFGS:   0  00:38:52    -4780.427067       0.0000       0.0002
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="4.113751121549193 -2.375086787558286 7.565591885976415e-09 4.113751136583683 2.3750868135987857 -7.5655919273626e-09 -1.4599432091829704e-17 -9.245153309950138e-09 2.93975467541822" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.37125312       0.00000000      -0.00000000 
+Ti       4.11375113       0.00000001       1.46987734 
+Ti       6.85624914       0.00000002       1.46987734 
+3
+Lattice="4.142122715486985 -2.3914672140626108 7.617770030581124e-09 4.1421227306251645 2.3914672402827053 -7.617770072252741e-09 -1.4700121012183197e-17 -9.30891500283149e-09 2.9600294862814214" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.38071034       0.00000000      -0.00000000 
+Ti       4.14212272       0.00000001       1.48001474 
+Ti       6.90353511       0.00000002       1.48001474 
+trying to relax i 9
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_09-relaxed.xyz
+castep call stdout:
+Application 37773745 resources: utime ~1611s, stime ~35s, Rss ~304360, inblocks ~136780, outblocks ~305528
+PreconLBFGS:   0  00:39:32    -4780.294053       0.0000       0.0004
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="4.142122715486985 -2.3914672140626108 7.617770030581124e-09 4.1421227306251645 2.3914672402827053 -7.617770072252741e-09 -1.4700121012183197e-17 -9.30891500283149e-09 2.9600294862814214" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.38071034       0.00000000      -0.00000000 
+Ti       4.14212272       0.00000001       1.48001474 
+Ti       6.90353511       0.00000002       1.48001474 
+3
+Lattice="4.170110880129801 -2.40762626649117 7.66924301109661e-09 4.170110895370269 2.4076262928884327 -7.669243053049801e-09 -1.4799449167194155e-17 -9.371814985193456e-09 2.980030292220821" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.39003974       0.00000000      -0.00000000 
+Ti       4.17011089       0.00000001       1.49001515 
+Ti       6.95018203       0.00000002       1.49001515 
+trying to relax i 10
+relax_config failed to read base run config from  TiAl-model-None-test-bulk_Ti_omega-E_vs_V_10-relaxed.xyz
+castep call stdout:
+Application 37773748 resources: utime ~1580s, stime ~33s, Rss ~304316, inblocks ~136757, outblocks ~305477
+PreconLBFGS:   0  00:40:12    -4780.152479       0.0097       0.0006
+symmetry.check: prec 0.0001 got symmetry group number 191 , international (Hermann-Mauguin) P6/mmm , Hall -P 6 2
+symmetry.check: prec 1e-06 got symmetry group number 38 , international (Hermann-Mauguin) Amm2 , Hall A 2 -2
+3
+Lattice="4.170110880129801 -2.40762626649117 7.66924301109661e-09 4.170110895370269 2.4076262928884327 -7.669243053049801e-09 -1.4799449167194155e-17 -9.371814985193456e-09 2.980030292220821" Properties=species:S:1:pos:R:3 pbc="T T T" n_minim_iter=0
+Ti       1.39003974       0.00000000      -0.00000000 
+Ti       4.17011089       0.00000001       1.49001515 
+Ti       6.95018203       0.00000002       1.49001515 
+calculating elastic constants
+/work/e89/e89/casv2/miniconda2/lib/python2.7/site-packages/ase/optimize/precon/lbfgs.py:137: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  'kwarg `precon`')
+castep call stdout:
+Application 37773751 resources: utime ~1162s, stime ~31s, Rss ~304340, inblocks ~136705, outblocks ~305213
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  00:40:44    -4781.026208       0.0353
+castep call stdout:
+Application 37773755 resources: utime ~1135s, stime ~31s, Rss ~304344, inblocks ~136696, outblocks ~305205
+PreconLBFGS:   0  00:41:14    -4781.034499       0.0159
+castep call stdout:
+Application 37773760 resources: utime ~1136s, stime ~32s, Rss ~304368, inblocks ~136685, outblocks ~305208
+PreconLBFGS:   0  00:41:45    -4781.034497       0.0000
+castep call stdout:
+Application 37773764 resources: utime ~1182s, stime ~32s, Rss ~304332, inblocks ~136715, outblocks ~305211
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  00:42:16    -4781.026678       0.0119
+castep call stdout:
+Application 37773768 resources: utime ~1150s, stime ~31s, Rss ~304336, inblocks ~136717, outblocks ~305205
+PreconLBFGS:   0  00:42:48    -4781.011288       0.0195
+castep call stdout:
+Application 37773771 resources: utime ~1157s, stime ~31s, Rss ~304332, inblocks ~136671, outblocks ~305207
+PreconLBFGS:   0  00:43:18    -4781.014130       0.0323
+castep call stdout:
+Application 37773783 resources: utime ~1114s, stime ~31s, Rss ~304328, inblocks ~136700, outblocks ~305207
+PreconLBFGS:   0  00:45:08    -4781.029231       0.0154
+castep call stdout:
+Application 37773789 resources: utime ~1143s, stime ~31s, Rss ~304372, inblocks ~136711, outblocks ~305210
+PreconLBFGS:   0  00:45:44    -4781.034497       0.0000
+castep call stdout:
+Application 37773791 resources: utime ~1112s, stime ~31s, Rss ~304316, inblocks ~136685, outblocks ~305187
+PreconLBFGS:   0  00:46:19    -4781.029108       0.0113
+castep call stdout:
+Application 37773794 resources: utime ~1120s, stime ~31s, Rss ~304316, inblocks ~136711, outblocks ~305187
+WARNING: /fs3/e89/e89/casv2/ship-testing-framework/example_run_dir/TiAl/run_dir/run_TiAl-model-CASTEP-test-bulk_Ti_omega/_CASTEP/castep.castep contains warnings
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+ Warning: There are no empty bands for at least one kpoint and spin; this may
+
+          If this warning persists, you should consider increasing nextra_bands
+
+PreconLBFGS:   0  00:46:55    -4781.014633       0.0200
+Fitting C_11
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-3.184266, -0.901233,  1.281825,  3.338319,  5.308411]) GPa
+Cij (gradient) / GPa    :     212.2490599999998
+Error in Cij / GPa      :     3.675284371818973
+Correlation coefficient :     0.9995505423968315
+Setting C11 (1) to 1.324754 +/- 0.022939
+
+
+Fitting C_21
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-0.605949,  0.382097,  1.280933,  2.105846,  2.923296]) GPa
+Cij (gradient) / GPa    :     87.82238999999993
+Error in Cij / GPa      :     2.082808310358732
+Correlation coefficient :     0.9991573830845758
+Setting C21 (7) to 0.548144 +/- 0.013000
+
+
+Fitting C_31
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.41394 , -0.691046, -0.00412 ,  0.648221,  1.282514]) GPa
+Cij (gradient) / GPa    :     67.32174999999995
+Error in Cij / GPa      :     1.0391072069008702
+Correlation coefficient :     0.9996428353577892
+Setting C31 (8) to 0.420189 +/- 0.006486
+
+
+Fitting C_61
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([ 1.e-06,  3.e-06, -9.e-06,  0.e+00,  4.e-06]) GPa
+Cij (gradient) / GPa    :     2.9999999999999977e-05
+Error in Cij / GPa      :     0.0001878829422805592
+Correlation coefficient :     0.09179850920431569      <----- WARNING
+Setting C61 (0) to 0.000000 +/- 0.000001
+
+
+Fitting C_44
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.046280e+00, -5.300440e-01,  9.000000e-06,  5.390030e-01,
+        1.079336e+00]) GPa
+Cij (gradient) / GPa    :     53.202790000000014
+Error in Cij / GPa      :     0.2880093879834685
+Correlation coefficient :     0.9999560451201214
+Setting C44 (4) to 0.332066 +/- 0.001798
+
+
+Fitting C_33
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-5.525618e+00, -2.702603e+00, -4.717000e-03,  2.841446e+00,
+        5.270276e+00]) GPa
+Cij (gradient) / GPa    :     271.35836999999975
+Error in Cij / GPa      :     3.994177509236869
+Correlation coefficient :     0.9996751761607424
+Setting C33 (3) to 1.693686 +/- 0.024930
+
+
+Fitting C_66
+Strain array([-0.02, -0.01,  0.  ,  0.01,  0.02])
+Stress array([-1.228384e+00, -6.244310e-01, -1.400000e-05,  5.482530e-01,
+        1.085759e+00]) GPa
+Cij (gradient) / GPa    :     58.00970000000001
+Error in Cij / GPa      :     1.0945034666001414
+Correlation coefficient :     0.9994664481663347
+Setting C66 (6) to 0.362068 +/- 0.006831
+
+
+[[ C11  C12  C13               ]
+ [ C12  C11  C13               ]
+ [ C13  C13  C33               ]
+ [                C44          ]
+ [                     C44     ]
+ [                          C66]]
+
+ = 
+
+[[212.25  87.82  67.32   0.     0.     0.  ]
+ [ 87.82 212.25  67.32   0.     0.     0.  ]
+ [ 67.32  67.32 271.36   0.     0.     0.  ]
+ [  0.     0.     0.    53.2    0.     0.  ]
+ [  0.     0.     0.     0.    53.2    0.  ]
+ [  0.     0.     0.     0.     0.    58.01]]
+C_11 = 212.25 +/- 3.68 GPa
+C_12 = 87.82 +/- 2.08 GPa
+C_13 = 67.32 +/- 1.04 GPa
+C_33 = 271.36 +/- 3.99 GPa
+C_44 = 53.20 +/- 0.29 GPa
+C_66 = 58.01 +/- 1.09 GPa
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'c44': 53.202790000000014, 'B': 126.46545510778796, 'E_vs_V': [(12.765742273034784, -1593.3506458146667), (13.164671719067123, -1593.440415647), (13.563601165099461, -1593.5132523989998), (13.962530611131795, -1593.5707196243332), (14.361460057164125, -1593.6144404923334), (14.760389503196484, -1593.6449301753335), (15.1593189492288, -1593.6654833963332), (15.55824839526115, -1593.676223448), (15.95717784129348, -1593.6781653766666), (16.356107287325813, -1593.6723479813334), (16.755036733358157, -1593.6595789423334), (17.15396617939049, -1593.6405269260001), (17.552895625422817, -1593.6160567626666), (17.951825071455172, -1593.5864868239998), (18.3507545174875, -1593.5525555393333), (18.749683963519846, -1593.5147393480001), (19.14861340955218, -1593.473417659), (19.547542855584528, -1593.429050164), (19.94647230161685, -1593.381769095)], 'c66': 58.00970000000001, 'c13': 67.32174999999995, 'c12': 87.82238999999993, 'c11': 212.2490599999998, 'c33': 271.35836999999975}
+============================================================
