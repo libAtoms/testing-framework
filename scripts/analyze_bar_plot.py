@@ -24,6 +24,7 @@ all_data = {}
 all_data = {}
 
 for model in models:
+    print(model)
     all_data[model] = {}
 
     all_data[model]["B"] = bulk_data[model]["bulk_Si_diamond"]["B"]
@@ -80,7 +81,7 @@ model_ticks = []
 
 models.remove(ref_model_name)
 
-for (i,model) in enumerate(models):
+for (i,model) in enumerate(reversed(sorted(models))):
     #if model != ref_model_name:
     plot_d = [(key, value) for (key,value) in all_data[model].items() if key != "surf_E_110"] ####
     top = [abs(d[1]) for d in plot_d]
