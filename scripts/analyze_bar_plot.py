@@ -73,8 +73,8 @@ _y = np.arange(len(all_data[ref_model_name].keys())-1) ###
 _xx, _yy = np.meshgrid(_x, _y)
 y, x = _xx.ravel(), _yy.ravel()
 
-width = 0.5
-depth = 0.3
+width = 0.4
+depth = 0.2
 
 model_vals = []
 model_ticks = []
@@ -94,8 +94,8 @@ for (i,model) in enumerate(reversed(sorted(models))):
 
     y = [_y + width for _y in y]
 
+ax1.view_init(63, -80)
 ax1.set_ylim(0,((width+depth)/2.0)*(len(models)))
-
 ax1.set_zlabel("Percentage Error [%]")
 
 print(test_names)
@@ -104,6 +104,8 @@ plt.xticks([i for i in range(len(all_data[ref_model_name].items())-1)], test_nam
 plt.yticks(model_vals, model_ticks, ha='left', va='center')
 
 plt.savefig("bar_plot.pdf")
+
+
 
 # fig = plt.figure(figsize=(8, 3))
 # for model in models:
