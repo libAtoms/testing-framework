@@ -94,7 +94,7 @@ for (i,model) in enumerate(reversed(sorted(models))):
 
     y = [_y + width for _y in y]
 
-ax1.view_init(63, -80)
+ax1.view_init(55, -80)
 ax1.set_ylim(0,((width+depth)/2.0)*(len(models)))
 ax1.set_zlabel("Percentage Error [%]")
 

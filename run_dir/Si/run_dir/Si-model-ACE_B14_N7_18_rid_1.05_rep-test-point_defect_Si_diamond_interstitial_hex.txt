@@ -1,0 +1,27 @@
+Model ACE_B14_N7_18_rid_1.05_rep, Test point_defect_Si_diamond_interstitial_hex
+Test run at 2020-08-10 22:19
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B14_N7_18_rid_1.05_rep/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_hex/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+doing do_interstitial
+got bulk_supercell  64
+Failed to read relaxed bulk '../Si-model-ACE_B14_N7_18_rid_1.05_rep-test-bulk_Si_diamond-relaxed.xyz', perhaps bulk test hasn't been run yet

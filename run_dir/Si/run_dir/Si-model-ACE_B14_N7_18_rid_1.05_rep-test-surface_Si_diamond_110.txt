@@ -1,0 +1,24 @@
+Model ACE_B14_N7_18_rid_1.05_rep, Test surface_Si_diamond_110
+Test run at 2020-08-11 09:31
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B14_N7_18_rid_1.05_rep/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_110/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
