@@ -10,6 +10,8 @@ from torchani.nn import Sequential
 # named `calculator`, which should be an instance of the ase.calculator.Calculator,
 # a subclass of this, or a compatible class implementing the calculator interface.
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 species_order = ['H', 'C', 'N', 'O']
 const_file = '../ANI_common/rHCNO-5.2R_16-3.5A_a4-8.params')
 consts = torchani.neurochem.Constants(const_file)
