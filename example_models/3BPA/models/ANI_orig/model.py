@@ -13,7 +13,7 @@ from torchani.nn import Sequential
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 species_order = ['H', 'C', 'N', 'O']
-const_file = '../ANI_common/rHCNO-5.2R_16-3.5A_a4-8.params')
+const_file = '../ANI_common/rHCNO-5.2R_16-3.5A_a4-8.params'
 consts = torchani.neurochem.Constants(const_file)
 aev_computer = AEVComputer(**consts)
 energy_shifter = load_sae('../ANI_common/sae_linfit.dat')
