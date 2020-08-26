@@ -1,5 +1,6 @@
 # ANI model fitted on 300K configs 
 
+import torch
 from torchani.neurochem import load_model
 from torchani.ase import Calculator
 from torchani import AEVComputer

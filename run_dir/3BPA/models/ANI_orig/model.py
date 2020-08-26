@@ -1,5 +1,6 @@
 # original ANI model
 
+import torch
 from torchani.neurochem import load_model
 from torchani.ase import Calculator
 from torchani import AEVComputer
