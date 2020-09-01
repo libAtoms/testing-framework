@@ -8,6 +8,11 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
     if band_paths is not None and len(band_paths) != len(bulk_struct_tests):
         raise RuntimeError("got {} bulk structs but different {} band paths".format(len(bulk_struct_tests), len(band_paths)))
     properties = {}
+    if type(n_supercell) != list:
+        n_supercell_list = [ n_supercell for i in bulk_struct_tests ]
+    else:
+        n_supercell_list = n_supercell
+    
     for bulk_i, bulk_struct_test in enumerate(bulk_struct_tests):
         at0 = get_relaxed_bulk(bulk_struct_test)
 
@@ -16,7 +21,7 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
                                       scaled_positions=at0.get_scaled_positions(),
                                       masses=at0.get_masses(), cell=at0.get_cell() )
 
-        phonons = phonopy.Phonopy( phonopy_atoms, np.diag([n_supercell]*3), factor=phonopy.units.VaspToTHz )
+        phonons = phonopy.Phonopy( phonopy_atoms, np.diag([n_supercell_list[bulk_i]]*3), factor=phonopy.units.VaspToTHz )
         phonons.generate_displacements(distance=dx)
 
         # convert from chosen Phonopy units (THz) to cm^-1
@@ -28,7 +33,7 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
 
         displ_supercells = phonons.get_supercells_with_displacements()
 
-        at0_sc = at0 * n_supercell
+        at0_sc = at0 * n_supercell_list[bulk_i]
         # reorder at0_sc to match order from phonopy
         at = ase.Atoms(pbc=True, cell=displ_supercells[0].get_cell(), positions=displ_supercells[0].get_positions(), numbers=displ_supercells[0].get_atomic_numbers())
         matched_pos = np.zeros(at.positions.shape)
@@ -85,7 +90,7 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
             f -= np.outer(np.ones(Nat), np.sum(f, axis=0)/Nat)
         all_forces = np.asarray(all_forces)
 
-        properties[bulk_struct_test] = { 'dx' : dx, 'all_forces' : all_forces.tolist(), 'symb' : at0.get_chemical_symbols(), 'scaled_pos' : at0.get_scaled_positions().tolist(), 'm' : at0.get_masses().tolist(), 'c' : at0.get_cell().tolist(), 'n_cell' : np.diag([n_supercell]*3).tolist(), 'unit_factor' : phonopy.units.VaspToTHz, 'band_path' : band_paths[bulk_i] }
+        properties[bulk_struct_test] = { 'dx' : dx, 'all_forces' : all_forces.tolist(), 'symb' : at0.get_chemical_symbols(), 'scaled_pos' : at0.get_scaled_positions().tolist(), 'm' : at0.get_masses().tolist(), 'c' : at0.get_cell().tolist(), 'n_cell' : np.diag([n_supercell_list[bulk_i]]*3).tolist(), 'unit_factor' : phonopy.units.VaspToTHz, 'band_path' : band_paths[bulk_i] }
 
         ####################################################################################################
 
