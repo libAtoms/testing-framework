@@ -21,7 +21,10 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
                                       scaled_positions=at0.get_scaled_positions(),
                                       masses=at0.get_masses(), cell=at0.get_cell() )
 
-        phonons = phonopy.Phonopy( phonopy_atoms, np.diag([n_supercell_list[bulk_i]]*3), factor=phonopy.units.VaspToTHz )
+        if np.size(n_supercell_list[bulk_i]) == 1:
+            phonons = phonopy.Phonopy( phonopy_atoms, np.diag([n_supercell_list[bulk_i]]*3), factor=phonopy.units.VaspToTHz )
+        else:
+            phonons = phonopy.Phonopy( phonopy_atoms, np.diag(n_supercell_list[bulk_i]), factor=phonopy.units.VaspToTHz )	
         phonons.generate_displacements(distance=dx)
 
         # convert from chosen Phonopy units (THz) to cm^-1
