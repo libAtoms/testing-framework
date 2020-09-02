@@ -81,7 +81,7 @@ model_ticks = []
 
 models.remove(ref_model_name)
 
-for (i,model) in enumerate(reversed(sorted(models))):
+for (i,model) in enumerate(sorted(models)):
     #if model != ref_model_name:
     plot_d = [(key, value) for (key,value) in all_data[model].items() if key != "surf_E_110"] ####
     top = [abs(d[1]) for d in plot_d]
@@ -97,8 +97,9 @@ for (i,model) in enumerate(reversed(sorted(models))):
 ax1.view_init(55, -80)
 ax1.set_ylim(0,((width+depth)/2.0)*(len(models)))
 ax1.set_zlabel("Percentage Error [%]")
-
-print(test_names)
+# ax1.zaxis._set_scale('log')
+#
+# print(test_names)
 
 plt.xticks([i for i in range(len(all_data[ref_model_name].items())-1)], test_names, rotation=30, ha='right')
 plt.yticks(model_vals, model_ticks, ha='left', va='center')

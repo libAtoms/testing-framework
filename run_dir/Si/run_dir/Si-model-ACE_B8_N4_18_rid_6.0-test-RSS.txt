@@ -1,0 +1,46 @@
+Model ACE_B8_N4_18_rid_6.0, Test RSS
+Test run at 2020-08-26 20:45
+
+model file: ../../models/ACE_B8_N4_18_rid_6.0/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/RSS/test.py
+============================================================
+import os.path
+from RSS import do_RSS
+
+properties = do_RSS(os.path.join(os.path.abspath(os.path.dirname(__file__)),'random_structs.extxyz'),':300:3')
+============================================================
+got index  :300:3 range_slice_args [None, 300, 3]
+using i_config range(0, 100, 3)
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 14 , international (Hermann-Mauguin) P2_1/c , Hall  -P 2ybc
+relax_config trying to maintain symmetry
+ SD2: i 0 E -2263.0298988901177 f 4.505324267407885 s 72.2896332729362  alpha 0.0001 False
+ SD2: i 1 E -2263.929268176711 f 3.9164405569639964 s 62.43414344216422  alpha 0.0006269410132887164 False
+ SD2: i 2 E -2266.5600357405956 f 2.0334754275280833 s 15.377213310957753  alpha 0.0007420534138279869 False
+ SD2: i 3 E -2266.8709288944756 f 2.047424768671839 s 12.466827494612117  alpha 0.0009417412197846571 False
+ SD2: i 4 E -2267.1433686974838 f 2.1469865880374677 s 11.915668609903292  alpha 0.003138250568582544 False
+ SD2: i 5 E -2267.8866727564696 f 2.3593199677927377 s 12.120095795236072  alpha 0.0036844533427531317 False
+ SD2: i 6 E -2268.317825861681 f 2.074873002464771 s 14.029793193888642  alpha 0.001320079001882118 False
+ SD2: i 7 E -2268.5165176102764 f 2.3119183572955277 s 7.390066112365498  alpha 0.000881748943780824 False
+ SD2: i 8 E -2268.6456168716327 f 2.348378966257102 s 8.319915066100146  alpha 0.0006903594997031988 False
+ SD2: i 9 E -2268.7482979816446 f 2.4456805317680947 s 10.309834674954182  alpha 0.01 False
+ SD2: i 10 E -2272.122347160939 f 3.9075062986049662 s 34.563607615092685  alpha 0.01 False
+ SD2: i 11 E -2271.6789923780602 f 5.533401599991198 s 66.75628625833049  alpha 0.002689575812205001 False
+ SD2: i 12 E -2269.8925683963753 f 6.752585550791953 s 180.9557117263185  alpha 0.000619414066157531 False
+ SD2: i 13 E -2282.0497874479756 f 9.224569518771338 s 93.2509182933877  alpha 0.00047996701652523965 False
+ SD2: i 14 E -2287.2279397524685 f 11.626413474645634 s 122.49968517142574  alpha 0.01 False
+ SD2: i 15 E -4648.646018294001 f 907.0259577416974 s 7586.195740449773  alpha 0.01 False

@@ -1,0 +1,25 @@
+Model ACE_B6_N7_18_lap_1.1, Test RSS
+Test run at 2020-08-18 13:15
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/ACE_B6_N7_18_lap_1.1/model.py
+============================================================
+import pyjulip
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.json"))[0]
+
+calculator = pyjulip.ACE(pot_name)
+
+no_checkpoint = True
+
+name = "ACE"
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/RSS/test.py
+============================================================
+import os.path
+from RSS import do_RSS
+
+properties = do_RSS(os.path.join(os.path.abspath(os.path.dirname(__file__)),'random_structs.extxyz'),':200:2')
+============================================================
