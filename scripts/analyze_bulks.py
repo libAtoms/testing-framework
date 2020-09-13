@@ -145,7 +145,7 @@ for model_name in models:
 
     for fu in figure_nums:
         figure(figure_nums[fu])
-        legend(loc="center left", bbox_to_anchor=[1, 0.5])
+        legend()#loc="center left", bbox_to_anchor=[1, 0.5])
         xlabel("V ($A^3$/atom)")
         ylabel("E (eV/atom)")
         savefig("{}_{}_bulk.pdf".format(model_name,fu), bbox_inches='tight')

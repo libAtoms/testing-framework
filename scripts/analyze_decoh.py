@@ -30,10 +30,10 @@ for test in tests:
 	ref_stress = decoh_data[ref_model_name][test]['surface_decohesion_unrelaxed_stress']
 
 	#f, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))
-	f, (ax1, ax2) = plt.subplots(1, 2, figsize=(12,5))
+	f, (ax1, ax2) = plt.subplots(2, 1, figsize=(5,6))
 
 	ax1.plot(ref_opening, ref_energy, label=ref_model_name, linestyle=ref_linestyles[0], color="black")
-	ax1.set_xlabel("Unrelaxed opening ($\AA$)")
+	#ax1.set_xlabel("Unrelaxed opening ($\AA$)")
 	ax1.set_ylabel("Energy (eV)")
 	ax2.plot(ref_opening, ref_stress, label=ref_model_name, linestyle=ref_linestyles[0], color="black")
 	ax2.set_xlabel("Unrelaxed opening ($\AA$)")
@@ -46,6 +46,7 @@ for test in tests:
 			ax1.plot(decoh_data[model][test]['surface_decohesion_unrelaxed_opening'], decoh_data[model][test]['surface_decohesion_unrelaxed_energy'], label=model, color=struct_colors[i])#, linestyle=other_linestyles[0])
 			ax2.plot(decoh_data[model][test]['surface_decohesion_unrelaxed_opening'], decoh_data[model][test]['surface_decohesion_unrelaxed_stress'], label=model, color=struct_colors[i])#, linestyle=other_linestyles[0])
 
-	plt.title(test)
-	plt.legend()
+	#plt.title(test)
+	ax1.legend()
+	plt.tight_layout()
 	plt.savefig("{}.pdf".format(test), bbox_inches='tight') ####
