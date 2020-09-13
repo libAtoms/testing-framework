@@ -1,0 +1,69 @@
+Model pACE_B8_N5_18_07_lap_1.1, Test point_defect_Si_diamond_vacancy
+Test run at 2020-09-03 14:38
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/pACE_B8_N5_18_07_lap_1.1/model.py
+============================================================
+import os
+from ase.calculators.lammpsrun import LAMMPS
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/gits/lammps-ace/src/lmp_serial"
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+
+parameters = {'pair_style': 'pace',
+              'pair_coeff': ['* * Si_B8_N5_18_07_lap_1.1_2B+ACE.ace Si']}
+
+files = [os.path.join(model_dir, "Si_B8_N5_18_07_lap_1.1_2B+ACE.ace")]
+
+calculator = LAMMPS(parameters=parameters, files=files)
+
+no_checkpoint = True
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_vacancy/test.py
+============================================================
+import os.path, vacancy
+
+properties = vacancy.do_all_vacancies(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+doing do_all_vacancies
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_vacancy-rescaled_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  14:38:02   -10443.215858       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+got bulk primitive cell  Cell([[2.7470454896515397, -1.902798406274834e-16, 2.7470454896515384], [2.7470454896515397, 2.7470454896515397, -1.1066762324439493e-16], [-1.7710947461217772e-16, 2.7470454896515397, 2.747045489651539]])
+got rescaled bulk_supercell cell  Cell([10.988181958606159, 10.988181958606159, 10.988181958606159])
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 1 , international (Hermann-Mauguin) P1 , Hall  P 1
+PreconLBFGS:   0  14:38:03   -10275.822345       0.9319
+PreconLBFGS:   1  14:38:04   -10276.224781       0.5802
+PreconLBFGS:   2  14:38:04   -10276.316372       0.2647
+PreconLBFGS:   3  14:38:05   -10276.358318       0.1698
+PreconLBFGS:   4  14:38:05   -10276.367965       0.1207
+PreconLBFGS:   5  14:38:05   -10276.372721       0.1488
+PreconLBFGS:   6  14:38:06   -10276.381181       0.0974
+PreconLBFGS:   7  14:38:07   -10276.386867       0.0352
+PreconLBFGS:   8  14:38:07   -10276.389756       0.0458
+PreconLBFGS:   9  14:38:07   -10276.390687       0.0686
+PreconLBFGS:  10  14:38:08   -10276.392107       0.0147
+PreconLBFGS:  11  14:38:09   -10276.392284       0.0087
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 1 , international (Hermann-Mauguin) P1 , Hall  P 1
+got vacancy ind_0_Z_14 cell energy -10276.39228397282 n_atoms 63
+got bulk energy -10280.040609961976  (scaled to (N-1)/N if single component)
+returning properties {'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.1752477771742, 'defects': {'ind_0_Z_14': {'Ef0': 3.7613970047950716, 'Ef': 3.648325989155637, 'unrelaxed_filename': 'Si-model-pACE_B8_N5_18_07_lap_1.1-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-pACE_B8_N5_18_07_lap_1.1-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-relaxed.xyz', 'atom_ind': 0, 'Z': 14, 'vac_pos': [2.715152596606623, 2.7151895032979296, 0.015319398773063844]}}}
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.1752477771742, 'defects': {'ind_0_Z_14': {'Ef0': 3.7613970047950716, 'Ef': 3.648325989155637, 'unrelaxed_filename': 'Si-model-pACE_B8_N5_18_07_lap_1.1-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-pACE_B8_N5_18_07_lap_1.1-test-point_defect_Si_diamond_vacancy-ind_0_Z_14-relaxed.xyz', 'atom_ind': 0, 'Z': 14, 'vac_pos': [2.715152596606623, 2.7151895032979296, 0.015319398773063844]}}}
+============================================================

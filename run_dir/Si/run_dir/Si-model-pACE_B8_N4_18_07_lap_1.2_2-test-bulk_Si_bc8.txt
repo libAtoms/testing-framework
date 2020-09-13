@@ -1,0 +1,194 @@
+Model pACE_B8_N4_18_07_lap_1.2_2, Test bulk_Si_bc8
+Test run at 2020-09-08 16:32
+
+model file: ../../models/pACE_B8_N4_18_07_lap_1.2_2/model.py
+============================================================
+import os
+from ase.calculators.lammpsrun import LAMMPS
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/gits/lammps-ace/src/lmp_serial"
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+
+parameters = {'pair_style': 'pace',
+              'pair_coeff': ['* * Si_B8_N4_18_07_lap_1.2_2_2B+ACE.ace Si']}
+
+files = [os.path.join(model_dir, "Si_B8_N4_18_07_lap_1.2_2_2B+ACE.ace")]
+
+calculator = LAMMPS(parameters=parameters, files=files)
+
+name="ACE"
+
+no_checkpoint = True
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_bc8/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'cubic')
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+relax bulk
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_bc8-bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 206 , international (Hermann-Mauguin) Ia-3 , Hall  -I 2b 2c 3
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  16:32:25    -1303.749151       0.8046       0.0575
+PreconLBFGS:   1  16:32:26    -1300.910007       2.0324       0.0595
+PreconLBFGS:   2  16:32:26    -1301.225358       1.0509       0.0207
+PreconLBFGS:   3  16:32:26    -1301.291429       1.2610       0.0058
+PreconLBFGS:   4  16:32:26    -1301.343076       1.0413       0.0160
+PreconLBFGS:   5  16:32:26    -1301.464957       0.8130       0.0234
+PreconLBFGS:   6  16:32:32    -1303.274635       1.2640       0.0329
+PreconLBFGS:   7  16:32:32    -1303.589724       1.1476       0.0328
+PreconLBFGS:   8  16:32:35    -1303.958975       0.7778       0.0250
+PreconLBFGS:   9  16:32:38    -1303.958975       0.7778       0.0250
+PreconLBFGS:  10  16:32:39    -1301.411323       0.5815       0.0263
+PreconLBFGS:  11  16:32:39    -1301.445611       0.7221       0.0106
+PreconLBFGS:  12  16:32:40    -1301.446039       0.8037       0.0057
+PreconLBFGS:  13  16:32:40    -1301.470778       0.7886       0.0072
+PreconLBFGS:  14  16:32:41    -1301.492739       0.8031       0.0048
+PreconLBFGS:  15  16:32:41    -1301.494886       0.7276       0.0071
+PreconLBFGS:  16  16:32:41    -1301.516038       0.6932       0.0081
+PreconLBFGS:  17  16:32:41    -1301.576783       0.7417       0.0091
+PreconLBFGS:  18  16:32:42    -1301.616407       0.8155       0.0100
+PreconLBFGS:  19  16:32:42    -1301.634440       1.0585       0.0072
+PreconLBFGS:  20  16:32:42    -1301.688276       1.3261       0.0090
+PreconLBFGS:  21  16:32:43    -1301.727204       1.5660       0.0085
+PreconLBFGS:  22  16:32:44    -1301.751546       1.5714       0.0145
+PreconLBFGS:  23  16:32:45    -1301.819358       1.4749       0.0114
+PreconLBFGS:  24  16:32:45    -1301.906244       1.8230       0.0205
+PreconLBFGS:  25  16:32:45    -1302.001532       1.7010       0.0140
+PreconLBFGS:  26  16:32:45    -1302.064231       1.4650       0.0085
+PreconLBFGS:  27  16:32:46    -1302.064231       1.4650       0.0085
+PreconLBFGS:  28  16:32:47    -1302.064231       1.4650       0.0085
+PreconLBFGS:  29  16:32:48    -1302.064231       1.4650       0.0085
+PreconLBFGS:  30  16:32:49    -1302.064231       1.4650       0.0085
+PreconLBFGS:  31  16:32:50    -1302.064231       1.4650       0.0085
+PreconLBFGS:  32  16:32:51    -1302.064231       1.4650       0.0085
+PreconLBFGS:  33  16:32:53    -1302.064597       1.4674       0.0085
+PreconLBFGS:  34  16:32:56    -1302.065655       1.4712       0.0086
+PreconLBFGS:  35  16:32:58    -1302.066062       1.4730       0.0085
+PreconLBFGS:  36  16:33:00    -1302.066718       1.4765       0.0086
+PreconLBFGS:  37  16:33:01    -1302.066718       1.4765       0.0086
+PreconLBFGS:  38  16:33:04    -1302.066774       1.4770       0.0087
+PreconLBFGS:  39  16:33:08    -1302.066831       1.4773       0.0088
+PreconLBFGS:  40  16:33:11    -1302.066933       1.4780       0.0090
+PreconLBFGS:  41  16:33:14    -1302.066933       1.4780       0.0090
+PreconLBFGS:  42  16:33:16    -1302.066977       1.4780       0.0092
+PreconLBFGS:  43  16:33:18    -1302.066977       1.4780       0.0092
+PreconLBFGS:  44  16:33:23    -1302.067030       1.4777       0.0093
+PreconLBFGS:  45  16:33:25    -1302.067096       1.4769       0.0094
+PreconLBFGS:  46  16:33:27    -1302.067096       1.4769       0.0094
+PreconLBFGS:  47  16:33:31    -1302.067829       1.4754       0.0097
+PreconLBFGS:  48  16:33:33    -1302.067829       1.4754       0.0097
+PreconLBFGS:  49  16:33:35    -1302.067852       1.4731       0.0098
+PreconLBFGS:  50  16:33:37    -1302.067852       1.4731       0.0098
+PreconLBFGS:  51  16:33:39    -1302.068076       1.4700       0.0099
+PreconLBFGS:  52  16:33:41    -1302.068234       1.4661       0.0100
+PreconLBFGS:  53  16:33:45    -1302.068272       1.4645       0.0100
+PreconLBFGS:  54  16:33:47    -1302.068538       1.4592       0.0101
+PreconLBFGS:  55  16:33:50    -1302.068782       1.4534       0.0102
+PreconLBFGS:  56  16:33:52    -1302.069046       1.4466       0.0103
+PreconLBFGS:  57  16:33:55    -1302.069484       1.4376       0.0104
+PreconLBFGS:  58  16:33:57    -1302.070026       1.4242       0.0105
+PreconLBFGS:  59  16:34:02    -1302.071032       1.4072       0.0107
+PreconLBFGS:  60  16:34:03    -1302.071801       1.3588       0.0111
+PreconLBFGS:  61  16:34:06    -1302.072158       1.3423       0.0111
+PreconLBFGS:  62  16:34:06    -1302.077862       1.3155       0.0114
+PreconLBFGS:  63  16:34:06    -1302.096723       1.3076       0.0115
+PreconLBFGS:  64  16:34:06    -1302.185633       1.3475       0.0115
+PreconLBFGS:  65  16:34:07    -1302.271854       1.1981       0.0114
+PreconLBFGS:  66  16:34:07    -1302.339041       0.9715       0.0088
+PreconLBFGS:  67  16:34:07    -1302.351677       0.9867       0.0069
+PreconLBFGS:  68  16:34:07    -1302.361361       0.9628       0.0064
+PreconLBFGS:  69  16:34:08    -1302.369449       0.9961       0.0064
+PreconLBFGS:  70  16:34:09    -1302.369449       0.9961       0.0064
+PreconLBFGS:  71  16:34:10    -1302.369449       0.9961       0.0064
+PreconLBFGS:  72  16:34:11    -1302.369449       0.9961       0.0064
+PreconLBFGS:  73  16:34:12    -1302.369449       0.9961       0.0064
+PreconLBFGS:  74  16:34:14    -1302.369449       0.9961       0.0064
+PreconLBFGS:  75  16:34:15    -1302.369449       0.9961       0.0064
+PreconLBFGS:  76  16:34:17    -1302.369449       0.9961       0.0064
+PreconLBFGS:  77  16:34:18    -1302.369449       0.9961       0.0064
+PreconLBFGS:  78  16:34:20    -1302.369449       0.9961       0.0064
+PreconLBFGS:  79  16:34:21    -1302.369449       0.9961       0.0064
+PreconLBFGS:  80  16:34:23    -1302.369449       0.9961       0.0064
+PreconLBFGS:  81  16:34:24    -1302.369449       0.9961       0.0064
+PreconLBFGS:  82  16:34:26    -1302.369449       0.9961       0.0064
+PreconLBFGS:  83  16:34:28    -1302.369449       0.9961       0.0064
+PreconLBFGS:  84  16:34:29    -1302.369449       0.9961       0.0064
+PreconLBFGS:  85  16:34:31    -1302.369449       0.9961       0.0064
+PreconLBFGS:  86  16:34:32    -1302.369449       0.9961       0.0064
+PreconLBFGS:  87  16:34:34    -1302.369449       0.9961       0.0064
+PreconLBFGS:  88  16:34:36    -1302.369449       0.9961       0.0064
+PreconLBFGS:  89  16:34:37    -1302.369449       0.9961       0.0064
+PreconLBFGS:  90  16:34:39    -1302.369449       0.9961       0.0064
+PreconLBFGS:  91  16:34:40    -1302.369449       0.9961       0.0064
+PreconLBFGS:  92  16:34:42    -1302.369449       0.9961       0.0064
+PreconLBFGS:  93  16:34:44    -1302.369449       0.9961       0.0064
+PreconLBFGS:  94  16:34:45    -1302.369449       0.9961       0.0064
+PreconLBFGS:  95  16:34:47    -1302.369449       0.9961       0.0064
+PreconLBFGS:  96  16:34:49    -1302.369449       0.9961       0.0064
+PreconLBFGS:  97  16:34:50    -1302.369449       0.9961       0.0064
+PreconLBFGS:  98  16:34:52    -1302.369449       0.9961       0.0064
+PreconLBFGS:  99  16:34:53    -1302.369449       0.9961       0.0064
+PreconLBFGS: 100  16:34:55    -1302.369449       0.9961       0.0064
+PreconLBFGS: 101  16:34:57    -1302.369449       0.9961       0.0064
+PreconLBFGS: 102  16:35:00    -1302.369455       0.9943       0.0064
+PreconLBFGS: 103  16:35:03    -1302.369551       0.9838       0.0066
+PreconLBFGS: 104  16:35:08    -1302.371073       0.9512       0.0069
+PreconLBFGS: 105  16:35:10    -1302.371298       0.8766       0.0073
+PreconLBFGS: 106  16:35:13    -1302.371441       0.8089       0.0077
+PreconLBFGS: 107  16:35:14    -1302.395697       0.7162       0.0076
+PreconLBFGS: 108  16:35:14    -1302.427669       0.6380       0.0071
+PreconLBFGS: 109  16:35:14    -1302.456691       0.5463       0.0065
+PreconLBFGS: 110  16:35:14    -1302.481381       0.4664       0.0059
+PreconLBFGS: 111  16:35:18    -1302.481381       0.4664       0.0059
+PreconLBFGS: 112  16:35:23    -1302.499883       0.5404       0.0038
+PreconLBFGS: 113  16:35:27    -1302.516379       0.7455       0.0061
+PreconLBFGS: 114  16:35:27    -1302.541875       0.6587       0.0076
+PreconLBFGS: 115  16:35:28    -1302.580869       0.4832       0.0051
+PreconLBFGS: 116  16:35:28    -1302.604422       0.3900       0.0033
+PreconLBFGS: 117  16:35:30    -1302.608679       0.4168       0.0040
+PreconLBFGS: 118  16:35:30    -1302.622985       0.3693       0.0031
+PreconLBFGS: 119  16:35:30    -1302.635487       0.2437       0.0033
+PreconLBFGS: 120  16:35:31    -1302.640613       0.1904       0.0017
+PreconLBFGS: 121  16:35:32    -1302.643452       0.2074       0.0018
+PreconLBFGS: 122  16:35:33    -1302.648854       0.1721       0.0024
+PreconLBFGS: 123  16:35:34    -1302.649565       0.1734       0.0031
+PreconLBFGS: 124  16:35:36    -1302.649577       0.1874       0.0032
+PreconLBFGS: 125  16:35:38    -1302.652382       0.2670       0.0021
+PreconLBFGS: 126  16:35:38    -1302.658534       0.2897       0.0024
+PreconLBFGS: 127  16:35:38    -1302.666431       0.2363       0.0016
+PreconLBFGS: 128  16:35:39    -1302.671828       0.2432       0.0013
+PreconLBFGS: 129  16:35:39    -1302.676442       0.2759       0.0020
+PreconLBFGS: 130  16:35:39    -1302.687880       0.2644       0.0042
+PreconLBFGS: 131  16:35:43    -1302.699172       0.4457       0.0082
+PreconLBFGS: 132  16:35:45    -1302.699172       0.4457       0.0082
+PreconLBFGS: 133  16:35:48    -1302.699172       0.4457       0.0082
+Traceback (most recent call last):
+  File "../../../scripts/run-model-test.py", line 129, in <module>
+    import test  # import and run the current test
+  File "/Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_bc8/test.py", line 3, in <module>
+    properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'cubic')
+  File "/Users/Cas/gits/testing-framework/scripts/../share/lattice.py", line 89, in do_lattice
+    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method,
+  File "/Users/Cas/gits/testing-framework/scripts/../share/utilities.py", line 207, in relax_config
+    opt.run(tol, max_steps)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 375, in run
+    return Optimizer.run(self, fmax, steps)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 275, in run
+    return Dynamics.run(self)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 162, in run
+    for converged in Dynamics.irun(self):
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 141, in irun
+    self.step()
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 256, in step
+    self.line_search(r, g, e, previously_reset_hessian)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 369, in line_search
+    raise RuntimeError('Wolff lineSearch failed!')
+RuntimeError: Wolff lineSearch failed!
