@@ -1,0 +1,67 @@
+Model pACE_B8_N4_18_07_rid_1.1, Test surface_Si_diamond_111
+Test run at 2020-09-03 16:08
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/pACE_B8_N4_18_07_rid_1.1/model.py
+============================================================
+import os
+from ase.calculators.lammpsrun import LAMMPS
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/gits/lammps-ace/src/lmp_serial"
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+
+parameters = {'pair_style': 'pace',
+              'pair_coeff': ['* * Si_B8_N4_18_07_rid_1.1_2B+ACE.ace Si']}
+
+files = [os.path.join(model_dir, "Si_B8_N4_18_07_rid_1.1_2B+ACE.ace")]
+
+calculator = LAMMPS(parameters=parameters, files=files)
+
+no_checkpoint = True
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_111/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+got relaxed bulk cell  Cell([[2.7461314966837778, -2.8588035537061085e-17, 2.7461314966837773], [2.7461314966837778, 2.7461314966837773, 8.768572940832764e-17], [4.850074199087077e-17, 2.7461314966837773, 2.7461314966837773]])
+got rescaled surf cell  Cell([[0.0, -2.7461314966837773, 2.7461314966837773], [2.7461314966837773, -2.7461314966837773, 0.0], [22.081171300073507, 22.081171300073507, 22.081171300073507]])
+relax_config failed to read base run config from  Si-model-None-test-surface_Si_diamond_111-surface-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  16:08:39    -2934.677216       0.4594
+PreconLBFGS:   1  16:08:39    -2934.715836       0.3006
+PreconLBFGS:   2  16:08:40    -2934.723787       0.2276
+PreconLBFGS:   3  16:08:40    -2934.733003       0.2699
+PreconLBFGS:   4  16:08:40    -2934.744688       0.1540
+PreconLBFGS:   5  16:08:40    -2934.748632       0.1178
+PreconLBFGS:   6  16:08:40    -2934.750380       0.0867
+PreconLBFGS:   7  16:08:40    -2934.751509       0.0927
+PreconLBFGS:   8  16:08:40    -2934.753413       0.1213
+PreconLBFGS:   9  16:08:41    -2934.755479       0.0930
+PreconLBFGS:  10  16:08:41    -2934.757762       0.0961
+PreconLBFGS:  11  16:08:41    -2934.758690       0.1018
+PreconLBFGS:  12  16:08:41    -2934.760374       0.1091
+PreconLBFGS:  13  16:08:41    -2934.762311       0.0741
+PreconLBFGS:  14  16:08:42    -2934.764365       0.1363
+PreconLBFGS:  15  16:08:42    -2934.767345       0.1240
+PreconLBFGS:  16  16:08:42    -2934.768185       0.0809
+PreconLBFGS:  17  16:08:42    -2934.768729       0.0014
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+got surface cell potential energy -2934.768729209564
+got bulk potential energy -2937.1553025336216
+got area 13.061807709319398
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'Ef': 0.09135693072387494, 'dmu': None, 'filename': 'Si-model-pACE_B8_N4_18_07_rid_1.1-test-surface_Si_diamond_111-relaxed.xyz'}
+============================================================

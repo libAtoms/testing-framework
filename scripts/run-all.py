@@ -39,13 +39,12 @@ tests_path = os.path.join(my_path,"..","tests",args.test_set)
 models = None
 tests = None
 omittests = None
-print("Models path: ", args.models_path)
 if args.models is not None:
     print("Models asked for: ", args.models)
-    print("Searching: ", [ os.path.join(args.models_path, d, 'model.py') for d in args.models ] ) 
     models = list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d, 'model.py')) for d in args.models ]))
 else:
     models = glob.glob(os.path.join(args.models_path, '*', 'model.py'))
+print("Models path: ", args.models_path)
 print("Models found: ", models)
 models = [ os.path.split(d)[0] for d in models ]
 

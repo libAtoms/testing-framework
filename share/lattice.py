@@ -86,7 +86,7 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
        if hasattr(model, "fix_cell_dependence"):
            model.fix_cell_dependence(bulk)
        orig_cell = bulk.get_cell()
-       bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method, 
+       bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method,
                            refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True, applied_P=applied_P)
        new_cell = bulk.get_cell()
        if hasattr(model, "fix_cell_dependence"):

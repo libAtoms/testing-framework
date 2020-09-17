@@ -1,0 +1,88 @@
+Model pACE_B8_N4_18_07_lap_1.3_2, Test bulk_Si_bc8
+Test run at 2020-09-08 16:32
+
+model file: ../../models/pACE_B8_N4_18_07_lap_1.3_2/model.py
+============================================================
+import os
+from ase.calculators.lammpsrun import LAMMPS
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/gits/lammps-ace/src/lmp_serial"
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+
+parameters = {'pair_style': 'pace',
+              'pair_coeff': ['* * Si_B8_N4_18_07_lap_1.3_2_2B+ACE.ace Si']}
+
+files = [os.path.join(model_dir, "Si_B8_N4_18_07_lap_1.3_2_2B+ACE.ace")]
+
+calculator = LAMMPS(parameters=parameters, files=files)
+
+name="ACE"
+
+no_checkpoint = True
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_bc8/test.py
+============================================================
+import os.path, lattice
+
+properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'cubic')
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+relax bulk
+relax_config failed to read base run config from  Si-model-None-test-bulk_Si_bc8-bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 206 , international (Hermann-Mauguin) Ia-3 , Hall  -I 2b 2c 3
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  16:32:17    -1303.759802       0.7586       0.0592
+PreconLBFGS:   1  16:32:18    -1303.759802       0.7586       0.0592
+PreconLBFGS:   2  16:32:18    -1300.861862       2.0075       0.0638
+PreconLBFGS:   3  16:32:19    -1304.140645       0.0563       0.0154
+PreconLBFGS:   4  16:32:19    -1304.170631       0.1206       0.0030
+PreconLBFGS:   5  16:32:19    -1304.172212       0.0902       0.0006
+PreconLBFGS:   6  16:32:19    -1304.173243       0.0544       0.0007
+PreconLBFGS:   7  16:32:19    -1304.173753       0.0263       0.0007
+PreconLBFGS:   8  16:32:19    -1304.173823       0.0214       0.0003
+PreconLBFGS:   9  16:32:19    -1304.173828       0.0200       0.0002
+PreconLBFGS:  10  16:32:19    -1304.173830       0.0204       0.0002
+PreconLBFGS:  11  16:32:19    -1304.173833       0.0193       0.0002
+PreconLBFGS:  12  16:32:19    -1304.173835       0.0200       0.0002
+PreconLBFGS:  13  16:32:20    -1304.173836       0.0186       0.0002
+PreconLBFGS:  14  16:32:20    -1304.173837       0.0167       0.0002
+PreconLBFGS:  15  16:32:20    -1304.173837       0.0171       0.0002
+PreconLBFGS:  16  16:32:20    -1304.173837       0.0171       0.0002
+PreconLBFGS:  17  16:32:20    -1304.173837       0.0171       0.0002
+PreconLBFGS:  18  16:32:20    -1304.173837       0.0171       0.0002
+PreconLBFGS:  19  16:32:21    -1304.173837       0.0170       0.0002
+PreconLBFGS:  20  16:32:21    -1304.173837       0.0170       0.0002
+PreconLBFGS:  21  16:32:21    -1304.173837       0.0170       0.0002
+PreconLBFGS:  22  16:32:21    -1304.173837       0.0170       0.0002
+PreconLBFGS:  23  16:32:21    -1304.173837       0.0170       0.0002
+PreconLBFGS:  24  16:32:22    -1304.173837       0.0170       0.0002
+PreconLBFGS:  25  16:32:22    -1304.173837       0.0170       0.0002
+PreconLBFGS:  26  16:32:22    -1304.173837       0.0170       0.0002
+PreconLBFGS:  27  16:32:23    -1304.173837       0.0170       0.0002
+Traceback (most recent call last):
+  File "../../../scripts/run-model-test.py", line 129, in <module>
+    import test  # import and run the current test
+  File "/Users/Cas/gits/testing-framework/scripts/../tests/Si/bulk_Si_bc8/test.py", line 3, in <module>
+    properties = lattice.do_lattice(os.path.abspath(os.path.dirname(__file__)), 'cubic')
+  File "/Users/Cas/gits/testing-framework/scripts/../share/lattice.py", line 89, in do_lattice
+    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method,
+  File "/Users/Cas/gits/testing-framework/scripts/../share/utilities.py", line 207, in relax_config
+    opt.run(tol, max_steps)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 375, in run
+    return Optimizer.run(self, fmax, steps)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 275, in run
+    return Dynamics.run(self)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 162, in run
+    for converged in Dynamics.irun(self):
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/optimize.py", line 141, in irun
+    self.step()
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 256, in step
+    self.line_search(r, g, e, previously_reset_hessian)
+  File "/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py", line 369, in line_search
+    raise RuntimeError('Wolff lineSearch failed!')
+RuntimeError: Wolff lineSearch failed!
