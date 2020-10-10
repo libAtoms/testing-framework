@@ -39,6 +39,8 @@ for model in models:
     all_data[model]["point_defect_Si_diamond_interstitial_tetr"] = point_defect_data[model]["point_defect_Si_diamond_interstitial_tetr"]["defects"]["Z_14"]["Ef"]
     all_data[model]["point_defect_Si_diamond_vacancy"] = point_defect_data[model]["point_defect_Si_diamond_vacancy"]["defects"]["ind_0_Z_14"]["Ef"]
     all_data[model]["point_defect_Si_diamond_interstitial_hex"] = point_defect_data[model]["point_defect_Si_diamond_interstitial_hex"]["defects"]["Z_14"]["Ef"]
+    #print()
+    all_data[model]["point_defect_Si_diamond_interstitial_dumb"] = point_defect_data[model]["point_defect_Si_diamond_interstitial_dumb"]["dumbbell_interstitial_energy"]
 
 latex_dict = {
     'B' : '$B$',
@@ -48,6 +50,7 @@ latex_dict = {
  'point_defect_Si_diamond_vacancy' : '$\\mathrm{vac}$',
   'point_defect_Si_diamond_interstitial_hex' : '$\\mathrm{hex.\\ int.}$',
   'point_defect_Si_diamond_interstitial_tetr' : '$\\mathrm{tetr.\\ int.}$',
+  'point_defect_Si_diamond_interstitial_dumb' : '$\\mathrm{dumb.\\ int.}$',
    'surf_E_111' : '$(111)$',
     'surf_E_110': '$(110)$',
     'surf_E_100': '$(100)$'
@@ -58,9 +61,9 @@ test_names = []
 for model in models:
     if model != ref_model_name:
         for obs in all_data[model].keys():
-            if obs != "surf_E_110": ####
-                test_names.append(latex_dict[obs])
-                all_data[model][obs] = ((all_data[model][obs] - all_data[ref_model_name][obs])/all_data[ref_model_name][obs]) * 100
+            #if obs != "surf_E_110": ####
+            test_names.append(latex_dict[obs])
+            all_data[model][obs] = ((all_data[model][obs] - all_data[ref_model_name][obs])/all_data[ref_model_name][obs]) * 100
 
 print(all_data)
 
@@ -68,7 +71,7 @@ fig = plt.figure(figsize=(12, 5))
 ax1 = fig.add_subplot(111, projection='3d')
 
 _x = np.arange(1 )
-_y = np.arange(len(all_data[ref_model_name].keys())-1) ###
+_y = np.arange(len(all_data[ref_model_name].keys())) ###
 
 _xx, _yy = np.meshgrid(_x, _y)
 y, x = _xx.ravel(), _yy.ravel()
@@ -81,9 +84,9 @@ model_ticks = []
 
 models.remove(ref_model_name)
 
-for (i,model) in enumerate(reversed(sorted(models))):
+for (i,model) in enumerate(sorted(models)):
     #if model != ref_model_name:
-    plot_d = [(key, value) for (key,value) in all_data[model].items() if key != "surf_E_110"] ####
+    plot_d = [(key, value) for (key,value) in all_data[model].items() ]#if key != "surf_E_110"] ####
     top = [abs(d[1]) for d in plot_d]
     bottom = np.zeros_like(top)
 
@@ -97,10 +100,11 @@ for (i,model) in enumerate(reversed(sorted(models))):
 ax1.view_init(55, -80)
 ax1.set_ylim(0,((width+depth)/2.0)*(len(models)))
 ax1.set_zlabel("Percentage Error [%]")
+# ax1.zaxis._set_scale('log')
+#
+# print(test_names)
 
-print(test_names)
-
-plt.xticks([i for i in range(len(all_data[ref_model_name].items())-1)], test_names, rotation=30, ha='right')
+plt.xticks([i for i in range(len(all_data[ref_model_name].items()))], test_names, rotation=30, ha='right')
 plt.yticks(model_vals, model_ticks, ha='left', va='center')
 
 plt.savefig("bar_plot.pdf")

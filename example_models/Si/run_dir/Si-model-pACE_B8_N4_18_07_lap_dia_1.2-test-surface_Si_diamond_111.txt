@@ -1,0 +1,72 @@
+Model pACE_B8_N4_18_07_lap_dia_1.2, Test surface_Si_diamond_111
+Test run at 2020-09-18 14:34
+
+model file: /Users/Cas/gits/testing-framework/example_models/Si/run_dir/../models/pACE_B8_N4_18_07_lap_dia_1.2/model.py
+============================================================
+import os
+from ase.calculators.lammpsrun import LAMMPS
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/gits/lammps-ace/src/lmp_serial"
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+
+parameters = {'pair_style': 'pace',
+              'pair_coeff': ['* * Si_B8_N4_18_07_lap_dia_1.2_rep_2B+ACE.ace Si']}
+
+files = [os.path.join(model_dir, "Si_B8_N4_18_07_lap_dia_1.2_rep_2B+ACE.ace")]
+
+calculator = LAMMPS(parameters=parameters, files=files)
+
+name="ACE"
+
+no_checkpoint = True
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/surface_Si_diamond_111/test.py
+============================================================
+import os.path, surface
+
+properties = surface.do_symmetric_surface(os.path.abspath(os.path.dirname(__file__)))
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+got relaxed bulk cell  Cell([[2.7471580324594207, 5.2728824671483083e-17, 2.7471580324594207], [2.7471580324594207, 2.7471580324594207, 8.275037118173424e-17], [6.715794179079825e-17, 2.7471580324594207, 2.7471580324594207]])
+got rescaled surf cell  Cell([[0.0, -2.7471580324594207, 2.7471580324594207], [2.7471580324594207, -2.7471580324594207, 0.0], [22.089425497782177, 22.089425497782177, 22.089425497782177]])
+relax_config failed to read base run config from  Si-model-None-test-surface_Si_diamond_111-surface-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  14:34:02    -2934.677461       0.4517
+PreconLBFGS:   1  14:34:02    -2934.716828       0.3107
+PreconLBFGS:   2  14:34:02    -2934.726849       0.2298
+PreconLBFGS:   3  14:34:02    -2934.735801       0.2510
+PreconLBFGS:   4  14:34:03    -2934.748077       0.1633
+PreconLBFGS:   5  14:34:03    -2934.752590       0.1221
+PreconLBFGS:   6  14:34:03    -2934.754485       0.0973
+PreconLBFGS:   7  14:34:03    -2934.756105       0.1306
+PreconLBFGS:   8  14:34:03    -2934.759593       0.0863
+PreconLBFGS:   9  14:34:04    -2934.761006       0.0715
+PreconLBFGS:  10  14:34:04    -2934.762745       0.1134
+PreconLBFGS:  11  14:34:04    -2934.764537       0.0614
+PreconLBFGS:  12  14:34:04    -2934.765404       0.0930
+PreconLBFGS:  13  14:34:05    -2934.766249       0.1374
+PreconLBFGS:  14  14:34:05    -2934.769123       0.1024
+PreconLBFGS:  15  14:34:05    -2934.770209       0.1473
+PreconLBFGS:  16  14:34:05    -2934.773060       0.0932
+PreconLBFGS:  17  14:34:05    -2934.773970       0.0979
+PreconLBFGS:  18  14:34:06    -2934.774471       0.0373
+PreconLBFGS:  19  14:34:06    -2934.774597       0.0132
+PreconLBFGS:  20  14:34:06    -2934.774614       0.0001
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 164 , international (Hermann-Mauguin) P-3m1 , Hall  -P 3 2"
+got surface cell potential energy -2934.774614322162
+got bulk potential energy -2937.1603472071984
+got area 13.071574844676498
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'Ef': 0.0912565208624389, 'dmu': None, 'filename': 'Si-model-pACE_B8_N4_18_07_lap_dia_1.2-test-surface_Si_diamond_111-relaxed.xyz'}
+============================================================

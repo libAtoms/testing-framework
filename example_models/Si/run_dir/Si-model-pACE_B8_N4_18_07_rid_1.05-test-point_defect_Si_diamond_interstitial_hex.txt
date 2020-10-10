@@ -1,0 +1,73 @@
+Model pACE_B8_N4_18_07_rid_1.05, Test point_defect_Si_diamond_interstitial_hex
+Test run at 2020-09-03 15:44
+
+model file: /Users/Cas/gits/testing-framework/run_dir/Si/run_dir/../models/pACE_B8_N4_18_07_rid_1.05/model.py
+============================================================
+import os
+from ase.calculators.lammpsrun import LAMMPS
+
+os.environ["ASE_LAMMPSRUN_COMMAND"]="/Users/Cas/gits/lammps-ace/src/lmp_serial"
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+
+parameters = {'pair_style': 'pace',
+              'pair_coeff': ['* * Si_B8_N4_18_07_rid_1.05_2B+ACE.ace Si']}
+
+files = [os.path.join(model_dir, "Si_B8_N4_18_07_rid_1.05_2B+ACE.ace")]
+
+calculator = LAMMPS(parameters=parameters, files=files)
+
+no_checkpoint = True
+============================================================
+test file: /Users/Cas/gits/testing-framework/scripts/../tests/Si/point_defect_Si_diamond_interstitial_hex/test.py
+============================================================
+import os.path, interstitial
+
+properties = interstitial.do_interstitial(os.path.abspath(os.path.dirname(__file__)), nn_cutoff=2.7)
+============================================================
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/calculators/lammpsrun.py:191: UserWarning: You are using an old syntax to set 'parameters'.
+Please use LAMMPSRUN.set().
+  warnings.warn(self.legacy_warn_string.format("parameters"))
+doing do_interstitial
+got bulk_supercell  64
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_hex-relaxed_bulk-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/Users/Cas/miniconda3/lib/python3.8/site-packages/ase-3.20.0b1-py3.8.egg/ase/optimize/precon/lbfgs.py:132: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  warnings.warn('The system is likely too small to benefit from ' +
+PreconLBFGS:   0  15:44:00   -10443.227252       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+got bulk primitive cell  Cell([[2.74596251028737, 7.434991595611348e-18, 2.74596251028737], [2.74596251028737, 2.745962510287371, 4.572650350200789e-17], [4.347610443225459e-17, 2.745962510287371, 2.74596251028737]])
+got rescaled bulk_supercell cell  Cell([10.98385004114948, 10.98385004114948, 10.98385004114948])
+setting constraint FixedPlane with normal [ 7.54031007 -7.54031007  7.54031007]
+relax_config failed to read base run config from  Si-model-None-test-point_defect_Si_diamond_interstitial_hex-Z_14-relaxed.xyz
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 166 , international (Hermann-Mauguin) R-3m , Hall  -R 3 2"
+PreconLBFGS:   0  15:44:01   -10602.386514       2.0620
+PreconLBFGS:   1  15:44:01   -10602.934135       0.4972
+PreconLBFGS:   2  15:44:01   -10603.019864       0.4337
+PreconLBFGS:   3  15:44:01   -10603.069431       0.3019
+PreconLBFGS:   4  15:44:01   -10603.097452       0.2158
+PreconLBFGS:   5  15:44:02   -10603.115336       0.1577
+PreconLBFGS:   6  15:44:02   -10603.122895       0.0673
+PreconLBFGS:   7  15:44:02   -10603.125727       0.0559
+PreconLBFGS:   8  15:44:02   -10603.128231       0.0758
+PreconLBFGS:   9  15:44:03   -10603.131366       0.0726
+PreconLBFGS:  10  15:44:03   -10603.133587       0.0557
+PreconLBFGS:  11  15:44:03   -10603.135853       0.0617
+PreconLBFGS:  12  15:44:04   -10603.137116       0.0420
+PreconLBFGS:  13  15:44:04   -10603.138772       0.0262
+PreconLBFGS:  14  15:44:04   -10603.139311       0.0123
+PreconLBFGS:  15  15:44:05   -10603.139432       0.0094
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 166 , international (Hermann-Mauguin) R-3m , Hall  -R 3 2"
+got interstitial Z_14 cell energy -10603.13943155994
+got bulk energy -10606.402678059916
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'bulk_struct_test': 'bulk_Si_diamond', 'bulk_E_per_atom': -163.17542581630642, 'defects': {'Z_14': {'Ef0': 4.016163931255505, 'Ef': 3.263246499976958, 'unrelaxed_filename': 'Si-model-pACE_B8_N4_18_07_rid_1.05-test-point_defect_Si_diamond_interstitial_hex-Z_14-unrelaxed.xyz', 'relaxed_filename': 'Si-model-pACE_B8_N4_18_07_rid_1.05-test-point_defect_Si_diamond_interstitial_hex-Z_14-relaxed.xyz', 'atom_ind': 64, 'Z': 14}}}
+============================================================

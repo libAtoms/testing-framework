@@ -1,0 +1,279 @@
+Model GAP, Test surface-energy-110-relaxed
+Test run at 2020-09-08 13:25
+
+model file: /root/gits/testing-framework/run_dir/Si/run_dir/../models/GAP/model.py
+============================================================
+from quippy.potential import Potential
+import os
+import glob
+
+model_dir = os.path.dirname(os.path.realpath(__file__))
+pot_name = glob.glob(os.path.join(model_dir,"*.xml"))[0]
+
+
+calculator = Potential(init_args='Potential xml_label="GAP_2017_6_17_60_4_3_56_165"',
+                        param_filename=pot_name)#, mpi_obj=mpi_glob)
+
+no_checkpoint = True
+
+name = 'GAP'
+============================================================
+test file: /root/gits/testing-framework/scripts/../tests/Si/surface-energy-110-relaxed/test.py
+============================================================
+# This script defines a test case which computes one or more physical
+# properties with a given model
+#
+# INPUTS:
+#   model.calculator -- an ase.calculator.Calculator instance
+#     this script can assume the calculator is checkpointed.
+#
+# OUTPUTS:
+#   properties -- dictionary of key/value pairs corresponding
+#     to physical quantities computed by this test
+
+# standard ASE structure generation routines
+from ase.lattice.cubic import Diamond
+import numpy as np
+
+import ase.io, sys
+
+# set of utility routines specific this this model/testing framework
+#from utilities import relax_atoms, relax_atoms_cell
+from utilities import relax_config
+
+# the current model
+import model
+
+a0 = 5.44 # initial guess at lattice constant, cell will be relaxed below
+fmax = 0.01 # maximum force following relaxtion [eV/A]
+
+if not hasattr(model, 'bulk_reference'):
+    # set up the a
+    bulk = Diamond(symbol='Si', latticeconstant=a0)
+
+    # specify that we will use model.calculator to compute forces, energies and stresses
+    bulk.set_calculator(model.calculator)
+
+    # use one of the routines from utilities module to relax the initial
+    # unit cell and atomic positions
+    #bulk = relax_atoms_cell(bulk, tol=fmax, traj_file=None)
+    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=1.0e-4, traj_file=None)
+else:
+    bulk = model.bulk_reference.copy()
+    bulk.set_calculator(model.calculator)
+
+a0 = bulk.cell[0,0] # get lattice constant from relaxed bulk
+bulk = Diamond(symbol="Si", latticeconstant=a0, directions=[[1,-1,0],[0,0,1],[1,1,0]])
+bulk.set_calculator(model.calculator)
+
+# set up supercell
+bulk *= (1, 1, 10)
+# flip coord system for ASE (precon minim?)
+c = bulk.get_cell()
+t_v = c[0,:].copy()
+c[0,:] = c[1,:]
+c[1,:] = t_v
+bulk.set_cell(c)
+
+ase.io.write(sys.stdout, bulk, format='extxyz')
+
+def surface_energy(bulk, z_offset):
+    Nat = bulk.get_number_of_atoms()
+
+    # shift so cut is through shuffle plane
+    bulk.positions[:,2] += z_offset
+    bulk.wrap()
+
+    # relax atom positions, holding cell fixed
+    # vac = relax_atoms(vac, fmax=fmax)
+
+    # compute surface formation energy as difference of bulk and expanded cell
+    ebulk = bulk.get_potential_energy()
+    print('bulk cell energy', ebulk)
+
+    bulk.cell[2,2] *= (np.abs(bulk.cell[2,2])+10.0)/np.abs(bulk.cell[2,2])
+
+    np.random.seed(75)
+
+    bulk.positions += (np.random.rand((Nat*3))*0.1).reshape([Nat,3])
+    bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=fmax, traj_file="model-"+model.name+"-surface-energy-110-relaxed.opt.xyz")
+
+    eexp  = bulk.get_potential_energy()
+
+    ase.io.write(sys.stdout, bulk, format='extxyz')
+
+    print('expanded cell energy', eexp)
+    e_form = 0.5*(eexp - ebulk) / np.linalg.norm(np.cross(bulk.cell[0,:],bulk.cell[1,:]))
+    print('relaxed 110 surface formation energy', e_form)
+    return e_form
+
+# dictionary of computed properties - this is output of this test, to
+#   be compared with other models
+properties = {'surface_energy_110_relaxed':
+                surface_energy(bulk, 1.0) }
+============================================================
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+/usr/local/lib/python3.7/site-packages/ase/optimize/precon/lbfgs.py:135: UserWarning: The system is likely too small to benefit from the standard preconditioner, hence it is disabled. To re-enable preconditioning, call`PreconLBFGS` by explicitly providing the kwarg `precon`
+  '`PreconLBFGS` by explicitly providing the ' +
+PreconLBFGS:   0  13:25:19    -1305.415044       0.0000       0.0065
+PreconLBFGS:   1  13:25:20    -1305.421038       0.0000       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 227 , international (Hermann-Mauguin) Fd-3m , Hall  F 4d 2 3 -1d
+WARNING: Creating a left-handed coordinate system!
+40
+Lattice="0.0 5.460923924493739 0.0 3.8614563385533764 0.0 0.0 0.0 0.0 -38.61456338553376" Properties=species:S:1:pos:R:3 energy=-1305.4210380335383 stress="2.6130831978847445e-06 4.920363338175322e-16 3.044965786128722e-16 4.920363338175322e-16 2.6130831977057266e-06 6.209773428064638e-16 3.044965786128722e-16 6.209773428064638e-16 2.6130831977567714e-06" free_energy=-1305.4210380335383 pbc="T T T"
+Si       0.00000000       0.00000000       0.00000000
+Si       0.00000000       1.36523098      -1.93072817
+Si       1.93072817       2.73046196      -1.93072817
+Si       1.93072817       4.09569294      -3.86145634
+Si       0.00000000       0.00000000      -3.86145634
+Si       0.00000000       1.36523098      -5.79218451
+Si       1.93072817       2.73046196      -5.79218451
+Si       1.93072817       4.09569294      -7.72291268
+Si       0.00000000       0.00000000      -7.72291268
+Si       0.00000000       1.36523098      -9.65364085
+Si       1.93072817       2.73046196      -9.65364085
+Si       1.93072817       4.09569294     -11.58436902
+Si       0.00000000       0.00000000     -11.58436902
+Si       0.00000000       1.36523098     -13.51509718
+Si       1.93072817       2.73046196     -13.51509718
+Si       1.93072817       4.09569294     -15.44582535
+Si       0.00000000       0.00000000     -15.44582535
+Si       0.00000000       1.36523098     -17.37655352
+Si       1.93072817       2.73046196     -17.37655352
+Si       1.93072817       4.09569294     -19.30728169
+Si       0.00000000       0.00000000     -19.30728169
+Si       0.00000000       1.36523098     -21.23800986
+Si       1.93072817       2.73046196     -21.23800986
+Si       1.93072817       4.09569294     -23.16873803
+Si       0.00000000       0.00000000     -23.16873803
+Si       0.00000000       1.36523098     -25.09946620
+Si       1.93072817       2.73046196     -25.09946620
+Si       1.93072817       4.09569294     -27.03019437
+Si       0.00000000       0.00000000     -27.03019437
+Si       0.00000000       1.36523098     -28.96092254
+Si       1.93072817       2.73046196     -28.96092254
+Si       1.93072817       4.09569294     -30.89165071
+Si       0.00000000       0.00000000     -30.89165071
+Si       0.00000000       1.36523098     -32.82237888
+Si       1.93072817       2.73046196     -32.82237888
+Si       1.93072817       4.09569294     -34.75310705
+Si       0.00000000       0.00000000     -34.75310705
+Si       0.00000000       1.36523098     -36.68383522
+Si       1.93072817       2.73046196     -36.68383522
+Si       1.93072817       4.09569294     -38.61456339
+/usr/local/lib/python3.7/site-packages/ase/atoms.py:972: VisibleDeprecationWarning: Use get_global_number_of_atoms() instead
+  np.VisibleDeprecationWarning)
+bulk cell energy -6527.105190131074
+relax_config symmetry before refinement at default tol 1.0e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 1 , international (Hermann-Mauguin) P1 , Hall  P 1
+PreconLBFGS:   0  13:25:22    -6521.680040       1.5817       0.0026
+/usr/local/lib/python3.7/site-packages/ase/io/extxyz.py:999: UserWarning: write_xyz() overwriting array "forces" present in atoms.arrays with stored results from calculator
+  'from calculator'.format(key))
+PreconLBFGS:   1  13:25:25    -6521.738491       1.3609       0.0021
+PreconLBFGS:   2  13:25:27    -6522.172276       0.6441       0.0034
+PreconLBFGS:   3  13:25:30    -6522.232911       0.4989       0.0044
+PreconLBFGS:   4  13:25:33    -6522.282590       0.4610       0.0027
+PreconLBFGS:   5  13:25:36    -6522.306255       0.4531       0.0031
+PreconLBFGS:   6  13:25:39    -6522.343864       0.3329       0.0004
+PreconLBFGS:   7  13:25:41    -6522.350042       0.3139       0.0023
+PreconLBFGS:   8  13:25:44    -6522.369292       0.2161       0.0017
+PreconLBFGS:   9  13:25:47    -6522.393402       0.2055       0.0008
+PreconLBFGS:  10  13:25:50    -6522.406392       0.1809       0.0016
+PreconLBFGS:  11  13:25:54    -6522.419849       0.1382       0.0002
+PreconLBFGS:  12  13:25:57    -6522.428052       0.0942       0.0004
+PreconLBFGS:  13  13:25:58    -6522.430182       0.0933       0.0001
+PreconLBFGS:  14  13:26:01    -6522.432060       0.1118       0.0003
+PreconLBFGS:  15  13:26:04    -6522.435430       0.1402       0.0001
+PreconLBFGS:  16  13:26:09    -6522.444905       0.2490       0.0002
+PreconLBFGS:  17  13:26:13    -6522.461316       0.6134       0.0003
+PreconLBFGS:  18  13:26:17    -6522.476530       0.8381       0.0007
+PreconLBFGS:  19  13:26:22    -6522.520826       0.8211       0.0015
+PreconLBFGS:  20  13:26:24    -6522.621507       0.6273       0.0020
+PreconLBFGS:  21  13:26:26    -6522.725601       0.6516       0.0007
+PreconLBFGS:  22  13:26:29    -6522.786137       0.6212       0.0001
+PreconLBFGS:  23  13:26:32    -6522.848852       0.6545       0.0009
+PreconLBFGS:  24  13:26:34    -6522.965245       0.4892       0.0007
+PreconLBFGS:  25  13:26:36    -6523.017046       0.4198       0.0002
+PreconLBFGS:  26  13:26:39    -6523.055042       0.3713       0.0005
+PreconLBFGS:  27  13:26:42    -6523.096765       0.1952       0.0001
+PreconLBFGS:  28  13:26:45    -6523.104312       0.1257       0.0003
+PreconLBFGS:  29  13:26:48    -6523.111963       0.0896       0.0003
+PreconLBFGS:  30  13:26:50    -6523.114794       0.0916       0.0001
+PreconLBFGS:  31  13:26:52    -6523.118161       0.0915       0.0002
+PreconLBFGS:  32  13:26:55    -6523.122443       0.0734       0.0001
+PreconLBFGS:  33  13:26:57    -6523.123410       0.0636       0.0000
+PreconLBFGS:  34  13:26:59    -6523.125570       0.0756       0.0001
+PreconLBFGS:  35  13:27:02    -6523.126958       0.0523       0.0000
+PreconLBFGS:  36  13:27:05    -6523.128534       0.0342       0.0001
+PreconLBFGS:  37  13:27:06    -6523.129070       0.0337       0.0000
+PreconLBFGS:  38  13:27:09    -6523.129509       0.0418       0.0000
+PreconLBFGS:  39  13:27:12    -6523.130094       0.0236       0.0000
+PreconLBFGS:  40  13:27:15    -6523.130464       0.0218       0.0001
+PreconLBFGS:  41  13:27:17    -6523.130654       0.0200       0.0000
+PreconLBFGS:  42  13:27:18    -6523.130773       0.0225       0.0000
+PreconLBFGS:  43  13:27:21    -6523.130950       0.0244       0.0001
+PreconLBFGS:  44  13:27:24    -6523.131239       0.0204       0.0000
+PreconLBFGS:  45  13:27:26    -6523.131511       0.0122       0.0000
+PreconLBFGS:  46  13:27:28    -6523.131606       0.0137       0.0000
+PreconLBFGS:  47  13:27:30    -6523.131712       0.0208       0.0000
+PreconLBFGS:  48  13:27:33    -6523.131896       0.0160       0.0000
+PreconLBFGS:  49  13:27:37    -6523.132093       0.0163       0.0000
+PreconLBFGS:  50  13:27:40    -6523.132208       0.0139       0.0000
+PreconLBFGS:  51  13:27:43    -6523.132308       0.0142       0.0000
+PreconLBFGS:  52  13:27:46    -6523.132398       0.0108       0.0000
+PreconLBFGS:  53  13:27:47    -6523.132443       0.0091       0.0000
+symmetry at end of relaxation at default tol 1e-6
+ase.spacegroup.symmetrize: prec 1e-06 got symmetry group number 1 , international (Hermann-Mauguin) P1 , Hall  P 1
+40
+Lattice="-3.4440586737078786e-05 5.4522088200894805 -0.0028637107852008525 3.850197907035294 -2.4353172424189437e-05 -0.00132454723067 0.016675647645831442 0.025493497329697905 -48.601586483717696" Properties=species:S:1:pos:R:3:forces:R:3 energy=-6523.132442681803 n_minim_iter=54 stress="-7.630412202632632e-07 9.66727072635857e-06 -7.831301151167665e-07 9.66727072635857e-06 4.633509676313267e-06 -6.980569579687911e-06 -7.831301151167665e-07 -6.980569579687911e-06 1.6796698632776043e-06" free_energy=-6523.132442681803 pbc="T T T"
+Si       0.04687667      -0.34377443     -37.03926080      -0.00212786      -0.00096933      -0.00023163
+Si       0.05854904       1.29914835      -0.62205850       0.00027130       0.00229266      -0.00116129
+Si       1.98337893       2.39966361      -1.38537915      -0.00038474      -0.00186780       0.00046870
+Si       1.98357976       4.23134082      -2.81943788       0.00111104       0.00088432      -0.00187726
+Si       0.05895637       0.14527319      -2.70146833      -0.00543980       0.00000959       0.00368643
+Si       0.05562489       1.45737999      -4.68427284      -0.00122493      -0.00059417      -0.00217951
+Si       1.98047522       2.82386171      -4.72807727       0.00331273      -0.00379149       0.00217472
+Si       1.97926942       4.17370858      -6.66608015       0.00583234      -0.00104771      -0.00017152
+Si       0.05466438       0.09033332      -6.63031229      -0.00431935      -0.00018741       0.00063869
+Si       0.05314532       1.44913650      -8.57110889       0.00541841       0.00237177       0.00181955
+Si       1.97852544       2.81557133      -8.59361372      -0.00181366      -0.00559221      -0.00235912
+Si       1.97844820       4.17649106     -10.52245197       0.00247213      -0.00474685       0.00245479
+Si       0.05341849       0.08921628     -10.50701787       0.00120847       0.00513924       0.00186299
+Si       0.05525156       1.44509454     -12.44360913      -0.00092364      -0.00203110      -0.00004353
+Si       1.98036337       2.81107142     -12.45011792      -0.00154248      -0.00406492      -0.00560056
+Si       1.98079365       4.16806714     -14.38351762       0.00066289       0.00375368       0.00015029
+Si       0.05591732       0.08194194     -14.37617370      -0.00388447       0.00329832      -0.00197591
+Si       0.05515138       1.43917705     -16.31128726       0.00151977      -0.00046685      -0.00275598
+Si       1.98040656       2.80518436     -16.31442288      -0.00258895       0.00172320      -0.00392448
+Si       1.97946969       4.16331252     -18.24866943       0.00183037       0.00389423      -0.00244057
+Si       0.05461375       0.07755817     -18.24429811      -0.00319119       0.00337809      -0.00024464
+Si       0.05345525       1.43642996     -20.17896774      -0.00102133       0.00738532       0.00301063
+Si       1.97858609       2.80326325     -20.18219736      -0.00183384      -0.00024775       0.00204042
+Si       1.97635582       4.16398470     -22.11591926      -0.00142998      -0.00071501       0.00029350
+Si       0.05114403       0.07755120     -22.11227499       0.00209357       0.00281430       0.00846032
+Si       0.04897582       1.44027202     -24.04314149       0.00099703      -0.00397849      -0.00382623
+Si       1.97393058       2.80572538     -24.04981952       0.00463419       0.00331700      -0.00042012
+Si       1.97432412       4.16613492     -25.98447137      -0.00039128      -0.00038607       0.00096589
+Si       0.04914521       0.08039552     -25.97459680       0.00257946      -0.00555122      -0.00178395
+Si       0.04971038       1.44252267     -27.90504863      -0.00075059       0.00333094       0.00246681
+Si       1.97476026       2.80826725     -27.92040812       0.00064815       0.00209731       0.00265328
+Si       1.97575955       4.16642532     -29.85773406      -0.00351331      -0.00115586       0.00189863
+Si       0.05058096       0.08020594     -29.83236853      -0.00059019      -0.00426974       0.00160403
+Si       0.04956431       1.43696964     -31.76061106      -0.00093195      -0.00270267      -0.00250726
+Si       1.97464252       2.80555480     -31.79679289      -0.00069742      -0.00249488       0.00340293
+Si       1.97348911       4.17015102     -33.74379341       0.00033101      -0.00223771       0.00147269
+Si       0.04850442       0.08424672     -33.69658486      -0.00115683      -0.00320247      -0.00392777
+Si       0.04616577       1.48917716     -35.60663948       0.00420135      -0.00020375      -0.00139557
+Si       1.97137453       2.85458838     -35.72456842      -0.00077222       0.00502702      -0.00118366
+Si       1.97147078       4.00735585     -37.80427144       0.00140579       0.00178851      -0.00151472
+expanded cell energy -6523.132442681803
+relaxed 110 surface formation energy 0.0946248799760559
+============================================================
+Property calculation output:
+
+
+Summary of computed properties:
+{'surface_energy_110_relaxed': 0.0946248799760559}
+============================================================
