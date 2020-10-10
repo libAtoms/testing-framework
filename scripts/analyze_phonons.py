@@ -154,6 +154,12 @@ for model_name in models:
             for i in range(model_data['BAND_PATH']['frequencies'].shape[1]):
                 ax_BP.plot(model_data['BAND_PATH']['positions'], model_data['BAND_PATH']['frequencies'][:,i], "-", color='C{}'.format(bulk_i), 
                            label=model_name if i == 0 else None)
+            f = open("phonons_BAND_PATH-"+model_name+"-"+bulk_struct_test+".dat", "w")
+            f.write(str(model_data['BAND_PATH']['positions']))
+            f.write("\n")
+            f.write(str(model_data['BAND_PATH']['frequencies'][:,:]))
+            f.write("\n")
+            f.close()
 
             if bulk_i == len(bulk_struct_tests)-1:
                 ax_BP.set_xlabel("BZ point")
