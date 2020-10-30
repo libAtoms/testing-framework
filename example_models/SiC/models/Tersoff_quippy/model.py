@@ -1,6 +1,6 @@
 # Model for Stillinger-Weber with original parameters for Si (Z=14)
 
-from quippy import Potential
+from quippy.potential import Potential
 
 # A module defining a module needs to define only one variable,
 # named `calculator`, which should be an instance of the ase.calculator.Calculator,
