@@ -21,6 +21,49 @@ def data_load(uid):
     
     return array_2d, midpoints
 
+
+#=================================================================
+def getCoord(x, y, rho, cutoff, sum=True):
+    """
+    Returns either the coordination number (default) or the 1d normalised array
+     of the integral.
+
+
+    Arguments:
+     x      - np.1darray - Bin midpoints from the RDF
+     y      - np.1darray - RDF values for each bin
+     rho    - float      - The number density for the system
+     cutoff - float      - The value we are intergrating up to for coord calculation
+     sum    - bool       - If True return the total integral, if False return the
+                            1darray with the value for the area for each bin
+    """
+    for i in range(len(x)):
+        if x[i] > cutoff:
+            i -= 1
+            break
+
+    # Calculate the bin width
+    dr = x[1] - x[0]
+    
+    # Shorten x & y to the cutoff
+    x = x[:i]
+    y = y[:i]
+    
+    # Intergrate
+    integral = np.zeros(len(x))
+    for i, r in enumerate(x):
+        # int(o,r') g(r) * r^2 dr
+        integral[i] = (y[i] * dr) * r**2
+        
+    # Normalise
+    norm_integral = 4 * np.pi * rho * integral
+
+    if sum:
+        return np.sum(norm_integral)
+    else:
+        return norm_integral
+
+
 #=================================================================
 def get_rdf(atoms_list, cutoff_size, s1=None, s2=None, bins=200, save=False, comment="", verbose=False):
     """
