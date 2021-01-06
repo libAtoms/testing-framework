@@ -11,17 +11,16 @@ import itertools
 my_path=os.path.dirname(os.path.realpath(__file__))
 
 parser = argparse.ArgumentParser(description='Run all tests on all models.  Default command line options in dict of lists in "default_run_opts.json", keys are "global" or regexps matching model names')
-parser.add_argument('--test_set', '-s', nargs='+', action='store', help='label for tests directories', required=True)
+parser.add_argument('--test_set', '-s', nargs='+', help='label(s) for tests directories', required=True)
 parser.add_argument('--models', '-m', action='store', nargs='+', type=str, help='models to include')
-parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='tests to include', default='*')
+parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='tests to include')
 parser.add_argument('--omit-tests', '-o', action='store', nargs='+', type=str, help='tests to omit')
 parser.add_argument('--force', '-f', action='store_true', help='force rerunning of tests')
 parser.add_argument('--bugs', '-b', action='store_true', help='use bugs to generate job scripts')
 parser.add_argument('--MPI', '-M', action='store_true', help='use MPI')
 parser.add_argument('--OpenMP', '-O', action='store_true', help='use OpenMP')
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
-parser.add_argument('--models_path', '-mp', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
-parser.add_argument('--tests_path', '-tp', action='store', type=str, help='path to tests directory', default=os.path.join(os.getcwd(),'../tests'))
+parser.add_argument('--models_path', '-P', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
 parser.add_argument('--n_procs', '-N', action='store', type=int, help='number of processors to round to', default=16)
 
 global_default_run_opts = []
@@ -35,7 +34,6 @@ if os.path.exists("default_run_opts.json"):
 
 args = parser.parse_args(sys.argv[1:] + global_default_run_opts)
 
-tests_paths = [os.path.join(args.tests_path, test_set) for test_set in args.test_set]
 
 models = None
 tests = None
@@ -49,19 +47,22 @@ print("Models found: ", models)
 models = [ os.path.split(d)[0] for d in models ]
 
 tests = []
-for tests_path in tests_paths:
-    for d in args.tests:
-        tests.extend(glob.glob(os.path.join(tests_path, d, 'test.py')))
-tests = [ os.path.split(t)[0] for t in tests ]
-
-if args.omit_tests is not None:
-    for tests_path in tests_paths:
-        for d in args.omit_tests:
-            for omit_test in glob.glob(os.path.join(tests_path, d)):
-                try:
-                    tests.remove(omit_test)
-                except ValueError:
-                    pass
+for test_set in args.test_set:
+    tests_path = os.path.join(my_path,"..","tests",test_set)
+    print("tests_path", tests_path)
+    if args.tests is not None:
+        tests_t = list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d, 'test.py')) for d in args.tests ]))
+    else:
+        print("glob", os.path.join(tests_path, '*', 'test.py'))
+        tests_t = glob.glob(os.path.join(tests_path, '*', 'test.py'))
+    tests_t = [ os.path.split(t)[0] for t in tests_t ]
+    if args.omit_tests is not None:
+        for omit_test in list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.omit_tests ])):
+            if omit_test in tests_t:
+                tests_t.remove(omit_test)
+            else:
+                sys.stderr.write("WARNING: omitted test %s not in list of tests\n" % omit_test)
+    tests.extend([(test, test_set) for test in tests_t])
 
 force = args.force
 bugs = args.bugs
@@ -83,7 +84,7 @@ for model in models:
 
     args = parser.parse_args(sys.argv[1:] + model_default_run_opts + global_default_run_opts)
 
-    for test in tests:
+    for test, test_set in tests:
         test_name = os.path.split(test)[-1]
         try:
             fp = open(model+"/COMPUTATIONAL_COST")
@@ -99,14 +100,14 @@ for model in models:
         if np < args.n_procs:
             np = args.n_procs
 
-        cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, "'"+os.path.join(args.models_path,model_name)+"'", test_name, args.test_set)
+        cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, "'"+os.path.join(args.models_path,model_name)+"'", test_name, test_set)
         if force:
             cmd_args += ' -force'
         if args.base_model is not None:
             cmd_args += ' --base_model '+args.base_model
 
         if args.bugs:
-            ident_string= '{0}_{1}_{2}'.format(args.test_set, model_name, test_name)
+            ident_string= '{0}_{1}_{2}'.format(test_set, model_name, test_name)
             if args.MPI:
                 bugs_script='test.bugs_script_mpi'
                 mpi_cmd=''
