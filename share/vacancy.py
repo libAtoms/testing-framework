@@ -33,8 +33,8 @@ def do_one_vacancy(bulk_supercell, bulk_supercell_pe, vac_i, relax_radial=0.0, r
     del vac[vac_i]
     vac_pos = vac.positions[vac_i]
 
-    vac = relax_config(vac, relax_pos=True, relax_cell=False, tol=tol, traj_file=None,
-        config_label=label, from_base_model=True, save_config=True)
+    vac = relax_config(vac, relax_pos=True, relax_cell=False, tol=tol, save_traj=True,
+        config_label=label, from_base_model=True, save_config=True, try_restart=True)
     relaxed_filename=run_root+"-%s-relaxed.xyz" % label
     ase.io.write(os.path.join("..",relaxed_filename), vac, format='extxyz')
 
@@ -58,7 +58,7 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
     bulk = rescale_to_relaxed_bulk(bulk_supercell)
     # relax bulk supercell positions in case it's only approximate (as it must be for different models), but stick
     # to relaxed bulk's lattice constants as set by rescale_to_relaxed_bulk
-    bulk_supercell = relax_config(bulk_supercell, relax_pos=True, relax_cell=False, tol=tol, traj_file=None,
+    bulk_supercell = relax_config(bulk_supercell, relax_pos=True, relax_cell=False, tol=tol, save_traj=True,
         config_label="rescaled_bulk", from_base_model=True, save_config=True)
 
     ase.io.write(os.path.join("..",run_root+"-rescaled-bulk.xyz"),  bulk_supercell, format='extxyz')
@@ -71,11 +71,8 @@ def do_all_vacancies(test_dir, nn_cutoff=0.0, tol=1.0e-2):
         prim_vacancy_list = np.unique(sym_data["equivalent_atoms"])
         print("orig cell vacancy_list", prim_vacancy_list)
         if 'arb_supercell' in bulk_supercell.info:
-            print("making bulk supercell from", [ bulk_supercell.info['arb_supercell'][0:3], bulk_supercell.info['arb_supercell'][3:6], bulk_supercell.info['arb_supercell'][6:9] ] )
-            bulk_supersupercell = ase.build.make_supercell(bulk_supercell,
-                [ bulk_supercell.info['arb_supercell'][0:3],
-                  bulk_supercell.info['arb_supercell'][3:6],
-                  bulk_supercell.info['arb_supercell'][6:9] ] )
+            print("making bulk supercell from", bulk_supercell.info['arb_supercell'].reshape((3,3)) )
+            bulk_supersupercell = ase.build.make_supercell(bulk_supercell,bulk_supercell.info['arb_supercell'].reshape((3,3)) )
             print("got supersupercell with ",len(bulk_supersupercell),"atoms, cell\n",bulk_supersupercell.get_cell())
             vacancy_list = []
             for i in prim_vacancy_list:
