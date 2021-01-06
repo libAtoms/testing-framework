@@ -11,16 +11,17 @@ import itertools
 my_path=os.path.dirname(os.path.realpath(__file__))
 
 parser = argparse.ArgumentParser(description='Run all tests on all models.  Default command line options in dict of lists in "default_run_opts.json", keys are "global" or regexps matching model names')
-parser.add_argument('--test_set', '-s', action='store', help='label for tests directories',required=True)
+parser.add_argument('--test_set', '-s', nargs='+', action='store', help='label for tests directories', required=True)
 parser.add_argument('--models', '-m', action='store', nargs='+', type=str, help='models to include')
-parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='tests to include')
+parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='tests to include', default='*')
 parser.add_argument('--omit-tests', '-o', action='store', nargs='+', type=str, help='tests to omit')
 parser.add_argument('--force', '-f', action='store_true', help='force rerunning of tests')
 parser.add_argument('--bugs', '-b', action='store_true', help='use bugs to generate job scripts')
 parser.add_argument('--MPI', '-M', action='store_true', help='use MPI')
 parser.add_argument('--OpenMP', '-O', action='store_true', help='use OpenMP')
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
-parser.add_argument('--models_path', '-P', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
+parser.add_argument('--models_path', '-mp', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
+parser.add_argument('--tests_path', '-tp', action='store', type=str, help='path to tests directory', default=os.path.join(os.getcwd(),'../tests'))
 parser.add_argument('--n_procs', '-N', action='store', type=int, help='number of processors to round to', default=16)
 
 global_default_run_opts = []
@@ -34,11 +35,10 @@ if os.path.exists("default_run_opts.json"):
 
 args = parser.parse_args(sys.argv[1:] + global_default_run_opts)
 
-tests_path = os.path.join(my_path,"..","tests",args.test_set)
+tests_paths = [os.path.join(args.tests_path, test_set) for test_set in args.test_set]
 
 models = None
 tests = None
-omittests = None
 if args.models is not None:
     print("Models asked for: ", args.models)
     models = list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d, 'model.py')) for d in args.models ]))
@@ -48,18 +48,20 @@ print("Models path: ", args.models_path)
 print("Models found: ", models)
 models = [ os.path.split(d)[0] for d in models ]
 
-if args.tests is not None:
-    tests = list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d, 'test.py')) for d in args.tests ]))
-else:
-    tests = glob.glob(os.path.join(tests_path, '*', 'test.py'))
+tests = []
+for tests_path in tests_paths:
+    for d in args.tests:
+        tests.extend(glob.glob(os.path.join(tests_path, d, 'test.py')))
 tests = [ os.path.split(t)[0] for t in tests ]
-if args.omit_tests is not None:
-    for omit_test in list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.omit_tests ])):
-        if omit_test in tests:
-            tests.remove(omit_test)
-        else:
-            sys.stderr.write("WARNING: omitted test %s not in list of tests\n" % omit_test)
 
+if args.omit_tests is not None:
+    for tests_path in tests_paths:
+        for d in args.omit_tests:
+            for omit_test in glob.glob(os.path.join(tests_path, d)):
+                try:
+                    tests.remove(omit_test)
+                except ValueError:
+                    pass
 
 force = args.force
 bugs = args.bugs
