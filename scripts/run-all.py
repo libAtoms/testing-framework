@@ -49,11 +49,9 @@ models = [ os.path.split(d)[0] for d in models ]
 tests = []
 for test_set in args.test_set:
     tests_path = os.path.join(my_path,"..","tests",test_set)
-    print("tests_path", tests_path)
     if args.tests is not None:
         tests_t = list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d, 'test.py')) for d in args.tests ]))
     else:
-        print("glob", os.path.join(tests_path, '*', 'test.py'))
         tests_t = glob.glob(os.path.join(tests_path, '*', 'test.py'))
     tests_t = [ os.path.split(t)[0] for t in tests_t ]
     if args.omit_tests is not None:
