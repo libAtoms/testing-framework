@@ -37,6 +37,7 @@ parser.add_argument('--system_label','-l', type=str, action='store', help='label
 parser.add_argument('--force','-f', action='store_true', help='force rerunning of test')
 parser.add_argument('--base_model','-B', type=str, action='store', help='optional base model to start from')
 parser.add_argument('--no_redirect_io','-N', action='store_true', help='do not redirect io')
+parser.add_argument('--no_append_log', dest='append_log', action='store_false', help='overwrite log (.txt) file, rather than appending')
 args = parser.parse_args()
 
 model_path = os.path.split(args.model)[0]
@@ -91,11 +92,15 @@ sys.path.insert(0, test_dir)
 if not args.no_redirect_io:
     _stdout, _stderr = sys.stdout, sys.stderr
     if do_io:
-        log = open(os.path.join('..',run_root+'.txt'), 'w', 1)
+        if args.append_log:
+            log = open(os.path.join('..',run_root+'.txt'), 'a', 1)
+        else:
+            log = open(os.path.join('..',run_root+'.txt'), 'w', 1)
         sys.stdout, sys.stderr = log, log
     else:
         sys.stdout = open(os.devnull, "w")
         sys.stderr = open(os.devnull, "w")
+sys.stdout.write('\n###### START RUN '+time.ctime()+' ######\n')
 
 import logging
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
