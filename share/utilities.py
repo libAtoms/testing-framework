@@ -132,29 +132,57 @@ def sd2_converged(minim_ind, atoms, fmax, smax=None):
     return f_conv
 
 
-def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, traj_file=None, constant_volume=False,
+def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, save_traj=False, constant_volume=False,
     refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False,
-    fix_cell_dependence=False, applied_P=0.0, **kwargs):
+    try_restart=False, fix_cell_dependence=False, applied_P=0.0, **kwargs):
 
     # get from base model if requested
     import model
-    if from_base_model:
-        if config_label is None:
-            raise ValueError('from_base_model is set but no config_label provided')
+
+    if config_label is not None:
+        save_file = run_root+'-'+config_label+'-relaxed.xyz'
+        traj_file = run_root+'-'+config_label+'-traj.xyz'
+    else:
+        save_file = None
+        traj_file = None
+
+    if try_restart:
+        # try from saved final config
         try:
-            base_run_file = os.path.join('..',base_run_root,base_run_root+'-'+config_label+'-relaxed.xyz')
-            atoms_in = read(base_run_file, format='extxyz')
+            atoms = read(save_file, format='extxyz')
+            print("relax_config read config from final file", save_file)
+            return atoms
+        except:
+            pass
+        # try from last config in traj file
+        try:
+            atoms_in = read(traj_file, -1, format='extxyz')
             # set positions from atoms_in rescaling to match current cell
             saved_cell = atoms.get_cell().copy()
             atoms.set_cell(atoms_in.get_cell())
             atoms.set_positions(atoms_in.get_positions())
             atoms.set_cell(saved_cell, scale_atoms=True)
-            print("relax_config read config from ",base_run_file)
+            print("relax_config read config from traj", traj_file)
         except:
+            pass
+    else:
+        if from_base_model:
+            if config_label is None:
+                raise ValueError('from_base_model is set but no config_label provided')
             try:
-                print("relax_config failed to read base run config from ",base_run_root+'-'+config_label+'-relaxed.xyz')
+                base_run_file = os.path.join('..',base_run_root,base_run_root+'-'+config_label+'-relaxed.xyz')
+                atoms_in = read(base_run_file, format='extxyz')
+                # set positions from atoms_in rescaling to match current cell
+                saved_cell = atoms.get_cell().copy()
+                atoms.set_cell(atoms_in.get_cell())
+                atoms.set_positions(atoms_in.get_positions())
+                atoms.set_cell(saved_cell, scale_atoms=True)
+                print("relax_config read config from base model ",base_run_file)
             except:
-                print("relax_config failed to determined base_run_root")
+                try:
+                    print("relax_config failed to read base run config from ",base_run_root+'-'+config_label+'-relaxed.xyz')
+                except:
+                    print("relax_config failed to determined base_run_root")
 
     print("relax_config symmetry before refinement at default tol 1.0e-6")
     check_symmetry(atoms, 1.0e-6, verbose=True)
@@ -182,17 +210,18 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         atoms.info["n_minim_iter"] = 0
         if method == 'sd2':
             (traj, run_stat) = sd2_run("", atoms_cell, tol, lambda i : sd2_converged(i, atoms_cell, tol), max_steps)
-            if traj_file is not None:
+            if save_traj is not None:
                 write(traj_file, traj)
         else:
             # precon="Exp" specified to resolve an error with the lbfgs not optimising
             opt = PreconLBFGS(atoms_cell, use_armijo=False, **kwargs)
-            if traj_file is not None:
+            if save_traj:
                 traj = open(traj_file, "w")
                 def write_trajectory():
                     if "n_minim_iter" in atoms.info:
                         atoms.info["n_minim_iter"] += 1
                     write(traj, atoms, format='extxyz')
+                    traj.flush()
                 opt.attach(write_trajectory)
     elif method == 'cg_n':
         raise ValueError('minim method cg_n not supported in new python3 quippy')
@@ -221,7 +250,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
     if save_config:
         if config_label is None:
             raise ValueError('save_config is set but no config_label provided')
-        write(run_root+'-'+config_label+'-relaxed.xyz', atoms, format='extxyz')
+        write(save_file, atoms, format='extxyz')
 
     if keep_symmetry:
         for (i_c, c) in enumerate(atoms.constraints):
@@ -310,7 +339,7 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
     if hasattr(model, "fix_cell_dependence"):
         model.fix_cell_dependence(atoms)
     relax_config(atoms, relax_pos=True, relax_cell=True, tol=sd2_tol, max_steps=max_sd2_iter,
-        traj_file="%s_sd2_traj.extxyz" % label, method='sd2', keep_symmetry=keep_symmetry, config_label=label )
+        save_traj=True, method='sd2', keep_symmetry=keep_symmetry, config_label=label )
 
     done=False
     i_iter = 0
@@ -319,7 +348,7 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
             if hasattr(model, "fix_cell_dependence"):
                 model.fix_cell_dependence(atoms)
             relax_config(atoms, relax_pos=True, relax_cell=True, tol=final_tol, max_steps=max_lbfgs_iter,
-                traj_file="%s_lbfgs_traj.%02d.extxyz" % (label, i_iter), method='lbfgs', keep_symmetry=keep_symmetry, config_label=label )
+                save_traj=True, method='lbfgs', keep_symmetry=keep_symmetry, config_label=f'{label}.{i_iter}' )
             done = (atoms.info["n_minim_iter"] < max_lbfgs_iter)
             print("robust_minim relax_configs LBFGS finished in ",atoms.info["n_minim_iter"],"iters, max", max_lbfgs_iter)
         except:

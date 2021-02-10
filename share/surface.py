@@ -24,7 +24,8 @@ def do_symmetric_surface(test_dir):
 
     # relax surface system
     tol = 1.0e-2
-    surf = relax_config(surf, relax_pos=True, relax_cell=False, tol=tol, traj_file=None, config_label="surface", from_base_model=True, save_config=True)
+    surf = relax_config(surf, relax_pos=True, relax_cell=False, tol=tol, save_traj=True,
+                        config_label="surface", from_base_model=True, save_config=True, try_restart=True)
 
     ase.io.write(os.path.join("..",run_root+"-relaxed.xyz"),  surf, format='extxyz')
 

@@ -33,17 +33,23 @@ except:
 parser = argparse.ArgumentParser(description='Run a particular model-test combination')
 parser.add_argument('model', type=str, action='store', help='model name')
 parser.add_argument('test', type=str, action='store', help='test name')
-parser.add_argument('--test_set','-s', type=str, action='store', help='label for tests directory', required=True)
+parser.add_argument('--system_label','-l', type=str, action='store', help='label for tests directory', default='')
 parser.add_argument('--force','-f', action='store_true', help='force rerunning of test')
 parser.add_argument('--base_model','-B', type=str, action='store', help='optional base model to start from')
 parser.add_argument('--no_redirect_io','-N', action='store_true', help='do not redirect io')
+parser.add_argument('--no_append_log', dest='append_log', action='store_false', help='overwrite log (.txt) file, rather than appending')
 args = parser.parse_args()
 
 model_path = os.path.split(args.model)[0]
 if len(model_path) == 0:
     model_path = os.path.join("..","..","models")
 model_name = os.path.split(args.model)[1]
-test_name = args.test
+
+test_path = os.path.split(args.test)[0]
+if len(test_path) == 0:
+    test_path = os.path.join("..","..","tests")
+test_name = os.path.split(args.test)[1]
+
 force = args.force
 
 my_path = os.path.split(os.path.realpath(__file__))[0]
@@ -59,7 +65,7 @@ import utilities
 utilities.model_name = model_name
 utilities.base_model_name = args.base_model
 utilities.test_name = test_name
-utilities.system_label = args.test_set
+utilities.system_label = args.system_label
 
 run_root = utilities.model_test_root()
 dir_name = "run_"+run_root # maybe a different name?
@@ -77,7 +83,7 @@ if not force and os.path.isfile(json_file_name) and os.path.getsize(json_file_na
     sys.exit(0)
 
 model_dir = os.path.join(model_path, model_name)
-test_dir = os.path.join(my_path, '..', 'tests', args.test_set, test_name)
+test_dir = os.path.join(test_path, test_name)
 
 ## sys.path.insert(0, share_dir)
 sys.path.insert(0, model_dir)
@@ -86,11 +92,15 @@ sys.path.insert(0, test_dir)
 if not args.no_redirect_io:
     _stdout, _stderr = sys.stdout, sys.stderr
     if do_io:
-        log = open(os.path.join('..',run_root+'.txt'), 'w', 1)
+        if args.append_log:
+            log = open(os.path.join('..',run_root+'.txt'), 'a', 1)
+        else:
+            log = open(os.path.join('..',run_root+'.txt'), 'w', 1)
         sys.stdout, sys.stderr = log, log
     else:
         sys.stdout = open(os.devnull, "w")
         sys.stderr = open(os.devnull, "w")
+sys.stdout.write('\n###### START RUN '+time.ctime()+' ######\n')
 
 import logging
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)

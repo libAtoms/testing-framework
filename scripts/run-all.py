@@ -2,11 +2,13 @@
 
 import os
 import sys
+import subprocess
 import glob
 import re
 import json
 import argparse
 import itertools
+import shlex
 
 my_path=os.path.dirname(os.path.realpath(__file__))
 
@@ -17,10 +19,14 @@ parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='
 parser.add_argument('--omit-tests', '-o', action='store', nargs='+', type=str, help='tests to omit')
 parser.add_argument('--force', '-f', action='store_true', help='force rerunning of tests')
 parser.add_argument('--bugs', '-b', action='store_true', help='use bugs to generate job scripts')
+parser.add_argument('--np', '-n', help='override number of processor when using bugs')
+parser.add_argument('--bugs_host', '-H', help='host to force bugs to use',
+                    default=re.sub('[0-9]*$', '', os.environ['HOSTNAME'].split('.')[0]))
 parser.add_argument('--MPI', '-M', action='store_true', help='use MPI')
 parser.add_argument('--OpenMP', '-O', action='store_true', help='use OpenMP')
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
-parser.add_argument('--models_path', '-P', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
+parser.add_argument('--models_path', '-MP', action='store', type=str, help='path to models directory', default=os.path.join(os.getcwd(),'../models'))
+parser.add_argument('--tests_path', '-TP', action='store', type=str, help='path to tests directory (above test_set)', default=os.path.join(my_path,'../tests'))
 parser.add_argument('--n_procs', '-N', action='store', type=int, help='number of processors to round to', default=16)
 
 global_default_run_opts = []
@@ -46,9 +52,19 @@ print("Models path: ", args.models_path)
 print("Models found: ", models)
 models = [ os.path.split(d)[0] for d in models ]
 
+def clean_path(p):
+    if p.startswith(os.environ['HOME']):
+        p_home = '"$HOME"'
+        p_rest = p.replace(os.environ['HOME'], '')
+    else:
+        p_home = ''
+        p_rest = p
+    return p_home+shlex.quote(p_rest)
+
 tests = []
 for test_set in args.test_set:
-    tests_path = os.path.join(my_path,"..","tests",test_set)
+    tests_path = os.path.join(args.tests_path,test_set)
+
     if args.tests is not None:
         tests_t = list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d, 'test.py')) for d in args.tests ]))
     else:
@@ -74,7 +90,7 @@ for model in models:
     model_name = os.path.split(model)[-1]
 
     model_default_run_opts = []
-    if default_run_opts is not None: 
+    if default_run_opts is not None:
         for m in default_run_opts:
             if re.search(m, model_name) is not None:
                 model_default_run_opts = default_run_opts[m]
@@ -94,32 +110,47 @@ for model in models:
             test_cost = float(fp.readline().strip())
         except:
             test_cost = 1.0
-        np=int(round(int(test_cost*model_cost*args.n_procs)/float(args.n_procs)))*args.n_procs
-        if np < args.n_procs:
-            np = args.n_procs
 
-        cmd_args = '{0} {1} {2} --test_set {3}'.format(run_model_test, "'"+os.path.join(args.models_path,model_name)+"'", test_name, test_set)
+        if args.np is None:
+            np=int(round(int(test_cost*model_cost*args.n_procs)/float(args.n_procs)))*args.n_procs
+            if np < args.n_procs:
+                np = args.n_procs
+        else:
+            np = args.np
+
+        if args.bugs:
+            # only clean for bugs, which will feed path into shell
+            cmd_args = [ clean_path(run_model_test), clean_path(os.path.join(args.models_path,model_name)),
+                         clean_path(test) ]
+        else:
+            cmd_args = [ run_model_test, os.path.join(args.models_path,model_name), test ]
+        cmd_args += [ '--system_label', test_set ]
+
         if force:
-            cmd_args += ' -force'
+            cmd_args += [ '-force' ]
         if args.base_model is not None:
-            cmd_args += ' --base_model '+args.base_model
+            cmd_args += [ '--base_model', args.base_model ]
 
         if args.bugs:
             ident_string= '{0}_{1}_{2}'.format(test_set, model_name, test_name)
+            cmd = ['bugs', '-exec=python' ]
             if args.MPI:
                 bugs_script='test.bugs_script_mpi'
-                mpi_cmd=''
             else:
-                mpi_cmd='-no_mpirun'
+                cmd += ['-no_mpirun']
                 bugs_script='test.bugs_script'
             if args.OpenMP:
                 bugs_script+='_openmp'
-            bugs_script += '.'+os.environ['HOSTNAME'].split('.')[0]
-            cmd=('env REDIRECT_IO="'+cmd_args+'" bugs -exec=python '+mpi_cmd+' -time=96h -np='+('%d' % np)+' -script='+bugs_script+
-                 ' -name='+ident_string+' -fileroot='+ident_string+' -in_cwd -output=job.'+ident_string)
+            bugs_script += '.'+args.bugs_host
+            cmd += [ '-time=96h', f'-np={np}', f'-script={bugs_script}', f'-host={args.bugs_host}', f'-name={ident_string}',
+                     f'-fileroot={ident_string}', '-in_cwd', f'-output=job.{ident_string}' ]
+
+            cmd_env = os.environ.copy()
+            cmd_env['REDIRECT_IO'] = ' '.join(cmd_args)
         else:
-            cmd="python "+cmd_args
+            cmd = ['python'] + cmd_args
+            cmd_env = None
         print(cmd)
         # TODO: convert this to using subprocess.run()
-        os.system(cmd)
-        
+        subprocess.run(cmd, env=cmd_env)
+

@@ -39,7 +39,7 @@ def calc_E_vs_V(bulk, dV=0.025, n_steps=(-10,10), tol=1e-2, method='lbfgs'): # h
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
           ase.io.write(run_root+"-E_vs_V_%03d-unrelaxed.xyz" % i,  scaled_bulk, format='extxyz')
-          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file="E_vs_V_traj_%02d.extxyz" % i, constant_volume=True, method=method,
+          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, save_traj=True, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-1, keep_symmetry=True, config_label="E_vs_V_%03d" % i, from_base_model=True, save_config=True)
       except Exception as e:
           print("WARNING: failed config in calc_E_vs_V", str(e))
@@ -58,7 +58,7 @@ def calc_E_vs_V(bulk, dV=0.025, n_steps=(-10,10), tol=1e-2, method='lbfgs'): # h
           if hasattr(model, "fix_cell_dependence"):
                model.fix_cell_dependence(scaled_bulk)
           ase.io.write(run_root+"-E_vs_V_%02d-unrelaxed.xyz" % i,  scaled_bulk, format='extxyz')
-          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, traj_file="E_vs_V_traj_%02d.extxyz" % i, constant_volume=True, method=method,
+          scaled_bulk = relax_config(scaled_bulk, relax_pos=True, relax_cell=True, tol=tol, max_steps=200, save_traj=True, constant_volume=True, method=method,
               refine_symmetry_tol=1.0e-1, keep_symmetry=True, config_label="E_vs_V_%02d" % i, from_base_model=True, save_config=True)
       except Exception as e:
           print("failed", str(e))
@@ -86,7 +86,7 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
        if hasattr(model, "fix_cell_dependence"):
            model.fix_cell_dependence(bulk)
        orig_cell = bulk.get_cell()
-       bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file="lattice_bulk_traj.xyz", method=method,
+       bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, save_traj=True, method=method,
                            refine_symmetry_tol=1.0e-2, keep_symmetry=True, config_label="bulk", from_base_model=True, save_config=True, applied_P=applied_P)
        new_cell = bulk.get_cell()
        if hasattr(model, "fix_cell_dependence"):
