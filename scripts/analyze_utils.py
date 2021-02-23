@@ -33,9 +33,12 @@ def get_matching_from_test_sets(test_sets, filename, unique=False):
         files.extend(glob.glob(f'{ts}-{filename}'))
 
     if unique:
-        if len(files) != 1:
+        if len(files) > 1:
             raise RuntimeError(f'unique but more than one file for {test_sets}, {filename} = {files}')
-        return files[0]
+        elif len(files) == 0:
+            return None
+        else:
+            return files[0]
     else:
         return files
 

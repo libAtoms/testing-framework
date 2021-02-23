@@ -48,7 +48,7 @@ for model_name in models:
             # print("defect label",defect_label)
             defect = data[model_name][test_name]["defects"][defect_label]
 
-            ind = defect['atom_ind']
+            ind = defect_label
             Z = defect['Z']
             Ef = defect['Ef']
             Ef0 = defect['Ef0']
