@@ -27,7 +27,7 @@ for model_name in models:
         try:
             (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.test_set, model_name, data[model_name][test_name]["bulk_struct_test"])
         except:
-            print("No data")
+            print("No bulk data")
             continue
         try:
             (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["bulk_struct_test"], mcc_compositions, mcc_energies[model_name])
@@ -46,20 +46,17 @@ for model_name in models:
                 print("stable mu range: None")
 
         # print("data", data[model_name][test_name])
-        if data[model_name][test_name]["dmu"] is None: # single component
-            print("SURFACE", model_name, test_name, data[model_name][test_name]["Ef"])
-            table_entry.append((test_name, "{}".format(data[model_name][test_name]["Ef"])))
-        else: # multicomponent
-            print("SURFACE", model_name, test_name, data[model_name][test_name]["Ef"],"+ ",end='')
-            l = "{} + ".format(data[model_name][test_name]["Ef"])
+
+        l_base = "{:.4f}".format(data[model_name][test_name]["Ef"])
+        l = l_base
+        dmus = data[model_name][test_name]["dmu"]
+        if dmus is not None and any([dmus[mu_Z] != 0.0 for mu_Z in dmus]): # multi component
             mu_contrib_min_total = 0.0
             mu_contrib_max_total = 0.0
-            l = ""
-            for mu_Z in data[model_name][test_name]["dmu"]:
-                n_dmu = data[model_name][test_name]["dmu"][mu_Z]
+            l_dmu = ''
+            for mu_Z, n_dmu in dmus.items():
                 if n_dmu != 0:
-                    print("( {} * mu_{} =".format(n_dmu,mu_Z),end='')
-                    l += " ( {} * mu_{} =".format(n_dmu,mu_Z)
+                    any_n_dmu = True
                     mu_min = min([ mu_pt[int(mu_Z)] for mu_pt in stable_mu_extrema] )
                     mu_max = max([ mu_pt[int(mu_Z)] for mu_pt in stable_mu_extrema] )
                     mu_contrib_min = np.finfo(float).max
@@ -68,13 +65,14 @@ for model_name in models:
                     mu_contrib_min = min(mu_contrib_min, n_dmu*mu_max)
                     mu_contrib_max = max(mu_contrib_max, n_dmu*mu_min)
                     mu_contrib_max = max(mu_contrib_max, n_dmu*mu_max)
-                    print("[",mu_contrib_min,"--",mu_contrib_max,"] )",end='')
-                    l += " [ {} -- {} ]".format(mu_contrib_min, mu_contrib_max)
+                    l_dmu += " + ( {:.4f} * mu_{} = [ {:.4f} -- {:.4f} ] )".format(n_dmu, mu_Z, mu_contrib_min, mu_contrib_max)
                     mu_contrib_min_total += mu_contrib_min
                     mu_contrib_max_total += mu_contrib_max
-            print(" = [", data[model_name][test_name]["Ef"] + mu_contrib_min_total,"--",data[model_name][test_name]["Ef"] + mu_contrib_max_total,"]")
-            l += " = [ {} -- {} ]".format(data[model_name][test_name]["Ef"] + mu_contrib_min_total,data[model_name][test_name]["Ef"] + mu_contrib_max_total)
-            table_entry.append((test_name, l))
+            l_dmu += " = [ {:.4f} -- {:.4f} ]".format(data[model_name][test_name]["Ef"] + mu_contrib_min_total,data[model_name][test_name]["Ef"] + mu_contrib_max_total)
+            l += l_dmu
+
+        table_entry.append((test_name, l))
+        print("SURFACE", model_name, test_name, l)
 
         print("")
 
@@ -86,7 +84,7 @@ for model_name in models:
 
 
 surfaces_sorted = sorted(surface_table_data.keys())
-surfaces_sorted_print(= [ n.replace("surface_","").replace("_"," ") for n in surfaces_sorted ])
+surfaces_sorted_print= ([ n.replace("surface_","").replace("_"," ") for n in surfaces_sorted ])
 print("\\begin{tabular}{ l & " + " & ".join(["c"]*len(surfaces_sorted)) + " }")
 print("model & "+" & ".join( [ n for n in surfaces_sorted_print ] ),end='')
 for model_name in models:
