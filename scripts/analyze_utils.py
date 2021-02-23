@@ -75,13 +75,13 @@ def get_multicomponent_constraints(test_set, models, multicomponent_constraints_
     composition_data = {}
     energy_data = {}
     if debug:
-        print("get_multicomponent_constraints", multicomponent_constraints_structs, isinstance(multicomponent_constraints_structs, basestring))
+        print("get_multicomponent_constraints", multicomponent_constraints_structs, isinstance(multicomponent_constraints_structs, str))
 
     for model_name in models:
         if debug:
             print("get_multicomponent_constraints model_name", model_name)
         energy_data[model_name] = {}
-        if isinstance(multicomponent_constraints_structs, basestring):
+        if isinstance(multicomponent_constraints_structs, str):
             # print("globbing multicomponent_constraints_struct")
             struct_name_list = get_matching_from_test_sets(test_set, f'model-{model_name}-test-{multicomponent_constraints_structs}-properties.json')
             struct_name_list = [ re.sub(f'.*-model-{model_name}-test-', '', x).replace('-properties.json','') for x in struct_name_list ]
