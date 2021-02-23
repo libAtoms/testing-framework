@@ -56,19 +56,21 @@ for model_name in models:
                 n_Z = defect['dmu'][0]
                 mu_Z = defect['dmu'][1]
                 if len(stable_mu_extrema) == 0:
-                    print("DEFECT", model_name, test_name, ind, Z, "(Ef0 =", Ef0,", Ef = ",Ef,") but no stable mu range exists")
+                    print(f'DEFECT {model_name}, {test_name}, {ind}, {Z}, (Ef0 = {Ef0:.4f} Ef = {Ef:.4f}) but no stable mu range exists')
                 else:
                     mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
                     mu_max = max([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
-                    print("DEFECT", model_name, test_name, "atom",ind, "Z",Z, )
-                    print("Ef0 ",Ef0," + ( mu_{} = [".format(mu_Z),mu_min,"--",mu_max,"] ) = [",Ef0+mu_min,"--",Ef0+mu_max,"]")
-                    print("Ef ",Ef," + ( mu_{} = [".format(mu_Z),mu_min,"--",mu_max,"] ) = [",Ef+mu_min,"--",Ef+mu_max,"]")
-                    table_entry.append((test_name, ind, Z, 
-                        "{} + ( mu_{} = [ {} -- {} ] ) = [ {} -- {} ]".format(Ef0,mu_Z, mu_min, mu_max,Ef0+mu_min,Ef0+mu_max),
-                        "{} + ( mu_{} = [ {} -- {} ] ) = [ {} -- {} ]".format(Ef,mu_Z, mu_min, mu_max,Ef+mu_min,Ef+mu_max)))
+                    print("DEFECT", model_name, test_name, "atom",ind, "Z",Z)
+                    l1 = f'{Ef0:.4f} + ( mu_{mu_Z} = [ {mu_min:.4f} -- {mu_max:.4f} ] ) = [ {Ef0+mu_min:.4f} -- {Ef0+mu_max:.4f} ]'
+                    print('DEFECT Ef0', l1)
+                    l2 = f'{Ef:.4f} + ( mu_{mu_Z} = [ {mu_min:.4f} -- {mu_max:.4f} ] ) = [ {Ef+mu_min:.4f} -- {Ef+mu_max:.4f} ]'
+                    print('DEFECT Ef', l2)
+                    table_entry.append((test_name, ind, Z, l1, l2))
             else:
-                print("DEFECT", model_name, test_name, "atom",ind, "Z", Z, "Ef0", Ef0, "Ef", Ef)
-                table_entry.append((test_name, ind, Z, str(Ef0), str(Ef)))
+                l1 = f'{Ef0:.4f}'
+                l2 = f'{Ef:.4f}'
+                print("DEFECT", model_name, test_name, "atom",ind, "Z", Z, "Ef0", l1, "Ef", l2)
+                table_entry.append((test_name, ind, Z, l1, l2))
 
         for (test_name, ind, Z, Ef0, Ef) in table_entry:
             l = test_name+" "+str(Z)+" "+str(ind)
