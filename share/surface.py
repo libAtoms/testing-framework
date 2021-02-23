@@ -38,7 +38,8 @@ def do_symmetric_surface(test_dir):
     else:
         n_dmu = {}
         for Z in set(bulk_Zs):
-            n_dmu[Z] = n_bulk_cells*sum(bulk_Zs == Z) - sum(surf_Zs == Z)
+            # make sure types are JSON compatible
+            n_dmu[int(Z)] = float(n_bulk_cells*sum(bulk_Zs == Z) - sum(surf_Zs == Z))
 
     # calculate surface energy
     area = np.linalg.norm(np.cross(surf.get_cell()[0,:],surf.get_cell()[1,:]))
