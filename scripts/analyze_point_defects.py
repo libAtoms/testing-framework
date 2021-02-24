@@ -39,7 +39,7 @@ for model_name in models:
                 print("stable mu range:")
                 for pt in stable_mu_extrema:
                     for Z in sorted(pt.keys()):
-                        print("mu_{} = {}".format(Z, pt[Z]),end='')
+                        print("  mu_{} = {} ".format(Z, pt[Z]),end='')
                     print("")
             else:
                 print("stable mu range: None")
@@ -49,9 +49,11 @@ for model_name in models:
             defect = data[model_name][test_name]["defects"][defect_label]
 
             ind = defect_label
-            Z = defect['Z']
+            Z = defect.get('Z', None)
             Ef = defect['Ef']
             Ef0 = defect['Ef0']
+            #  the following should probably be refactored, to make a more general routine
+            # to determine formation energy of non-stoichiometric defects
             if 'dmu' in defect:
                 n_Z = defect['dmu'][0]
                 mu_Z = defect['dmu'][1]
@@ -60,11 +62,11 @@ for model_name in models:
                 else:
                     mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
                     mu_max = max([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )
-                    print("DEFECT", model_name, test_name, "atom",ind, "Z",Z)
-                    l1 = f'{Ef0:.4f} + ( mu_{mu_Z} = [ {mu_min:.4f} -- {mu_max:.4f} ] ) = [ {Ef0+mu_min:.4f} -- {Ef0+mu_max:.4f} ]'
-                    print('DEFECT Ef0', l1)
-                    l2 = f'{Ef:.4f} + ( mu_{mu_Z} = [ {mu_min:.4f} -- {mu_max:.4f} ] ) = [ {Ef+mu_min:.4f} -- {Ef+mu_max:.4f} ]'
-                    print('DEFECT Ef', l2)
+                    print("DEFECT", model_name, test_name, "label", ind, "Z", Z)
+                    l1 = f'{Ef0:.4f} + (n_{mu_Z} = {n_Z})*(mu_{mu_Z} = [ {mu_min:.4f} -- {mu_max:.4f} ] ) = [ {Ef0+n_Z*mu_min:.4f} -- {Ef0+n_Z*mu_max:.4f} ]'
+                    print("DEFECT", model_name, test_name, "Ef0", l1)
+                    l2 = f'{Ef:.4f} + (n_{mu_Z} = {n_Z})*(mu_{mu_Z} = [ {mu_min:.4f} -- {mu_max:.4f} ] ) = [ {Ef+n_Z*mu_min:.4f} -- {Ef+n_Z*mu_max:.4f} ]'
+                    print("DEFECT", model_name, test_name, "Ef", l2)
                     table_entry.append((test_name, ind, Z, l1, l2))
             else:
                 l1 = f'{Ef0:.4f}'

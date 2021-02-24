@@ -53,8 +53,8 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
     i_of_element = {}
     for (i, element) in enumerate(cur_composition):
         if i > 0:
-            print("+"),
-        print("{}*mu_{}".format(element[1], element[0])),
+            print("+", end='')
+        print("  {}*mu_{}".format(element[1], element[0]), end='')
         cur_elements.append(element[0])
         Leq.append(element[1])
         i_of_element[element[0]] = i
@@ -86,8 +86,8 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         n_atoms = 0
         for (i, element) in enumerate(mcc_compositions[struct]):
             if i > 0:
-                print("+"),
-            print("   {}*mu_{}".format(element[1], element[0])),
+                print("+", end='')
+            print("  {}*mu_{}".format(element[1], element[0]), end='')
             n_atoms += element[1]
             Lne_cur[i_of_element[element[0]]] = element[1]
         print(" <= mu_{} = {}".format(struct, mcc_energies[struct]*n_atoms))

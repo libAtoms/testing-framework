@@ -40,7 +40,7 @@ for model_name in models:
                 print("stable mu range:")
                 for pt in stable_mu_extrema:
                     for Z in sorted(pt.keys()):
-                        print("mu_{} = {}".format(Z, pt[Z]),end='')
+                        print("mu_{} = {} ".format(Z, pt[Z]),end='')
                     print("")
             else:
                 print("stable mu range: None")

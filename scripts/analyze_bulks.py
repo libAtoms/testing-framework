@@ -30,7 +30,7 @@ for model_name in models:
         sys.stderr.write("   reading data for test {}\n".format(bulk_test_name))
 
         # read bulk test structure
-        struct_filename = "{}-model-{}-test-{}-relaxed.xyz".format(args.test_set, model_name, bulk_test_name)
+        struct_filename = get_matching_from_test_sets(args.test_set, "model-{}-test-{}-relaxed.xyz".format(model_name, bulk_test_name), unique=True)
         try:
             struct = ase.io.read(struct_filename, format="extxyz")
         except:
@@ -38,7 +38,7 @@ for model_name in models:
             continue
 
         # read bulk test properties
-        prop_filename ="{}-model-{}-test-{}-properties.json".format(args.test_set, model_name, bulk_test_name)
+        prop_filename = get_matching_from_test_sets(args.test_set, "model-{}-test-{}-properties.json".format(model_name, bulk_test_name), unique=True)
         try:
             with open(prop_filename, "r") as model_data_file:
                 json_data = json.load(model_data_file)
