@@ -157,6 +157,11 @@ def read_properties(models, tests, test_set):
             print("   reading data for test {}".format(test_name))
             try:
                 prop_filename = get_matching_from_test_sets(test_set, f'model-{model_name}-test-{test_name}-properties.json', unique=True)
+            except:
+                print("Failed to get unique prop_filename for ", test_set, f'model-{model_name}-test-{test_name}-properties.json')
+                continue
+
+            try:
                 with open(prop_filename, "r") as model_data_file:
                     cur_model_data[test_name] = json.load(model_data_file)
             except:
