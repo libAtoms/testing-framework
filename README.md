@@ -1,7 +1,7 @@
 Testing Framework for atomistic models
 ======================================
 
-Live demo: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/libAtoms/testing-framework/binder?filepath=examples%2Fdemo.ipynb)
+Live demo: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/libAtoms/testing-framework/public?filepath=examples%2Fdemo.ipynb)
 
 The purpose of this repository is to aid the testing of a large number
 of interatomic potentials for a variety of systems (materials or
