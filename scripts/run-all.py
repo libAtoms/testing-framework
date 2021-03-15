@@ -19,9 +19,9 @@ parser.add_argument('--tests', '-t', action='store', nargs='+', type=str, help='
 parser.add_argument('--omit-tests', '-o', action='store', nargs='+', type=str, help='tests to omit')
 parser.add_argument('--force', '-f', action='store_true', help='force rerunning of tests')
 parser.add_argument('--bugs', '-b', action='store_true', help='use bugs to generate job scripts')
-parser.add_argument('--np', '-n', help='override number of processor when using bugs')
+parser.add_argument('--bugs_np', '-n', help='override number of processor when using bugs')
 parser.add_argument('--bugs_host', '-H', help='host to force bugs to use',
-                    default=re.sub('[0-9]*$', '', os.environ['HOSTNAME'].split('.')[0]))
+                    default=re.sub('[0-9]*$', '', os.environ.get('HOSTNAME', 'None.FQDN').split('.')[0]))
 parser.add_argument('--MPI', '-M', action='store_true', help='use MPI')
 parser.add_argument('--OpenMP', '-O', action='store_true', help='use OpenMP')
 parser.add_argument('--base_model', '-B', action='store', type=str, help='model to use as initial config for tests where it is enabled')
@@ -111,12 +111,12 @@ for model in models:
         except:
             test_cost = 1.0
 
-        if args.np is None:
+        if args.bugs_np is None:
             np=int(round(int(test_cost*model_cost*args.n_procs)/float(args.n_procs)))*args.n_procs
             if np < args.n_procs:
                 np = args.n_procs
         else:
-            np = args.np
+            np = args.bugs_np
 
         if args.bugs:
             # only clean for bugs, which will feed path into shell
