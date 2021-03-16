@@ -1,27 +1,34 @@
 #!/usr/bin/env python
 
-import json
-import ase.io
-import fractions
+import argparse
+import glob
 import itertools
-import argparse, os, glob, sys
+import json
+import math
+import os
+import sys
+
+import ase.io
 
 debug = False
+
 
 # greatest common divisor
 def gcd(l):
     divisor = l[0]
     for i in range(1, len(l)):
-        divisor = fractions.gcd(divisor, l[i])
+        divisor = math.gcd(divisor, l[i])
     return divisor
+
 
 # formula unit from an array of atomic numbers
 def formula_unit(atomic_numbers):
     composition = []
-    for Z in set(atomic_numbers):
+    for Z in sorted(set(atomic_numbers)):
         composition.append([Z, sum(atomic_numbers == Z)])
-    divisor = gcd([ x[1] for x in composition ])
-    return [ [x[0], x[1]/divisor] for x in composition ]
+    divisor = gcd([x[1] for x in composition])
+    return [[x[0], x[1] / divisor] for x in composition]
+
 
 def get_matching_from_test_sets(test_sets, filename, unique=False):
     if isinstance(test_sets, str):
@@ -69,7 +76,7 @@ def get_element_ref_structs(test_set, models, element_ref_struct):
             except:
                 continue
             data[symb]["min_Es"][model_name] = min_EV
-            if not "composition" in data[symb]: 
+            if not "composition" in data[symb]:
                 data[symb]["composition"] = composition
     return data
 
@@ -98,7 +105,7 @@ def get_multicomponent_constraints(test_set, models, multicomponent_constraints_
                 print("get_multicomponent_constraints struct_name",struct_name)
             (min_EV, composition) = read_ref_bulk_model_struct(test_set, model_name, struct_name)
             energy_data[model_name][struct_name] = min_EV
-            if not "struct_name" in composition_data: 
+            if not "struct_name" in composition_data:
                 composition_data[struct_name] = composition
             if debug:
                 print("min_EV, composition ",min_EV, composition)
