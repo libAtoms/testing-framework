@@ -110,7 +110,7 @@ if ref_model_name in data and ref_model_name in phonon_test_names:
     for phonon_test_name in phonon_test_names[model_name]:
         for bulk_struct_test in data[ref_model_name][phonon_test_name]:
             print("analyze ref model", ref_model_name, bulk_struct_test)
-        analyze_phonons(data[ref_model_name][phonon_test_name][bulk_struct_test])
+            analyze_phonons(data[ref_model_name][phonon_test_name][bulk_struct_test])
 
 for model_name in models:
     if model_name == ref_model_name and len(models) > 1:
@@ -161,7 +161,7 @@ for model_name in models:
                 for i in range(ref_model_data['BAND_PATH']['frequencies'].shape[1]):
                     ax_BP.plot(ref_model_data['BAND_PATH']['positions'], ref_model_data['BAND_PATH']['frequencies'][:,i], "-", color='C{}'.format(panel_i-1), 
                                label=None)
-            if  'BAND_PATH' in model_data:
+            if 'BAND_PATH' in model_data:
                 for i in range(model_data['BAND_PATH']['frequencies'].shape[1]):
                     ax_BP.plot(model_data['BAND_PATH']['positions'], model_data['BAND_PATH']['frequencies'][:,i], ":", color='C{}'.format(panel_i-1), 
                                label=bulk_struct_test if i == 0 else None)
