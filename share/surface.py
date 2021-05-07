@@ -5,8 +5,14 @@ import numpy as np
 # the current 
 import model 
 
-def do_symmetric_surface(test_dir):
+def do_symmetric_surface(test_dir, in_plane_supercell=[1,1], pert_pos=0.0):
+    assert len(supercell) == 2
+
     surf = ase.io.read(test_dir+"/surface.xyz", format="extxyz")
+    surf *= list(in_plane_supercell) + [1]
+
+    if pert_pos > 0.0:
+        surf.rattle(pert_pos)
 
     bulk = rescale_to_relaxed_bulk(surf)
     bulk_Zs = bulk.get_atomic_numbers()
@@ -48,4 +54,6 @@ def do_symmetric_surface(test_dir):
     print("got bulk potential energy",bulk_E*n_bulk_cells)
     print("got area",area)
 
-    return { "bulk_struct_test" : surf.info["bulk_struct_test"],  "Ef" : (surf.get_potential_energy() - bulk_E*n_bulk_cells)/(2.0*area), "dmu" : n_dmu, 'filename' : run_root+"-relaxed.xyz" }
+    return { "bulk_struct_test" : surf.info["bulk_struct_test"],
+             "Ef" : (surf.get_potential_energy() - bulk_E*n_bulk_cells)/(2.0*area),
+             "dmu" : n_dmu, 'filename' : run_root+"-relaxed.xyz" }
