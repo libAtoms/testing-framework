@@ -24,12 +24,14 @@ for model_name in models:
         print("DO {} {}".format(model_name, test_name))
 
         try:
-            (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.test_set, model_name, data[model_name][test_name]["bulk_struct_test"])
+            (cur_min_EV, cur_composition) = read_ref_bulk_model_struct(args.test_set, model_name,
+                                                                       data[model_name][test_name]["bulk_struct_test"])
         except:
             print("No data")
             continue
         try:
-            (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["bulk_struct_test"], mcc_compositions, mcc_energies[model_name])
+            (stable_mu_extrema, full_mu_range) = mu_range(cur_min_EV, cur_composition, data[model_name][test_name]["bulk_struct_test"],
+                                                          mcc_compositions, mcc_energies[model_name])
         except:
             (stable_mu_extrema, full_mu_range) = (None,None)
         # print(model_name, test_name, "stable_mu_extrema", stable_mu_extrema)
@@ -57,7 +59,7 @@ for model_name in models:
             if 'dmu' in defect:
                 n_Z = defect['dmu'][0]
                 mu_Z = defect['dmu'][1]
-                if len(stable_mu_extrema) == 0:
+                if stable_mu_extrema is None or len(stable_mu_extrema) == 0:
                     print(f'DEFECT {model_name}, {test_name}, {ind}, {Z}, (Ef0 = {Ef0:.4f} Ef = {Ef:.4f}) but no stable mu range exists')
                 else:
                     mu_min = min([ mu_pt[mu_Z] for mu_pt in stable_mu_extrema] )

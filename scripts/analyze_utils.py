@@ -102,13 +102,16 @@ def get_multicomponent_constraints(test_set, models, multicomponent_constraints_
 
         for struct_name in struct_name_list:
             if debug:
-                print("get_multicomponent_constraints struct_name",struct_name)
-            (min_EV, composition) = read_ref_bulk_model_struct(test_set, model_name, struct_name)
-            energy_data[model_name][struct_name] = min_EV
-            if not "struct_name" in composition_data:
-                composition_data[struct_name] = composition
-            if debug:
-                print("min_EV, composition ",min_EV, composition)
+                print("get_multicomponent_constraints struct_name",test_set, model_name, struct_name)
+            try:
+                (min_EV, composition) = read_ref_bulk_model_struct(test_set, model_name, struct_name)
+                energy_data[model_name][struct_name] = min_EV
+                if not "struct_name" in composition_data:
+                    composition_data[struct_name] = composition
+                if debug:
+                    print("min_EV, composition ",min_EV, composition)
+            except:
+                pass
 
     return (composition_data, energy_data)
 
