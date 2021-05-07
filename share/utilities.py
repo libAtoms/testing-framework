@@ -134,7 +134,7 @@ def sd2_converged(minim_ind, atoms, fmax, smax=None):
 
 def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_steps=200, save_traj=False, constant_volume=False,
     refine_symmetry_tol=None, keep_symmetry=False, strain_mask = None, config_label=None, from_base_model=False, save_config=False,
-    try_restart=False, fix_cell_dependence=False, applied_P=0.0, **kwargs):
+    try_restart=False, fix_cell_dependence=False, applied_P=0.0, hydrostatic_strain=False, **kwargs):
 
     # get from base model if requested
     import model
@@ -204,7 +204,8 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         if 'move_mask' in atoms.arrays:
             atoms.set_constraint(FixAtoms(np.where(atoms.arrays['move_mask'] == 0)[0]))
         if relax_cell:
-            atoms_cell = ExpCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume, scalar_pressure=applied_P*GPa)
+            atoms_cell = ExpCellFilter(atoms, mask=strain_mask, constant_volume=constant_volume,
+                                       scalar_pressure=applied_P*GPa, hydrostatic_strain=hydrostatic_strain)
         else:
             atoms_cell = atoms
         atoms.info["n_minim_iter"] = 0
