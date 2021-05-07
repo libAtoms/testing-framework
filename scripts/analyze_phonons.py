@@ -9,7 +9,7 @@ from matplotlib import pyplot
 import phonopy
 import ase.units
 
-(args, models, tests, default_analysis_settings) = analyze_start(['phonons'])
+(args, models, tests, default_analysis_settings) = analyze_start(['phonon_bulks_*'])
 
 data = read_properties(models, tests, args.test_set)
 
