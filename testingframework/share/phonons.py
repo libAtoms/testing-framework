@@ -1,5 +1,5 @@
 import sys
-from utilities import *
+from testingframework.share.utilities  import *
 import numpy as np
 import phonopy
 import ase.units
@@ -12,7 +12,7 @@ def do_phonons(bulk_struct_tests, n_supercell, band_paths=None, dx=0.01):
         at0 = get_relaxed_bulk(bulk_struct_test)
 
         # magnetic moments could change the symmetry, ignored here for now
-        phonopy_atoms = phonopy.structure.atoms.PhonopyAtoms( symbols=at0.get_chemical_symbols(), 
+        phonopy_atoms = phonopy.structure.atoms.PhonopyAtoms( symbols=at0.get_chemical_symbols(),
                                       scaled_positions=at0.get_scaled_positions(),
                                       masses=at0.get_masses(), cell=at0.get_cell() )
 

@@ -25,7 +25,7 @@ GPA=160.21766208
 
 import ase
 from ase import Atoms
-from utilities import relax_config, phonons
+from testingframework.share.utilities  import relax_config, phonons
 import numpy as np
 
 supercell = [[4, 0, 0], [0, 4, 0], [0, 0, 4]]

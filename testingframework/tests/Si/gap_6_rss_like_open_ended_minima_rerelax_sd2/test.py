@@ -17,7 +17,7 @@ import ase.io, sys, os
 from ase.constraints import UnitCellFilter
 
 # set of utility routines specific this this model/testing framework
-from utilities_old import relax_atoms, relax_atoms_cell
+from testingframework.share.utilities _old import relax_atoms, relax_atoms_cell
 
 # the current model
 #print "import model"
@@ -41,7 +41,7 @@ if not hasattr(model, 'bulk_reference'):
     # specify that we will use model.calculator to compute forces, energies and stresses
     bulk.set_calculator(model.calculator)
 
-    # use one of the routines from utilities module to relax the initial
+    # use one of the routines from testingframework.share.utilities  module to relax the initial
     # unit cell and atomic positions
     bulk = relax_atoms_cell(bulk, tol=fmax, traj_file=None)
 else:

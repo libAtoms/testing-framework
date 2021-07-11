@@ -1,9 +1,9 @@
 import ase.io, os
-from utilities import relax_config, model_test_root, run_root, rescale_to_relaxed_bulk, evaluate
+from testingframework.share.utilities  import relax_config, model_test_root, run_root, rescale_to_relaxed_bulk, evaluate
 import numpy as np
 
-# the current 
-import model 
+# the current
+import model
 
 def do_symmetric_surface(test_dir, in_plane_supercell=[1,1], pert_pos=0.0):
     assert len(supercell) == 2

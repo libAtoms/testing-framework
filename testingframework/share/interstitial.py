@@ -1,6 +1,6 @@
 import ase.io, os.path
 from ase import Atoms
-from utilities import relax_config, run_root, rescale_to_relaxed_bulk, evaluate
+from testingframework.share.utilities  import relax_config, run_root, rescale_to_relaxed_bulk, evaluate
 from ase.neighborlist import NeighborList
 from ase.constraints import FixedPlane
 import numpy as np

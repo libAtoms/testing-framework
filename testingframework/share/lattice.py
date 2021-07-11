@@ -1,5 +1,5 @@
 import numpy as np
-from utilities import relax_config, run_root
+from testingframework.share.utilities  import relax_config, run_root
 import ase.io, sys, os.path
 from ase.optimize.precon import PreconLBFGS
 import matscipy.elasticity

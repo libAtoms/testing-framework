@@ -4,7 +4,7 @@ import numpy as np
 import ase.io, sys
 
 # set of utility routines specific this this model/testing framework
-from utilities import relax_config
+from testingframework.share.utilities  import relax_config
 
 # the current model
 import model
@@ -24,7 +24,7 @@ c[0,:] = c[1,:]
 c[1,:] = t_v
 bulk.set_cell(c)
 
-# use one of the routines from utilities module to relax the initial
+# use one of the routines from testingframework.share.utilities  module to relax the initial
 # unit cell and atomic positions
 bulk = relax_config(bulk, relax_pos=True, relax_cell=False, tol=fmax, traj_file=None)
 

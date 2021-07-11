@@ -17,7 +17,7 @@ import numpy as np
 import ase.io, sys
 
 # set of utility routines specific this this model/testing framework
-from utilities import relax_config, run_root
+from testingframework.share.utilities  import relax_config, run_root
 
 # the current model
 import model
@@ -33,7 +33,7 @@ if not hasattr(model, 'bulk_reference_216'):
     # specify that we will use model.calculator to compute forces, energies and stresses
     bulk.set_calculator(model.calculator)
 
-    # use one of the routines from utilities module to relax the initial
+    # use one of the routines from testingframework.share.utilities  module to relax the initial
     # unit cell and atomic positions
     bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, traj_file=None)
     bulk *= (N, N, N)

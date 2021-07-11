@@ -1,12 +1,12 @@
 import os.path, ase.io
-from utilities import relax_config, run_root
+from testingframework.share.utilities  import relax_config, run_root
 import random, sys, model
 
 test_dir = os.path.abspath(os.path.dirname(__file__))
 
 bulk = ase.io.read(os.path.join(test_dir,"bulk.xyz"), format="extxyz")
 tol=1.0e-3
-relaxed_bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol, 
+relaxed_bulk = relax_config(bulk, relax_pos=True, relax_cell=True, tol=tol,
     traj_file=None, config_label='bulk', from_base_model=True, save_config=True, keep_symmetry=True)
 relaxed_bulk_pe = relaxed_bulk.get_potential_energy()/len(relaxed_bulk)
 ase.io.write(sys.stdout, relaxed_bulk, format="extxyz")
@@ -30,7 +30,7 @@ for config_i in range(20):
     antisites.set_calculator(model.calculator)
     unrelaxed_energies.append(antisites.get_potential_energy()/len(antisites)-relaxed_bulk_pe)
     relaxed_antisites = antisites.copy()
-    relaxed_antisites = relax_config(relaxed_antisites, relax_pos=True, relax_cell=True, tol=tol, 
+    relaxed_antisites = relax_config(relaxed_antisites, relax_pos=True, relax_cell=True, tol=tol,
         traj_file=None, config_label='supercell_antisite_{}'.format(config_i), from_base_model=True, save_config=True)
     relaxed_energies.append(relaxed_antisites.get_potential_energy()/len(antisites)-relaxed_bulk_pe)
     ase.io.write(sys.stdout, relaxed_antisites, format="extxyz")

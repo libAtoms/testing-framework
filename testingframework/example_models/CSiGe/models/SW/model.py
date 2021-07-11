@@ -1,7 +1,7 @@
 # Model for Stillinger-Weber with original parameters for Si (Z=14)
 
 from quippy.potential import Potential
-from utilities import path_of_file
+from testingframework.share.utilities  import path_of_file
 
 
 # A module defining a module needs to define only one variable,

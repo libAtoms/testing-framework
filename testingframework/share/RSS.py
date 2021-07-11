@@ -1,5 +1,5 @@
 import ase.io
-from utilities import robust_minim_cell_pos
+from testingframework.share.utilities  import robust_minim_cell_pos
 
 def do_RSS(initial_configs_file, index=':', tol=0.01):
     import model

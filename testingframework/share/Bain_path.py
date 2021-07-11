@@ -1,6 +1,6 @@
 import sys
 import ase.atoms
-from utilities import get_relaxed_bulk, run_root, relax_config
+from testingframework.share.utilities  import get_relaxed_bulk, run_root, relax_config
 import numpy as np
 import spglib
 
