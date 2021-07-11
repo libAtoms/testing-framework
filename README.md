@@ -92,3 +92,14 @@ directory. This routine loads up a file called `bulk.xyz` from the same test dir
 (this is why the full path name of the `test.py` script has to be
 passed as the first argument), and calculates the Energy-Volume curve
 of that structure, and also computes the elastic constants. 
+
+Install
+-------
+
+To use `testingframework` as a module, go to the git_dir and run
+
+```bash
+pip install -e .
+```
+ `-e` command ensures that changes to the scirpts will be kept up do date upon import. 
+ Now utilities can be importes as `from testingframework.share.utilities`
