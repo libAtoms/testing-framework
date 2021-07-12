@@ -103,3 +103,16 @@ pip install -e .
 ```
  `-e` command ensures that changes to the scirpts will be kept up do date upon import. 
  Now utilities can be importes as `from testingframework.share.utilities`
+
+
+Formatting
+----------
+
+The git repo is formatted using `black`. Install `black` using
+```bash
+pip install black
+# or 
+conda install -c conda-forge black
+```
+
+To [use black](https://www.freecodecamp.org/news/auto-format-your-python-code-with-black/) simpy do: `black file_to_format.py` or use `black *` to format whole direcotries, or whole repository. The easiest way to use black is by integrating it into your favorite ediotr: [for VS Code](https://dev.to/adamlombard/how-to-use-the-black-python-code-formatter-in-vscode-3lo0), [for Jupyter Noteooks](https://github.com/drillan/jupyter-black). 

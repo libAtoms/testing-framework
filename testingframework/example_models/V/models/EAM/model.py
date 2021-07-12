@@ -15,12 +15,14 @@
 import os
 from ase.calculators.lammpsrun import LAMMPS
 
-os.environ["ASE_LAMMPSRUN_COMMAND"]="lmp_serial"
+os.environ["ASE_LAMMPSRUN_COMMAND"] = "lmp_serial"
 
 model_dir = os.path.dirname(os.path.realpath(__file__))
 
-parameters = {'pair_style': 'eam/alloy',
-              'pair_coeff': ['* * V_Olsson_CMS2009.eam.alloy V']}
+parameters = {
+    "pair_style": "eam/alloy",
+    "pair_coeff": ["* * V_Olsson_CMS2009.eam.alloy V"],
+}
 
 files = [os.path.join(model_dir, "V_Olsson_CMS2009.eam.alloy")]
 

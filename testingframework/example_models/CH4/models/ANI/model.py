@@ -18,13 +18,13 @@ import os
 
 model_dir = os.path.dirname(os.path.realpath(__file__))
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-species_order = ['H', 'C', 'N', 'O']
-const_file = os.path.join(model_dir,'rHCNO-5.2R_16-3.5A_a4-8.params')
+species_order = ["H", "C", "N", "O"]
+const_file = os.path.join(model_dir, "rHCNO-5.2R_16-3.5A_a4-8.params")
 consts = torchani.neurochem.Constants(const_file)
 aev_computer = AEVComputer(**consts)
-energy_shifter = load_sae(os.path.join(model_dir,'sae_linfit.dat'))
+energy_shifter = load_sae(os.path.join(model_dir, "sae_linfit.dat"))
 
 
 nn = load_model(consts.species, model_dir)
@@ -32,4 +32,4 @@ model_trained = Sequential(aev_computer, nn, energy_shifter).to(device)
 
 calculator = Calculator(species=species_order, model=model_trained)
 
-name = 'ANI'
+name = "ANI"

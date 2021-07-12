@@ -5,10 +5,12 @@ import numpy as np
 from ase.units import _k
 import matplotlib.pyplot as plt
 
-(args, models, tests, default_analysis_settings) = analyze_start('RSS')
+(args, models, tests, default_analysis_settings) = analyze_start("RSS")
 
 try:
-    (mcc_compositions, mcc_energies) = get_multicomponent_constraints(args.test_set, models, default_analysis_settings["multicomponent_constraints"])
+    (mcc_compositions, mcc_energies) = get_multicomponent_constraints(
+        args.test_set, models, default_analysis_settings["multicomponent_constraints"]
+    )
 except:
     (mcc_compositions, mcc_energies) = (None, None)
 
@@ -16,9 +18,9 @@ except:
 
 from multicomponent_mu_range import mu_range
 
-ref_linestyles=[ "-", "--" ]
-other_linestyles=[ ":", "-." ]
-struct_colors = [ "red", "blue", "orange", "green", "brown", "grey", "magenta","cyan" ]
+ref_linestyles = ["-", "--"]
+other_linestyles = [":", "-."]
+struct_colors = ["red", "blue", "orange", "green", "brown", "grey", "magenta", "cyan"]
 ref_model_name = default_analysis_settings["ref_model"]
 
 # read and parse all data
@@ -28,11 +30,17 @@ print(rss_data)
 
 ace_name = "ACE_B8_N4_18_lap_1.1"
 
-print(len(rss_data[ace_name]['RSS']["volumes"]))
-print(len(rss_data['GAP']['RSS']["volumes"]))
+print(len(rss_data[ace_name]["RSS"]["volumes"]))
+print(len(rss_data["GAP"]["RSS"]["volumes"]))
 
-plt.scatter(rss_data[ace_name]['RSS']["volumes"], rss_data[ace_name]['RSS']["energies"], label="ACE")
-plt.scatter(rss_data["GAP"]['RSS']["volumes"], rss_data["GAP"]["RSS"]["energies"], label="GAP")
+plt.scatter(
+    rss_data[ace_name]["RSS"]["volumes"],
+    rss_data[ace_name]["RSS"]["energies"],
+    label="ACE",
+)
+plt.scatter(
+    rss_data["GAP"]["RSS"]["volumes"], rss_data["GAP"]["RSS"]["energies"], label="GAP"
+)
 plt.legend()
 plt.xlim(10, 75)
 plt.ylim(-163.4, -161.5)

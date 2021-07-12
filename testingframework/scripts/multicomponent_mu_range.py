@@ -2,6 +2,7 @@ import numpy as np
 
 debug = False
 
+
 def intersect_half_plane(polygon, L, V):
     # print "check intersection ", L, V
     # print "polygon", polygon
@@ -11,34 +12,37 @@ def intersect_half_plane(polygon, L, V):
     new_polygon = []
     for e in polygon:
         # print "check edge ", e
-        in_0 = sum(L*e[0]) < V
-        in_1 = sum(L*e[1]) < V
+        in_0 = sum(L * e[0]) < V
+        in_1 = sum(L * e[1]) < V
         # print "in status ", in_0, in_1
         if in_0 and in_1:
             new_polygon.append(e)
         elif not in_0 and not in_1:
             continue
-        else: # intersection
+        else:  # intersection
             # L . (e0 + x (e1-e0)) = V
             # L.e0 + x L.(e1-e0) = V
             # x = (V-L.e0)/(L.(e1-e0))
-            x = (V - np.sum(L*e[0]) ) / np.sum(L*(e[1]-e[0]))
-            intersection_p = e[0] + x*(e[1]-e[0])
-            if in_0 and not in_1: # in to out
-                new_polygon.append( [ e[0], intersection_p ] )
+            x = (V - np.sum(L * e[0])) / np.sum(L * (e[1] - e[0]))
+            intersection_p = e[0] + x * (e[1] - e[0])
+            if in_0 and not in_1:  # in to out
+                new_polygon.append([e[0], intersection_p])
                 last_in_point = intersection_p.copy()
-            else: # no in_0 and in_1, out to in
-                if last_in_point is None: # should only happen on first edge
+            else:  # no in_0 and in_1, out to in
+                if last_in_point is None:  # should only happen on first edge
                     first_in_point = intersection_p.copy()
                 else:
-                    new_polygon.append( [ last_in_point, intersection_p ] )
-                new_polygon.append( [ intersection_p, e[1] ] )
+                    new_polygon.append([last_in_point, intersection_p])
+                new_polygon.append([intersection_p, e[1]])
     if first_in_point is not None:
-        new_polygon.append( [ last_in_point, first_in_point ] )
+        new_polygon.append([last_in_point, first_in_point])
     # print "new_polygon ", new_polygon
     return new_polygon
 
-def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc_energies):
+
+def mu_range(
+    cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc_energies
+):
     if debug:
         print("mu_range got compositions ", mcc_compositions)
         print("mu_range got energies ", mcc_energies)
@@ -47,14 +51,14 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
     n_types = len(cur_composition)
     Leq = []
     print("getting Veq from cur_min_EV, cur_composition")
-    Veq = cur_min_EV * sum( [x[1] for x in cur_composition ] )
+    Veq = cur_min_EV * sum([x[1] for x in cur_composition])
     print("mu_range: equality constraint:")
     cur_elements = []
     i_of_element = {}
     for (i, element) in enumerate(cur_composition):
         if i > 0:
-            print("+", end='')
-        print("  {}*mu_{}".format(element[1], element[0]), end='')
+            print("+", end="")
+        print("  {}*mu_{}".format(element[1], element[0]), end="")
         cur_elements.append(element[0])
         Leq.append(element[1])
         i_of_element[element[0]] = i
@@ -82,17 +86,17 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
         # determine inequality
         Lne_cur = [0] * n_types
         ## if debug:
-            ## print "   ", struct, mcc_energies, mcc_compositions
+        ## print "   ", struct, mcc_energies, mcc_compositions
         n_atoms = 0
         for (i, element) in enumerate(mcc_compositions[struct]):
             if i > 0:
-                print("+", end='')
-            print("  {}*mu_{}".format(element[1], element[0]), end='')
+                print("+", end="")
+            print("  {}*mu_{}".format(element[1], element[0]), end="")
             n_atoms += element[1]
             Lne_cur[i_of_element[element[0]]] = element[1]
-        print(" <= mu_{} = {}".format(struct, mcc_energies[struct]*n_atoms))
+        print(" <= mu_{} = {}".format(struct, mcc_energies[struct] * n_atoms))
         Lne.append(np.array(Lne_cur))
-        Vne.append(mcc_energies[struct]*n_atoms)
+        Vne.append(mcc_energies[struct] * n_atoms)
 
     if debug:
         for (L, V) in zip(Lne, Vne):
@@ -100,23 +104,27 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
 
     full_mu_range = None
     stable_mu_range = None
-    if n_types == 2: # binary
+    if n_types == 2:  # binary
         if debug:
-            print("****************************************************************************************************")
-            print("types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ])
+            print(
+                "****************************************************************************************************"
+            )
+            print("types ", [(i_of_element[x], x) for x in sorted(i_of_element.keys())])
         Leq_3 = np.array([Leq[0], Leq[1], 0.0])
-        stable_mu_range = [ [ -np.finfo(float).max, None ] , [ np.finfo(float).max, None ]  ]
+        stable_mu_range = [[-np.finfo(float).max, None], [np.finfo(float).max, None]]
         for (L, V) in zip(Lne, Vne):
-            if np.all(L == Leq): # skip instance when inequality corresponds to same composition as base structure equilibrium equality
+            if np.all(
+                L == Leq
+            ):  # skip instance when inequality corresponds to same composition as base structure equilibrium equality
                 continue
             if debug:
                 print("inequality")
-                print("Leq",Leq)
-                print("L from ne",L)
-                print("Veq",Veq)
-                print("V from ne",V)
-            A_lin_sys = np.array( [Leq, L] )
-            b_lin_sys = np.array( [Veq, V] )
+                print("Leq", Leq)
+                print("L from ne", L)
+                print("Veq", Veq)
+                print("V from ne", V)
+            A_lin_sys = np.array([Leq, L])
+            b_lin_sys = np.array([Veq, V])
             x = np.linalg.solve(A_lin_sys, b_lin_sys)
             L_3 = np.array([L[0], L[1], 0.0])
             if np.cross(Leq_3, L_3)[2] < 0.0:
@@ -131,31 +139,33 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
                     stable_mu_range[0][1] = x[1]
         full_mu_range = stable_mu_range
 
-    elif n_types == 3: # ternary
+    elif n_types == 3:  # ternary
         if debug:
-            print("****************************************************************************************************")
-            print("types ", [ (i_of_element[x], x) for x in sorted(i_of_element.keys()) ])
+            print(
+                "****************************************************************************************************"
+            )
+            print("types ", [(i_of_element[x], x) for x in sorted(i_of_element.keys())])
         # do monatomic limits first
         vertices = []
         for (L1, V1) in zip(Lne, Vne):
-            if sum(L1 != 0) == 1: # monatomic
+            if sum(L1 != 0) == 1:  # monatomic
                 i1 = np.where(L1 != 0)[0][0]
-                for (L2, V2) in zip(Lne, Vne): # monatomic
+                for (L2, V2) in zip(Lne, Vne):  # monatomic
                     i2 = np.where(L2 != 0)[0][0]
                     if sum(L2 != 0) == 1 and i1 < i2:
                         i3 = [0, 1, 2]
                         i3.remove(i1)
                         i3.remove(i2)
                         i3 = i3[0]
-                        mu_3 = (Veq - Leq[i1]*V1 - Leq[i2]*V2)/Leq[i3]
-                        pt = [ 0 ] * 3
+                        mu_3 = (Veq - Leq[i1] * V1 - Leq[i2] * V2) / Leq[i3]
+                        pt = [0] * 3
                         pt[i1] = V1
                         pt[i2] = V2
                         pt[i3] = mu_3
                         vertices.append(np.array(pt))
         polygon = []
-        for i in range (3):
-            polygon.append([vertices[i], vertices[(i+1)%3]])
+        for i in range(3):
+            polygon.append([vertices[i], vertices[(i + 1) % 3]])
         full_mu_range = []
         for e in polygon:
             full_mu_range.append(e[0])
@@ -163,13 +173,15 @@ def mu_range(cur_min_EV, cur_composition, cur_bulk_struct, mcc_compositions, mcc
             print("initial polygon ", polygon)
         for (L, V) in zip(Lne, Vne):
             if sum(L != 0) > 1:
-                polygon = intersect_half_plane (polygon, L, V)
+                polygon = intersect_half_plane(polygon, L, V)
         if debug:
-            print("****************************************************************************************************")
+            print(
+                "****************************************************************************************************"
+            )
         stable_mu_range = []
         for e in polygon:
             stable_mu_range.append(e[0])
-    elif n_types > 1: # n >= 4
+    elif n_types > 1:  # n >= 4
         raise ValueError("Can't do mu_range for %d-ary".format(n_types))
 
     if stable_mu_range is None:

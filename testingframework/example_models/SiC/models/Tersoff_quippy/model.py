@@ -6,7 +6,9 @@ from quippy.potential import Potential
 # named `calculator`, which should be an instance of the ase.calculator.Calculator,
 # a subclass of this, or a compatible class implementing the calculator interface.
 
-calculator = Potential('IP Tersoff', param_str="""
+calculator = Potential(
+    "IP Tersoff",
+    param_str="""
 <Tersoff_params n_types="3" label="PRB_39">
 <comment> Tersoff, Phys. Rev. B v 39, p 5566 (1989) </comment>
 <per_type_data type="1" atomic_num="6" 
@@ -25,8 +27,9 @@ calculator = Potential('IP Tersoff', param_str="""
 <per_pair_data type1="3" type2="2" chi="1.00061" />
 <per_pair_data type1="3" type2="3" chi="1.0" />
 </Tersoff_params>
-""")
+""",
+)
 
 no_checkpoint = True
 
-name = 'Tersoff'
+name = "Tersoff"

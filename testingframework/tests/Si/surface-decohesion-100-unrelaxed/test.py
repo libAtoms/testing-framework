@@ -13,16 +13,16 @@
 from ase.lattice.cubic import Diamond
 
 # set of utility routines specific this this model/testing framework
-from testingframework.share.utilities  import relax_config
+from testingframework.share.utilities import relax_config
 
 # the current model
 import model
 
-a0 = 5.44 # initial guess at lattice constant, cell will be relaxed below
-fmax = 0.01 # maximum force following relaxtion [eV/A]
+a0 = 5.44  # initial guess at lattice constant, cell will be relaxed below
+fmax = 0.01  # maximum force following relaxtion [eV/A]
 
 # set up the a
-bulk = Diamond(symbol='Si', latticeconstant=a0)
+bulk = Diamond(symbol="Si", latticeconstant=a0)
 
 # specify that we will use model.calculator to compute forces, energies and stresses
 bulk.set_calculator(model.calculator)
@@ -34,6 +34,7 @@ bulk = relax_config(bulk, relax_pos=True, relax_cell=False, tol=fmax, traj_file=
 # set up supercell
 bulk *= (5, 1, 1)
 
+
 def surface_energy(bulk, opening):
     Nat = bulk.get_number_of_atoms()
 
@@ -42,15 +43,16 @@ def surface_energy(bulk, opening):
 
     # compute surface formation energy as difference of bulk and expanded cell
     ebulk = bulk.get_potential_energy()
-    print('bulk cell energy', ebulk)
+    print("bulk cell energy", ebulk)
 
-    bulk.cell[0,:] += [opening,0.0,0.0]
-    eexp  = bulk.get_potential_energy()
+    bulk.cell[0, :] += [opening, 0.0, 0.0]
+    eexp = bulk.get_potential_energy()
 
-    print('expanded cell energy', eexp)
-    e_form = (eexp - ebulk) / (bulk.cell[1,1]*bulk.cell[2,2])
-    print('unrelaxed 100 surface formation energy', e_form)
+    print("expanded cell energy", eexp)
+    e_form = (eexp - ebulk) / (bulk.cell[1, 1] * bulk.cell[2, 2])
+    print("unrelaxed 100 surface formation energy", e_form)
     return e_form
+
 
 # dictionary of computed properties - this is output of this test, to
 #   be compared with other models
@@ -62,7 +64,7 @@ al = []
 openings = []
 es = []
 for i in range(n_steps + 1):
-    opening = float(i)/float(n_steps)*max_opening
+    opening = float(i) / float(n_steps) * max_opening
     openings.append(opening)
     bulk_copy = bulk.copy()
     bulk_copy.set_calculator(model.calculator)
@@ -76,8 +78,13 @@ write("./decoh_traj.xyz", al)
 print("openings ", openings)
 print("es ", es)
 from scipy import interpolate
+
 spline = interpolate.splrep(openings, es, s=0)
 stresses = [x for x in interpolate.splev(openings, spline, der=1)]
 
 print("stresses ", stresses)
-properties = {'surface_decohesion_unrelaxed_opening': openings, 'surface_decohesion_unrelaxed_energy' : es, 'surface_decohesion_unrelaxed_stress' : stresses}
+properties = {
+    "surface_decohesion_unrelaxed_opening": openings,
+    "surface_decohesion_unrelaxed_energy": es,
+    "surface_decohesion_unrelaxed_stress": stresses,
+}

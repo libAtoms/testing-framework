@@ -1,14 +1,15 @@
 import ase.io
-from testingframework.share.utilities  import robust_minim_cell_pos
+from testingframework.share.utilities import robust_minim_cell_pos
 
-def do_RSS(initial_configs_file, index=':', tol=0.01):
+
+def do_RSS(initial_configs_file, index=":", tol=0.01):
     import model
 
     ats = ase.io.read(initial_configs_file, index)
-    range_slice_args = [ None if i == '' else int(i) for i in index.split(':')]
+    range_slice_args = [None if i == "" else int(i) for i in index.split(":")]
 
-    print("got index ", index, "range_slice_args",range_slice_args)
-    print("using i_config",range(len(ats))[slice(*range_slice_args)])
+    print("got index ", index, "range_slice_args", range_slice_args)
+    print("using i_config", range(len(ats))[slice(*range_slice_args)])
 
     energies = []
     volumes = []
@@ -17,8 +18,8 @@ def do_RSS(initial_configs_file, index=':', tol=0.01):
         print("RSS completed minimization")
         if hasattr(model, "fix_cell_dependence"):
             model.fix_cell_dependence()
-        energies.append(at.get_potential_energy()/len(at))
-        volumes.append(at.get_volume()/len(at))
+        energies.append(at.get_potential_energy() / len(at))
+        volumes.append(at.get_volume() / len(at))
         ase.io.write("RSS_relaxed_%04d.extxyz" % i_config, at)
 
-    return { 'energies' : energies, 'volumes' : volumes }
+    return {"energies": energies, "volumes": volumes}

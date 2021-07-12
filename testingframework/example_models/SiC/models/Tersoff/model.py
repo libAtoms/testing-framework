@@ -7,4 +7,4 @@ from atomistica import Tersoff, Tersoff_PRB_39_5566_Si_C
 calculator = Tersoff(**Tersoff_PRB_39_5566_Si_C)
 
 no_checkpoint = True
-name = 'Tersoff'
+name = "Tersoff"
