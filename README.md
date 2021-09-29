@@ -35,7 +35,7 @@ Any interatomic potential that can be instantiated as an ASE
  the test-system, and under each are `models` and `run_dir` subdirectories,
  the former contains the different potentials, the latter is where
  the tests are actually run and the test results appear. The test-system
- is indicated to the test scripts using the `-s` option. The `models` directory
+ is indicated to the test scripts using the `-l` option. The `models` directory
  can be kept elsewhere and its location specified via an option. The test-system
  label is used to generate unique file names and directories when the
  tests are run. 
@@ -49,7 +49,7 @@ is called `CSiGe`, the model is `Tersoff` and the test is `bulk_Si_diamond`.
 
 ```
 cd testing-framework/example_run_dir/CSiGe/run_dir
-../../../scripts/run-model-test.py -s CSiGe Tersoff bulk_Si_diamond
+../../../scripts/run-model-test.py -l CSiGe Tersoff bulk_Si_diamond
 ```
 
 This will produce three things:
