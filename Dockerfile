@@ -1,6 +1,6 @@
 FROM python:3.8
 
-RUN apt-get -y update && apt-get upgrade -y && apt-get install -y gfortran libblas-dev
+RUN apt-get -y update && apt-get upgrade -y && apt-get install -y gfortran libopenblas-dev
 
 RUN pip install numpy scipy matplotlib seaborn 
 RUN pip install quippy-ase
