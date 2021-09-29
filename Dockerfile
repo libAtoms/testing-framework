@@ -4,11 +4,7 @@ RUN apt-get -y update && apt-get upgrade -y && apt-get install -y gfortran libbl
 
 RUN pip install numpy scipy matplotlib seaborn 
 RUN pip install quippy-ase
-
-WORKDIR /opt
-RUN git clone --depth 1 https://github.com/Atomistica/atomistica.git \
- && cd atomistica \
- && python setup.py install
+RUN pip install --global-option=build_ext --global-option="-L/opt/OpenBLAS/lib" atomistica
 
 # create user with a home directory
 ARG NB_USER
