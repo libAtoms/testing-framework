@@ -1,11 +1,7 @@
-# start from QUIP base container, i.e. without GAP (to avoid licence check)
-FROM libatomsquip/quip-base:latest
+FROM python:3.8
 
 # add some additional Python packages
-RUN pip install seaborn atomistica
-
-# set dynamic library path to include OpenBLAS
-ENV LD_LIBRARY_PATH=/opt/OpenBLAS/lib
+RUN pip install seaborn atomistica quippy-ase
 
 # create user with a home directory
 ARG NB_USER
