@@ -1,7 +1,7 @@
 FROM python:3.8
 
-# add some additional Python packages
-RUN pip install seaborn atomistica quippy-ase
+RUN pip install numpy scipy matplotlib seaborn 
+RUN pip install atomistica quippy-ase
 
 # create user with a home directory
 ARG NB_USER
