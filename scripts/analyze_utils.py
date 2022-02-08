@@ -7,6 +7,8 @@ import json
 import math
 import os
 import sys
+# need to convert rest of os.path to Pathlib
+from pathlib import Path
 
 import ase.io
 
@@ -140,12 +142,12 @@ def analyze_start(default_tests=['*']):
     args = parser.parse_args(sys.argv[1:] + default_analysis_opts)
 
     # from full list of models/tests
-    models = [ os.path.split(f)[1] for f in list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d)) for d in args.models ])) ]
+    models = [ os.path.split(f)[1] for f in list(itertools.chain.from_iterable([ glob.glob(os.path.join(args.models_path, d)) for d in args.models ])) if (Path(f) / 'model.py').is_file() ]
     my_path=os.path.dirname(os.path.realpath(__file__))
     tests = []
     for test_set in args.test_set:
         tests_path = os.path.join(my_path,"..","tests",test_set)
-        tests.extend([ os.path.split(f)[1] for f in list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.tests ])) ])
+        tests.extend([ os.path.split(f)[1] for f in list(itertools.chain.from_iterable([ glob.glob(os.path.join(tests_path, d)) for d in args.tests ])) if (Path(f) / 'test.py').is_file() ])
 
     with open("default_analysis_settings.json") as default_analysis_file:
         try:
