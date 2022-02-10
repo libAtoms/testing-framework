@@ -2,7 +2,7 @@ import numpy as np
 from utilities import relax_config, run_root
 import ase.io, sys, os.path
 from ase.optimize.precon import PreconLBFGS
-import matscipy.elasticity
+from matscipy import elasticity
 from ase.units import GPa
 # Calculate B for Hexagonal, Tetragonal & Trigonal
 # DOI: 10.1103/PhysRevB.77.104118 Eq. (29)
@@ -68,6 +68,7 @@ def calc_E_vs_V(bulk, dV=0.025, n_steps=(-10,10), tol=1e-2, method='lbfgs'): # h
 
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence()
+       scaled_bulk.calc = model.calculator
 
    return E_vs_V
 
@@ -91,6 +92,7 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
        new_cell = bulk.get_cell()
        if hasattr(model, "fix_cell_dependence"):
            model.fix_cell_dependence()
+           bulk.calc = model.calculator
        else:
            break
 
@@ -107,15 +109,17 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence(bulk)
 
+   bulk.calc = model.calculator
+
    opt = lambda atoms, **kwargs: PreconLBFGS(atoms, **kwargs)
    if lattice_type == 'cubic':
-       elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, symmetry='cubic', optimizer=opt, logfile=sys.stdout)
+       elastic_consts = elasticity.fit_elastic_constants(bulk, symmetry='cubic', optimizer=opt, logfile=sys.stdout)
        c11 = elastic_consts[0][0,0]/GPa
        c12 = elastic_consts[0][0,1]/GPa
        c44 = elastic_consts[0][3,3]/GPa
        results_dict.update({'c11' : c11, 'c12': c12, 'c44' : c44, 'B' : (c11+2.0*c12)/3.0})
    elif lattice_type == 'orthorhombic':
-       elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, optimizer=opt, logfile=sys.stdout)
+       elastic_consts = elasticity.fit_elastic_constants(bulk, optimizer=opt, logfile=sys.stdout)
        c11 = elastic_consts[0][0,0]/GPa
        c22 = elastic_consts[0][1,1]/GPa
        c33 = elastic_consts[0][2,2]/GPa
@@ -128,7 +132,7 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
        results_dict.update({'c11' : c11, 'c22' : c22, 'c33' : c33, 'c12': c12, 'c13' : c13, 'c23' : c23,
                             'c44' : c44, 'c55' : c55, 'c66' : c66})
    elif lattice_type == 'tetragonal':
-       elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, symmetry='tetragonal_high', optimizer=opt, logfile=sys.stdout)
+       elastic_consts = elasticity.fit_elastic_constants(bulk, symmetry='tetragonal_high', optimizer=opt, logfile=sys.stdout)
        c11 = elastic_consts[0][0,0]/GPa
        c33 = elastic_consts[0][2,2]/GPa
        c12 = elastic_consts[0][0,1]/GPa
@@ -140,7 +144,7 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
    elif lattice_type == 'hexagonal':
        # Need to check if hexagonal structures are truly trigonal_high
        # symmetry=triginal_high not hexagonal until matscipy is debugged
-       elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, symmetry='trigonal_high', optimizer=opt, logfile=sys.stdout)
+       elastic_consts = elasticity.fit_elastic_constants(bulk, symmetry='trigonal_high', optimizer=opt, logfile=sys.stdout)
        c11 = elastic_consts[0][0,0]/GPa
        c33 = elastic_consts[0][2,2]/GPa
        c12 = elastic_consts[0][0,1]/GPa
@@ -153,7 +157,7 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
        results_dict.update({'c11' : c11, 'c33' : c33, 'c12': c12, 'c13' : c13, 'c44' : c44, 'c14' : c14,
                             'c15' : c15, 'c25' : c25, 'c66' : c66, 'B' : HTT_B(c11, c33, c12, c13)})
    elif lattice_type == 'trigonal':
-       elastic_consts = matscipy.elasticity.fit_elastic_constants(bulk, symmetry='trigonal_high', optimizer=opt, logfile=sys.stdout)
+       elastic_consts = elasticity.fit_elastic_constants(bulk, symmetry='trigonal_high', optimizer=opt, logfile=sys.stdout)
        c11 = elastic_consts[0][0,0]/GPa
        c33 = elastic_consts[0][2,2]/GPa
        c12 = elastic_consts[0][0,1]/GPa
@@ -168,5 +172,6 @@ def do_lattice(test_dir, lattice_type, dV=0.025, n_steps=(-10,10), tol=1.0e-2, m
 
    if hasattr(model, "fix_cell_dependence"):
        model.fix_cell_dependence()
+       bulk.calc = model.calculator
 
    return results_dict

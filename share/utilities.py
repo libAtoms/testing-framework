@@ -194,11 +194,11 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
         print("relax_config trying to maintain symmetry")
         atoms.set_constraint(FixSymmetry(atoms))
 
-    atoms.set_calculator(model.calculator)
-
     # if needed, fix cell dependence before running
     if fix_cell_dependence and hasattr(model, "fix_cell_dependence"):
         model.fix_cell_dependence(atoms)
+
+    atoms.set_calculator(model.calculator)
 
     if method == 'lbfgs' or method == 'sd2':
         if 'move_mask' in atoms.arrays:
@@ -263,6 +263,7 @@ def relax_config(atoms, relax_pos, relax_cell, tol=1e-3, method='lbfgs', max_ste
     if fix_cell_dependence and hasattr(model, "fix_cell_dependence"):
         sys.stderr.write("WARNING: relax_config undoing fix_cell_dependence, whether or not it was set before it started\n")
         model.fix_cell_dependence()
+        atoms.calc = model.calculator
 
     return atoms
 
@@ -360,6 +361,7 @@ def robust_minim_cell_pos(atoms, final_tol, label="robust_minim", max_sd2_iter=5
     # more complex process that is doing its own fix_cell_depdence()
     if hasattr(model, "fix_cell_dependence"):
         model.fix_cell_dependence()
+        atoms.calc = model.calculator
 
 def get_relaxed_bulk(bulk_struct_test, model_name=None):
     bulk_model_test_relaxed = os.path.join('..',model_test_root(u_model_name=model_name, u_test_name=bulk_struct_test)+"-relaxed.xyz")
